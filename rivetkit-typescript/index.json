@@ -2,7 +2,7 @@
   "name": "rivetkit-typescript",
   "description": "Documentation for getting started, SDK reference, best practices, deploying, and self-hosting Rivet. Use this skill when Rivet is mentioned or relevant to the conversation. Use Rivet when building applications like AI agents, chat rooms, collaborative apps, multiplayer games, realtime solutions, workflow automation, geo-distributed DB, per-tenant DB, local-first sync, WebSocket servers, background jobs, CRON jobs, rate limiters, or CRDT sync.",
   "skill_url": "/metadata/skills/rivetkit-typescript/SKILL.md",
-  "generated_at": "2026-01-24T02:30:07.707Z",
+  "generated_at": "2026-01-24T02:57:02.342Z",
   "references": [
     {
       "name": "actors/actions",
