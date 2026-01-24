@@ -1,6 +1,6 @@
 ---
 name: "rivetkit-typescript"
-description: "Documentation for getting started, SDK reference, best practices, deploying, and self-hosting Rivet. Use this skill when writing, reviewing, interating with, or deploying Rivet code (both frontend and backend). Use Rivet when building applications like AI agents, chat rooms, collaborative apps, multiplayer games, realtime solutions, workflow automation, geo-distributed DB, per-tenant DB, local-first sync, WebSocket servers, background jobs, CRON jobs, rate limiters, or CRDT sync."
+description: "Documentation for getting started, SDK reference, best practices, deploying, and self-hosting Rivet. Use this skill when Rivet is mentioned or relevant to the conversation. Use Rivet when building applications like AI agents, chat rooms, collaborative apps, multiplayer games, realtime solutions, workflow automation, geo-distributed DB, per-tenant DB, local-first sync, WebSocket servers, background jobs, CRON jobs, rate limiters, or CRDT sync."
 ---
 
 # Rivet Actors
@@ -51,12 +51,12 @@ Use that canonical URL when citing, not the reference file path.
 
 ## First Steps
 
-1. Install RivetKit
+1. Install RivetKit (latest: 2.0.42-rc.1)
    ```bash
-   npm install rivetkit
+   npm install rivetkit@2.0.42-rc.1
    ```
 2. Define a registry with `setup({ use: { /* actors */ } })`.
-3. Expose `registry.serve()` or `registry.handler()` (serverless) or `registry.startRunner()` (runner mode).
+3. Expose `registry.serve()` or `registry.handler()` (serverless) or `registry.startRunner()` (runner mode). Prefer serverless mode unless the user has a specific reason to use runner mode.
 4. Verify `/api/rivet/metadata` returns 200 before deploying.
 5. Configure Rivet Cloud or self-hosted engine
 6. Integrate clients (see client guide below for JavaScript or for React)
@@ -1250,6 +1250,10 @@ const myActor = actor({
 ```
 
 [Documentation](/docs/general/cors)
+
+## API Reference
+
+The RivetKit OpenAPI specification is available in the skill directory at `openapi.json`. This file documents all HTTP endpoints for managing actors.
 
 ## Reference Map
 
