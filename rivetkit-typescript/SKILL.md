@@ -1,6 +1,6 @@
 ---
 name: "rivetkit-typescript"
-description: "RivetKit SDK documentation. Load this skill when you see rivetkit imports, actor definitions, rivetkit in package.json, discussing Rivet, or discussing actors. Use RivetKit when building applications like AI agents, chat rooms, collaborative apps, multiplayer games, realtime solutions, workflow automation, geo-distributed DB, per-tenant DB, local-first sync, WebSocket servers, background jobs, CRON jobs, rate limiters, or CRDT sync."
+description: "Use this skill for RivetKit building, modification, debugging, testing, or performance analysis. Trigger on RivetKit imports, Rivet/actor discussion, actor-based code analysis/logs/performance. Use RivetKit for AI agents, sandboxes, collaboration/multiplayer, realtime/WebSocket, workflows, background/scheduled jobs, or CRDT/local-first sync."
 ---
 
 # Rivet Actors
