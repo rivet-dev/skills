@@ -1,0 +1,311 @@
+# CLI Reference
+
+> Source: `docs/cli.mdx`
+> Canonical URL: https://sandboxagent.dev/docs/cli
+> Description: Complete CLI reference for sandbox-agent.
+
+---
+## Server
+
+Start the HTTP server:
+
+```bash
+sandbox-agent server [OPTIONS]
+```
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `-t, --token ` | - | Authentication token for all requests |
+| `-n, --no-token` | - | Disable authentication (local dev only) |
+| `-H, --host ` | `127.0.0.1` | Host to bind to |
+| `-p, --port ` | `2468` | Port to bind to |
+| `-O, --cors-allow-origin ` | - | Additional CORS origin (repeatable, cumulative with Inspector) |
+| `-M, --cors-allow-method ` | all | CORS allowed method (repeatable) |
+| `-A, --cors-allow-header ` | all | CORS allowed header (repeatable) |
+| `-C, --cors-allow-credentials` | - | Enable CORS credentials |
+| `--no-inspector-cors` | - | Disable default Inspector CORS |
+| `--no-telemetry` | - | Disable anonymous telemetry |
+
+```bash
+sandbox-agent server --token "$TOKEN" --port 3000
+```
+
+---
+
+## Install Agent (Local)
+
+Install an agent without running the server:
+
+```bash
+sandbox-agent install-agent <AGENT> [OPTIONS]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-r, --reinstall` | Force reinstall even if already installed |
+
+```bash
+sandbox-agent install-agent claude --reinstall
+```
+
+---
+
+## Credentials
+
+### Extract
+
+Extract locally discovered credentials:
+
+```bash
+sandbox-agent credentials extract [OPTIONS]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-a, --agent ` | Filter by agent (`claude`, `codex`, `opencode`, `amp`) |
+| `-p, --provider ` | Filter by provider (`anthropic`, `openai`) |
+| `-d, --home-dir ` | Custom home directory for credential search |
+| `-r, --reveal` | Show full credential values (default: redacted) |
+| `--no-oauth` | Exclude OAuth credentials |
+
+```bash
+sandbox-agent credentials extract --agent claude --reveal
+sandbox-agent credentials extract --provider anthropic
+```
+
+### Extract as Environment Variables
+
+Output credentials as shell environment variables:
+
+```bash
+sandbox-agent credentials extract-env [OPTIONS]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-e, --export` | Prefix each line with `export` |
+| `-d, --home-dir ` | Custom home directory for credential search |
+| `--no-oauth` | Exclude OAuth credentials |
+
+```bash
+# Source directly into shell
+eval "$(sandbox-agent credentials extract-env --export)"
+```
+
+---
+
+## API Commands
+
+The `sandbox-agent api` subcommand mirrors the HTTP API for scripting without client code.
+
+All API commands support:
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `-e, --endpoint ` | `http://127.0.0.1:2468` | API endpoint |
+| `-t, --token ` | - | Authentication token |
+
+---
+
+### Agents
+
+#### List Agents
+
+```bash
+sandbox-agent api agents list
+```
+
+#### Install Agent
+
+```bash
+sandbox-agent api agents install <AGENT> [OPTIONS]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-r, --reinstall` | Force reinstall |
+
+```bash
+sandbox-agent api agents install claude --reinstall
+```
+
+#### Get Agent Modes
+
+```bash
+sandbox-agent api agents modes <AGENT>
+```
+
+```bash
+sandbox-agent api agents modes claude
+```
+
+---
+
+### Sessions
+
+#### List Sessions
+
+```bash
+sandbox-agent api sessions list
+```
+
+#### Create Session
+
+```bash
+sandbox-agent api sessions create <SESSION_ID> [OPTIONS]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-a, --agent ` | Agent identifier (required) |
+| `-g, --agent-mode ` | Agent mode |
+| `-p, --permission-mode ` | Permission mode (`default`, `plan`, `bypass`) |
+| `-m, --model ` | Model override |
+| `-v, --variant ` | Model variant |
+| `-A, --agent-version ` | Agent version |
+
+```bash
+sandbox-agent api sessions create my-session \
+  --agent claude \
+  --agent-mode code \
+  --permission-mode default
+```
+
+#### Send Message
+
+```bash
+sandbox-agent api sessions send-message <SESSION_ID> [OPTIONS]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-m, --message ` | Message text (required) |
+
+```bash
+sandbox-agent api sessions send-message my-session \
+  --message "Summarize the repository"
+```
+
+#### Send Message (Streaming)
+
+Send a message and stream the response:
+
+```bash
+sandbox-agent api sessions send-message-stream <SESSION_ID> [OPTIONS]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-m, --message ` | Message text (required) |
+| `--include-raw` | Include raw agent data |
+
+```bash
+sandbox-agent api sessions send-message-stream my-session \
+  --message "Help me debug this"
+```
+
+#### Terminate Session
+
+```bash
+sandbox-agent api sessions terminate <SESSION_ID>
+```
+
+```bash
+sandbox-agent api sessions terminate my-session
+```
+
+#### Get Events
+
+Fetch session events:
+
+```bash
+sandbox-agent api sessions events <SESSION_ID> [OPTIONS]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-o, --offset ` | Event offset |
+| `-l, --limit ` | Max events to return |
+| `--include-raw` | Include raw agent data |
+
+```bash
+sandbox-agent api sessions events my-session --offset 0 --limit 50
+```
+
+`get-messages` is an alias for `events`.
+
+#### Stream Events (SSE)
+
+Stream session events via Server-Sent Events:
+
+```bash
+sandbox-agent api sessions events-sse <SESSION_ID> [OPTIONS]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-o, --offset ` | Event offset to start from |
+| `--include-raw` | Include raw agent data |
+
+```bash
+sandbox-agent api sessions events-sse my-session --offset 0
+```
+
+#### Reply to Question
+
+```bash
+sandbox-agent api sessions reply-question <SESSION_ID> <QUESTION_ID> [OPTIONS]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-a, --answers ` | JSON array of answers (required) |
+
+```bash
+sandbox-agent api sessions reply-question my-session q1 \
+  --answers '[["yes"]]'
+```
+
+#### Reject Question
+
+```bash
+sandbox-agent api sessions reject-question <SESSION_ID> <QUESTION_ID>
+```
+
+```bash
+sandbox-agent api sessions reject-question my-session q1
+```
+
+#### Reply to Permission
+
+```bash
+sandbox-agent api sessions reply-permission <SESSION_ID> <PERMISSION_ID> [OPTIONS]
+```
+
+| Option | Description |
+|--------|-------------|
+| `-r, --reply ` | `once`, `always`, or `reject` (required) |
+
+```bash
+sandbox-agent api sessions reply-permission my-session perm1 --reply once
+```
+
+---
+
+## CLI to HTTP Mapping
+
+| CLI Command | HTTP Endpoint |
+|-------------|---------------|
+| `api agents list` | `GET /v1/agents` |
+| `api agents install` | `POST /v1/agents/{agent}/install` |
+| `api agents modes` | `GET /v1/agents/{agent}/modes` |
+| `api sessions list` | `GET /v1/sessions` |
+| `api sessions create` | `POST /v1/sessions/{sessionId}` |
+| `api sessions send-message` | `POST /v1/sessions/{sessionId}/messages` |
+| `api sessions send-message-stream` | `POST /v1/sessions/{sessionId}/messages/stream` |
+| `api sessions terminate` | `POST /v1/sessions/{sessionId}/terminate` |
+| `api sessions events` | `GET /v1/sessions/{sessionId}/events` |
+| `api sessions events-sse` | `GET /v1/sessions/{sessionId}/events/sse` |
+| `api sessions reply-question` | `POST /v1/sessions/{sessionId}/questions/{questionId}/reply` |
+| `api sessions reject-question` | `POST /v1/sessions/{sessionId}/questions/{questionId}/reject` |
+| `api sessions reply-permission` | `POST /v1/sessions/{sessionId}/permissions/{permissionId}/reply` |

@@ -1,0 +1,152 @@
+# TypeScript
+
+> Source: `docs/sdks/typescript.mdx`
+> Canonical URL: https://sandboxagent.dev/docs/sdks/typescript
+> Description: Use the generated client to manage sessions and stream events.
+
+---
+The TypeScript SDK is generated from the OpenAPI spec that ships with the server. It provides a typed
+client for sessions, events, and agent operations.
+
+## Install
+
+```bash
+npm install sandbox-agent
+```
+
+## Create a client
+
+```ts
+import { SandboxAgent } from "sandbox-agent";
+
+const client = await SandboxAgent.connect({
+  baseUrl: "http://127.0.0.1:2468",
+  token: process.env.SANDBOX_TOKEN,
+});
+```
+
+## Autospawn (Node only)
+
+If you run locally, the SDK can launch the server for you.
+
+```ts
+import { SandboxAgent } from "sandbox-agent";
+
+const client = await SandboxAgent.start();
+
+await client.dispose();
+```
+
+Autospawn uses the local `sandbox-agent` binary. Install `@sandbox-agent/cli` (recommended) or set
+`SANDBOX_AGENT_BIN` to a custom path.
+
+## Sessions and messages
+
+```ts
+await client.createSession("demo-session", {
+  agent: "codex",
+  agentMode: "default",
+  permissionMode: "plan",
+});
+
+await client.postMessage("demo-session", { message: "Hello" });
+```
+
+List agents and pick a compatible one:
+
+```ts
+const agents = await client.listAgents();
+const codex = agents.agents.find((agent) => agent.id === "codex");
+console.log(codex?.capabilities);
+```
+
+## Poll events
+
+```ts
+const events = await client.getEvents("demo-session", {
+  offset: 0,
+  limit: 200,
+  includeRaw: false,
+});
+
+for (const event of events.events) {
+  console.log(event.type, event.data);
+}
+```
+
+## Stream events (SSE)
+
+```ts
+for await (const event of client.streamEvents("demo-session", {
+  offset: 0,
+  includeRaw: false,
+})) {
+  console.log(event.type, event.data);
+}
+```
+
+The SDK parses `text/event-stream` into `UniversalEvent` objects. If you want full control, use
+`getEventsSse()` and parse the stream yourself.
+
+## Stream a single turn
+
+```ts
+for await (const event of client.streamTurn("demo-session", { message: "Hello" })) {
+  console.log(event.type, event.data);
+}
+```
+
+This method posts the message and streams only the next turn. For manual control, call
+`postMessageStream()` and parse the SSE response yourself.
+
+## Optional raw payloads
+
+Set `includeRaw: true` on `getEvents`, `streamEvents`, or `streamTurn` to include the raw provider
+payload in `event.raw`. This is useful for debugging and conversion analysis.
+
+## Error handling
+
+All HTTP errors throw `SandboxAgentError`:
+
+```ts
+import { SandboxAgentError } from "sandbox-agent";
+
+try {
+  await client.postMessage("missing-session", { message: "Hi" });
+} catch (error) {
+  if (error instanceof SandboxAgentError) {
+    console.error(error.status, error.problem);
+  }
+}
+```
+
+## Inspector URL
+
+Build a URL to open the sandbox-agent Inspector UI with pre-filled connection settings:
+
+```ts
+import { buildInspectorUrl } from "sandbox-agent";
+
+const url = buildInspectorUrl({
+  baseUrl: "https://your-sandbox-agent.example.com",
+  token: "optional-bearer-token",
+  headers: { "X-Custom-Header": "value" },
+});
+console.log(url);
+// https://inspect.sandboxagent.dev?url=https%3A%2F%2Fyour-sandbox-agent.example.com&token=...&headers=...
+```
+
+Parameters:
+- `baseUrl` (required): The sandbox-agent server URL
+- `token` (optional): Bearer token for authentication
+- `headers` (optional): Extra headers to pass to the server (JSON-encoded in the URL)
+
+## Types
+
+The SDK exports OpenAPI-derived types for events, items, and capabilities:
+
+```ts
+import type { UniversalEvent, UniversalItem, AgentCapabilities } from "sandbox-agent";
+```
+
+See the [API Reference](/api) for schema details.

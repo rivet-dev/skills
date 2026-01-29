@@ -1,0 +1,81 @@
+# E2B
+
+> Source: `docs/deploy/e2b.mdx`
+> Canonical URL: https://sandboxagent.dev/docs/deploy/e2b
+> Description: Deploy the daemon inside an E2B sandbox.
+
+---
+## Prerequisites
+
+- `E2B_API_KEY` environment variable
+- `ANTHROPIC_API_KEY` or `OPENAI_API_KEY` for the coding agents
+
+## TypeScript Example
+
+```typescript
+import { Sandbox } from "@e2b/code-interpreter";
+import { SandboxAgent } from "sandbox-agent";
+
+// Pass API keys to the sandbox
+const envs: Record<string, string> = {};
+if (process.env.ANTHROPIC_API_KEY) envs.ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+if (process.env.OPENAI_API_KEY) envs.OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
+const sandbox = await Sandbox.create({ allowInternetAccess: true, envs });
+
+// Install sandbox-agent
+await sandbox.commands.run(
+  "curl -fsSL https://releases.rivet.dev/sandbox-agent/latest/install.sh | sh"
+);
+
+// Install agents before starting the server
+await sandbox.commands.run("sandbox-agent install-agent claude");
+await sandbox.commands.run("sandbox-agent install-agent codex");
+
+// Start the server in the background
+await sandbox.commands.run(
+  "sandbox-agent server --no-token --host 0.0.0.0 --port 3000",
+  { background: true }
+);
+
+// Connect to the server
+const baseUrl = `https://${sandbox.getHost(3000)}`;
+const client = await SandboxAgent.connect({ baseUrl });
+
+// Wait for server to be ready
+for (let i = 0; i < 30; i++) {
+  try {
+    await client.getHealth();
+    break;
+  } catch {
+    await new Promise((r) => setTimeout(r, 1000));
+  }
+}
+
+// Create a session and start coding
+await client.createSession("my-session", {
+  agent: "claude",
+  permissionMode: "default",
+});
+
+await client.postMessage("my-session", {
+  message: "Summarize this repository",
+});
+
+for await (const event of client.streamEvents("my-session")) {
+  console.log(event.type, event.data);
+}
+
+// Cleanup
+await sandbox.kill();
+```
+
+## Faster Cold Starts
+
+For faster startup, create a custom E2B template with sandbox-agent and agents pre-installed:
+
+1. Create a template with the install script baked in
+2. Pre-install agents: `sandbox-agent install-agent claude codex`
+3. Use the template ID when creating sandboxes
+
+See [E2B Custom Templates](https://e2b.dev/docs/sandbox-template) for details.

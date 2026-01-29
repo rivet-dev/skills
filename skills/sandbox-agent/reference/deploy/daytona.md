@@ -1,0 +1,90 @@
+# Daytona
+
+> Source: `docs/deploy/daytona.mdx`
+> Canonical URL: https://sandboxagent.dev/docs/deploy/daytona
+> Description: Run the daemon in a Daytona workspace.
+
+---
+Daytona Tier 3+ is required to access api.anthropic.com and api.openai.com. Tier 1/2 sandboxes have restricted network access that will cause agent failures. See [Daytona network limits](https://www.daytona.io/docs/en/network-limits/) for details.
+
+## Prerequisites
+
+- `DAYTONA_API_KEY` environment variable
+- `ANTHROPIC_API_KEY` or `OPENAI_API_KEY` for the coding agents
+
+## TypeScript Example
+
+```typescript
+import { Daytona } from "@daytonaio/sdk";
+import { SandboxAgent } from "sandbox-agent";
+
+const daytona = new Daytona();
+
+// Pass API keys to the sandbox
+const envVars: Record<string, string> = {};
+if (process.env.ANTHROPIC_API_KEY) envVars.ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+if (process.env.OPENAI_API_KEY) envVars.OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
+const sandbox = await daytona.create({ envVars });
+
+// Install sandbox-agent
+await sandbox.process.executeCommand(
+  "curl -fsSL https://releases.rivet.dev/sandbox-agent/latest/install.sh | sh"
+);
+
+// Start the server in the background
+await sandbox.process.executeCommand(
+  "nohup sandbox-agent server --no-token --host 0.0.0.0 --port 3000 >/tmp/sandbox-agent.log 2>&1 &"
+);
+
+// Wait for server to be ready
+await new Promise((r) => setTimeout(r, 2000));
+
+// Get the public URL
+const baseUrl = (await sandbox.getSignedPreviewUrl(3000, 4 * 60 * 60)).url;
+
+// Connect and use the SDK
+const client = await SandboxAgent.connect({ baseUrl });
+
+await client.createSession("my-session", {
+  agent: "claude",
+  permissionMode: "default",
+});
+
+// Cleanup when done
+await sandbox.delete();
+```
+
+## Using Snapshots for Faster Startup
+
+For production, use snapshots with pre-installed binaries:
+
+```typescript
+import { Daytona, Image } from "@daytonaio/sdk";
+
+const daytona = new Daytona();
+const SNAPSHOT = "sandbox-agent-ready";
+
+// Create snapshot once (takes 2-3 minutes)
+const hasSnapshot = await daytona.snapshot.get(SNAPSHOT).then(() => true, () => false);
+
+if (!hasSnapshot) {
+  await daytona.snapshot.create({
+    name: SNAPSHOT,
+    image: Image.base("ubuntu:22.04").runCommands(
+      "apt-get update && apt-get install -y curl ca-certificates",
+      "curl -fsSL https://releases.rivet.dev/sandbox-agent/latest/install.sh | sh",
+      "sandbox-agent install-agent claude",
+      "sandbox-agent install-agent codex",
+    ),
+  });
+}
+
+// Now sandboxes start instantly
+const sandbox = await daytona.create({
+  snapshot: SNAPSHOT,
+  envVars,
+});
+```
+
+See [Daytona Snapshots](https://daytona.io/docs/snapshots) for details.
