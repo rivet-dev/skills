@@ -9,14 +9,14 @@ The universal API normalizes different coding agents into a consistent interface
 
 ## Feature Matrix
 
-| Feature | [Claude Code](https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview)* | [Codex](https://github.com/openai/codex) | [OpenCode](https://github.com/opencode-ai/opencode) | [Amp](https://ampcode.com) |
+| Feature | [Claude Code](https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview) | [Codex](https://github.com/openai/codex) | [OpenCode](https://github.com/opencode-ai/opencode) | [Amp](https://ampcode.com) |
 |---------|:-----------:|:-----:|:--------:|:---:|
 | Stability | Stable | Stable | Experimental | Experimental |
 | Text Messages | ✓ | ✓ | ✓ | ✓ |
-| Tool Calls | —* | ✓ | ✓ | ✓ |
-| Tool Results | —* | ✓ | ✓ | ✓ |
-| Questions (HITL) | —* | | ✓ | |
-| Permissions (HITL) | —* | | ✓ | |
+| Tool Calls | ✓ | ✓ | ✓ | ✓ |
+| Tool Results | ✓ | ✓ | ✓ | ✓ |
+| Questions (HITL) | ✓ | | ✓ | |
+| Permissions (HITL) | ✓ | | ✓ | |
 | Images | | ✓ | ✓ | |
 | File Attachments | | ✓ | ✓ | |
 | Session Lifecycle | | ✓ | ✓ | |
@@ -25,9 +25,7 @@ The universal API normalizes different coding agents into a consistent interface
 | Command Execution | | ✓ | | |
 | File Changes | | ✓ | | |
 | MCP Tools | | ✓ | | |
-| Streaming Deltas | | ✓ | ✓ | |
-
-\* Coming imminently
+| Streaming Deltas | ✓ | ✓ | ✓ | |
 
 ## Feature Descriptions
 
