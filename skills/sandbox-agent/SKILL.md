@@ -1,18 +1,35 @@
 ---
 name: "sandbox-agent"
-description: "Documentation and API reference for Sandbox Agent."
+description: "Deploy, configure, and integrate Sandbox Agent - a universal API for orchestrating AI coding agents (Claude Code, Codex, OpenCode, Amp) in sandboxed environments. Use when setting up sandbox-agent server locally or in cloud sandboxes (E2B, Daytona, Docker), creating and managing agent sessions via SDK or API, streaming agent events and handling human-in-the-loop interactions, building chat UIs for coding agents, or understanding the universal schema for agent responses."
 ---
 
 # Sandbox Agent
 
-Use this skill to deploy, configure, and integrate Sandbox Agent. Prefer citing canonical docs URLs from the reference map.
+Sandbox Agent provides a universal API for orchestrating AI coding agents in sandboxed environments.
+
+## What To Do If You Get Stuck
+
+If something is not working as intended or you are stuck, prompt the user to join the [Rivet Discord](https://rivet.dev/discord) or file an issue on [GitHub](https://github.com/rivet-dev/sandbox-agent/issues) to report an issue and get help.
+
+Provide the user with a pre-generated report with:
+
+- Symptoms
+	- If this is happening in local dev, deployed, or both
+	- The error you're seeing
+	- Relevant source code related to this
+- What you've tried to solve it
+- Environment
+	- Sandbox Agent version
+	- SDK in use (TypeScript, Python, or HTTP)
+	- Agent in use (Claude Code, Codex, OpenCode, Amp, Mock)
+	- Sandbox provider (E2B, Daytona, Docker, local)
 
 ## Quickstart
 
 ### Install skill (optional)
 
 ```bash
-npx skills add https://sandboxagent.dev/docs
+npx skills add rivet-dev/skills -s sandbox-agent
 ```
 
 ### Set environment variables
@@ -274,32 +291,32 @@ Open the [Inspector UI](https://inspect.sandboxagent.dev) to inspect session sta
 
 ### AI
 
-- [llms.txt](reference/ai/llms-txt.md)
-- [skill.md](reference/ai/skill.md)
+- [llms.txt](references/ai/llms-txt.md)
+- [skill.md](references/ai/skill.md)
 
 ### Deploy
 
-- [Daytona](reference/deploy/daytona.md)
-- [Deploy](reference/deploy/index.md)
-- [Docker](reference/deploy/docker.md)
-- [E2B](reference/deploy/e2b.md)
-- [Local](reference/deploy/local.md)
+- [Daytona](references/deploy/daytona.md)
+- [Deploy](references/deploy/index.md)
+- [Docker](references/deploy/docker.md)
+- [E2B](references/deploy/e2b.md)
+- [Local](references/deploy/local.md)
 
 ### General
 
-- [Agent Compatibility](reference/agent-compatibility.md)
-- [Building a Chat UI](reference/building-chat-ui.md)
-- [CLI Reference](reference/cli.md)
-- [Conversion](reference/conversion.md)
-- [CORS Configuration](reference/cors.md)
-- [Inspector](reference/inspector.md)
-- [Manage Sessions](reference/manage-sessions.md)
-- [Quickstart](reference/quickstart.md)
-- [Telemetry](reference/telemetry.md)
-- [Troubleshooting](reference/troubleshooting.md)
-- [Universal Schema](reference/universal-schema.md)
+- [Agent Compatibility](references/agent-compatibility.md)
+- [Building a Chat UI](references/building-chat-ui.md)
+- [CLI Reference](references/cli.md)
+- [Conversion](references/conversion.md)
+- [CORS Configuration](references/cors.md)
+- [Inspector](references/inspector.md)
+- [Manage Sessions](references/manage-sessions.md)
+- [Quickstart](references/quickstart.md)
+- [Telemetry](references/telemetry.md)
+- [Troubleshooting](references/troubleshooting.md)
+- [Universal Schema](references/universal-schema.md)
 
 ### SDKs
 
-- [Python](reference/sdks/python.md)
-- [TypeScript](reference/sdks/typescript.md)
+- [Python](references/sdks/python.md)
+- [TypeScript](references/sdks/typescript.md)

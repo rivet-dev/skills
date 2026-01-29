@@ -8,7 +8,7 @@
 ### Install skill (optional)
 
 ```bash
-npx skills add https://sandboxagent.dev/docs
+npx skills add rivet-dev/skills -s sandbox-agent
 ```
 
 ### Set environment variables
