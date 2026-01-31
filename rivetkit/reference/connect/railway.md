@@ -2,7 +2,7 @@
 
 > Source: `src/content/docs/connect/railway.mdx`
 > Canonical URL: https://rivet.dev/docs/connect/railway
-> Description: Deploy your RivetKit app to [Railway](https://railway.app).
+> Description: Deploy your RivetKit app to Railway.
 
 ---
 ## Steps

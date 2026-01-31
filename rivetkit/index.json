@@ -2,7 +2,7 @@
   "name": "rivetkit",
   "description": "RivetKit backend and Rivet Actor runtime guidance. Use for building, modifying, debugging, or testing Rivet Actors, registries, serverless/runner modes, deployment, or actor-based workflows.",
   "skill_url": "/metadata/skills/rivetkit/SKILL.md",
-  "generated_at": "2026-01-31T05:11:37.224Z",
+  "generated_at": "2026-01-31T05:30:59.421Z",
   "references": [
     {
       "name": "actors/actions",
@@ -112,21 +112,21 @@
     {
       "name": "connect/freestyle",
       "title": "Deploying to Freestyle",
-      "description": "Deploy RivetKit app to [Freestyle.sh](https://freestyle.sh/), a cloud platform for running AI-generated code with built-in security and scalability.",
+      "description": "Deploy RivetKit app to Freestyle.sh, a cloud platform for running AI-generated code with built-in security and scalability.",
       "canonical_url": "https://rivet.dev/docs/connect/freestyle",
       "reference_url": "/metadata/skills/rivetkit/reference/connect/freestyle.md"
     },
     {
       "name": "connect/gcp-cloud-run",
       "title": "Deploying to Google Cloud Run",
-      "description": "Deploy your RivetKit app to [Google Cloud Run](https://cloud.google.com/run).",
+      "description": "Deploy your RivetKit app to Google Cloud Run.",
       "canonical_url": "https://rivet.dev/docs/connect/gcp-cloud-run",
       "reference_url": "/metadata/skills/rivetkit/reference/connect/gcp-cloud-run.md"
     },
     {
       "name": "connect/hetzner",
       "title": "Deploying to Hetzner",
-      "description": "Please see the [VM & Bare Metal](/docs/connect/vm-and-bare-metal) guide.",
+      "description": "Please see the VM & Bare Metal guide.",
       "canonical_url": "https://rivet.dev/docs/connect/hetzner",
       "reference_url": "/metadata/skills/rivetkit/reference/connect/hetzner.md"
     },
@@ -140,14 +140,14 @@
     {
       "name": "connect/railway",
       "title": "Deploying to Railway",
-      "description": "Deploy your RivetKit app to [Railway](https://railway.app).",
+      "description": "Deploy your RivetKit app to Railway.",
       "canonical_url": "https://rivet.dev/docs/connect/railway",
       "reference_url": "/metadata/skills/rivetkit/reference/connect/railway.md"
     },
     {
       "name": "connect/vercel",
       "title": "Deploying to Vercel",
-      "description": "Deploy your RivetKit app to [Vercel](https://vercel.com/).",
+      "description": "Deploy your RivetKit app to Vercel.",
       "canonical_url": "https://rivet.dev/docs/connect/vercel",
       "reference_url": "/metadata/skills/rivetkit/reference/connect/vercel.md"
     },

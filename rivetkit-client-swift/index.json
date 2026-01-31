@@ -2,6 +2,6 @@
   "name": "rivetkit-client-swift",
   "description": "RivetKit Swift client guidance. Use for Swift clients that connect to Rivet Actors with RivetKitClient, create actor handles, call actions, or manage connections.",
   "skill_url": "/metadata/skills/rivetkit-client-swift/SKILL.md",
-  "generated_at": "2026-01-31T05:11:37.227Z",
+  "generated_at": "2026-01-31T05:30:59.423Z",
   "references": []
 }

@@ -2,7 +2,7 @@
 
 > Source: `src/content/docs/connect/gcp-cloud-run.mdx`
 > Canonical URL: https://rivet.dev/docs/connect/gcp-cloud-run
-> Description: Deploy your RivetKit app to [Google Cloud Run](https://cloud.google.com/run).
+> Description: Deploy your RivetKit app to Google Cloud Run.
 
 ---
 ## Steps

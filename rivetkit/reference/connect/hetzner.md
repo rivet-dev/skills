@@ -2,7 +2,7 @@
 
 > Source: `src/content/docs/connect/hetzner.mdx`
 > Canonical URL: https://rivet.dev/docs/connect/hetzner
-> Description: Please see the [VM & Bare Metal](/docs/connect/vm-and-bare-metal) guide.
+> Description: Please see the VM & Bare Metal guide.
 
 ---
 

@@ -2,7 +2,7 @@
 
 > Source: `src/content/docs/connect/freestyle.mdx`
 > Canonical URL: https://rivet.dev/docs/connect/freestyle
-> Description: Deploy RivetKit app to [Freestyle.sh](https://freestyle.sh/), a cloud platform for running AI-generated code with built-in security and scalability.
+> Description: Deploy RivetKit app to Freestyle.sh, a cloud platform for running AI-generated code with built-in security and scalability.
 
 ---
 Freestyle provides built-in security for running untrusted AI-generated code, making it ideal for AI agent applications. Using Rivet, it is easy to deploy your vibe-coded or user-provided RivetKit backends straight to Freestyle.
