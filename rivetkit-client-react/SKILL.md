@@ -9,9 +9,9 @@ Use this skill when building React apps that connect to Rivet Actors with `@rive
 
 ## First Steps
 
-1. Install the React client (latest: 2.0.42-rc.1)
+1. Install the React client (latest: 2.0.42)
    ```bash
-   npm install @rivetkit/react@2.0.42-rc.1
+   npm install @rivetkit/react@2.0.42
    ```
 2. Create hooks with `createRivetKit()` and connect with `useActor()`.
 

@@ -9,7 +9,7 @@ Use this skill when building SwiftUI apps that connect to Rivet Actors with `Riv
 
 ## Version
 
-RivetKit version: 2.0.42-rc.1
+RivetKit version: 2.0.42
 
 ## Install
 

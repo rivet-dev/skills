@@ -51,9 +51,9 @@ Use that canonical URL when citing, not the reference file path.
 
 ## First Steps
 
-1. Install RivetKit (latest: 2.0.42-rc.1)
+1. Install RivetKit (latest: 2.0.42)
    ```bash
-   npm install rivetkit@2.0.42-rc.1
+   npm install rivetkit@2.0.42
    ```
 2. Define a registry with `setup({ use: { /* actors */ } })`.
 3. Expose `registry.serve()` or `registry.handler()` (serverless) or `registry.startRunner()` (runner mode). Prefer serverless mode unless the user has a specific reason to use runner mode.
