@@ -19,16 +19,22 @@ sandbox-agent server [OPTIONS]
 | `-n, --no-token` | - | Disable authentication (local dev only) |
 | `-H, --host ` | `127.0.0.1` | Host to bind to |
 | `-p, --port ` | `2468` | Port to bind to |
-| `-O, --cors-allow-origin ` | - | Additional CORS origin (repeatable, cumulative with Inspector) |
+| `-O, --cors-allow-origin ` | - | CORS origin to allow (repeatable) |
 | `-M, --cors-allow-method ` | all | CORS allowed method (repeatable) |
 | `-A, --cors-allow-header ` | all | CORS allowed header (repeatable) |
 | `-C, --cors-allow-credentials` | - | Enable CORS credentials |
-| `--no-inspector-cors` | - | Disable default Inspector CORS |
 | `--no-telemetry` | - | Disable anonymous telemetry |
+| `--log-to-file` | - | Redirect server logs to a daily log file |
 
 ```bash
 sandbox-agent server --token "$TOKEN" --port 3000
 ```
+
+Server logs print to stdout/stderr by default. Use `--log-to-file` or `SANDBOX_AGENT_LOG_TO_FILE=1` to redirect logs to a daily log file under the sandbox-agent data directory (for example, `~/.local/share/sandbox-agent/logs`). Override the directory with `SANDBOX_AGENT_LOG_DIR`, or set `SANDBOX_AGENT_LOG_STDOUT=1` to force stdout/stderr.
+
+HTTP request logging is enabled by default. Control it with:
+- `SANDBOX_AGENT_LOG_HTTP=0` to disable request logs
+- `SANDBOX_AGENT_LOG_HTTP_HEADERS=1` to include request headers (Authorization is redacted)
 
 ---
 
@@ -47,6 +53,78 @@ sandbox-agent install-agent <AGENT> [OPTIONS]
 ```bash
 sandbox-agent install-agent claude --reinstall
 ```
+
+---
+
+## OpenCode (Experimental)
+
+Start (or reuse) a sandbox-agent daemon and attach an OpenCode session (uses `opencode attach`):
+
+```bash
+sandbox-agent opencode [OPTIONS]
+```
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `-t, --token ` | - | Authentication token for all requests |
+| `-n, --no-token` | - | Disable authentication (local dev only) |
+| `-H, --host ` | `127.0.0.1` | Host to bind to |
+| `-p, --port ` | `2468` | Port to bind to |
+| `--session-title ` | - | Title for the OpenCode session |
+| `--opencode-bin ` | - | Override `opencode` binary path |
+
+```bash
+sandbox-agent opencode --token "$TOKEN"
+```
+
+The daemon logs to a per-host log file under the sandbox-agent data directory (for example, `~/.local/share/sandbox-agent/daemon/daemon-127-0-0-1-2468.log`).
+
+Requires the `opencode` binary to be installed (or set `OPENCODE_BIN` / `--opencode-bin`). If it is not found on `PATH`, sandbox-agent installs it automatically.
+
+---
+
+## Daemon
+
+Manage the background daemon. See the [Daemon](/daemon) docs for details on lifecycle and auto-upgrade.
+
+### Start
+
+```bash
+sandbox-agent daemon start [OPTIONS]
+```
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `-H, --host ` | `127.0.0.1` | Host to bind to |
+| `-p, --port ` | `2468` | Port to bind to |
+| `-t, --token ` | - | Authentication token |
+| `-n, --no-token` | - | Disable authentication |
+
+```bash
+sandbox-agent daemon start --no-token
+```
+
+### Stop
+
+```bash
+sandbox-agent daemon stop [OPTIONS]
+```
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `-H, --host ` | `127.0.0.1` | Host of the daemon |
+| `-p, --port ` | `2468` | Port of the daemon |
+
+### Status
+
+```bash
+sandbox-agent daemon status [OPTIONS]
+```
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `-H, --host ` | `127.0.0.1` | Host of the daemon |
+| `-p, --port ` | `2468` | Port of the daemon |
 
 ---
 
@@ -137,6 +215,16 @@ sandbox-agent api agents modes <AGENT>
 
 ```bash
 sandbox-agent api agents modes claude
+```
+
+#### Get Agent Models
+
+```bash
+sandbox-agent api agents models <AGENT>
+```
+
+```bash
+sandbox-agent api agents models claude
 ```
 
 ---
@@ -299,6 +387,7 @@ sandbox-agent api sessions reply-permission my-session perm1 --reply once
 | `api agents list` | `GET /v1/agents` |
 | `api agents install` | `POST /v1/agents/{agent}/install` |
 | `api agents modes` | `GET /v1/agents/{agent}/modes` |
+| `api agents models` | `GET /v1/agents/{agent}/models` |
 | `api sessions list` | `GET /v1/sessions` |
 | `api sessions create` | `POST /v1/sessions/{sessionId}` |
 | `api sessions send-message` | `POST /v1/sessions/{sessionId}/messages` |

@@ -1,13 +1,100 @@
-# Universal Schema
+# Session Transcript Schema
 
-> Source: `docs/universal-schema.mdx`
-> Canonical URL: https://sandboxagent.dev/docs/universal-schema
-> Description: Reference for the universal event and item schema.
+> Source: `docs/session-transcript-schema.mdx`
+> Canonical URL: https://sandboxagent.dev/docs/session-transcript-schema
+> Description: Universal event schema for session transcripts across all agents.
 
 ---
-The universal schema normalizes events from all supported agents (Claude Code, Codex, OpenCode, Amp) into a consistent format. This lets you build UIs and persistence layers that work with any agent without special-casing.
+Each coding agent outputs events in its own native format. The sandbox-agent converts these into a universal event schema, giving you a consistent session transcript regardless of which agent you use.
 
 The schema is defined in [OpenAPI format](https://github.com/rivet-dev/sandbox-agent/blob/main/docs/openapi.json). See the [HTTP API Reference](/api-reference) for endpoint documentation.
+
+## Coverage Matrix
+
+This table shows which agent feature coverage appears in the universal event stream. All agents retain their full native feature coverage—this only reflects what's normalized into the schema.
+
+| Feature            | Claude | Codex | OpenCode     | Amp          |
+|--------------------|:------:|:-----:|:------------:|:------------:|
+| Stability          | Stable | Stable| Experimental | Experimental |
+| Text Messages      |   ✓    |   ✓   |      ✓       |      ✓       |
+| Tool Calls         |   ✓    |   ✓   |      ✓       |      ✓       |
+| Tool Results       |   ✓    |   ✓   |      ✓       |      ✓       |
+| Questions (HITL)   |   ✓    |       |      ✓       |              |
+| Permissions (HITL) |   ✓    |   ✓   |      ✓       |      -       |
+| Images             |   -    |   ✓   |      ✓       |      -       |
+| File Attachments   |   -    |   ✓   |      ✓       |      -       |
+| Session Lifecycle  |   -    |   ✓   |      ✓       |      -       |
+| Error Events       |   -    |   ✓   |      ✓       |      ✓       |
+| Reasoning/Thinking |   -    |   ✓   |      -       |      -       |
+| Command Execution  |   -    |   ✓   |      -       |      -       |
+| File Changes       |   -    |   ✓   |      -       |      -       |
+| MCP Tools          |   -    |   ✓   |      -       |      -       |
+| Streaming Deltas   |   ✓    |   ✓   |      ✓       |      -       |
+| Variants           |        |   ✓   |      ✓       |      ✓       |
+
+Agents: [Claude Code](https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview) · [Codex](https://github.com/openai/codex) · [OpenCode](https://github.com/opencode-ai/opencode) · [Amp](https://ampcode.com)
+
+- ✓ = Appears in session events
+- \- = Agent supports natively, schema conversion coming soon
+- (blank) = Not supported by agent
+
+#### Text Messages
+
+Basic message exchange between user and assistant.
+
+#### Tool Calls & Results
+
+Visibility into tool invocations (file reads, command execution, etc.) and their results. When not natively supported, tool activity is embedded in message content.
+
+#### Questions (HITL)
+
+Interactive questions the agent asks the user. Emits `question.requested` and `question.resolved` events.
+
+#### Permissions (HITL)
+
+Permission requests for sensitive operations. Emits `permission.requested` and `permission.resolved` events.
+
+#### Images
+
+Support for image attachments in messages.
+
+#### File Attachments
+
+Support for file attachments in messages.
+
+#### Session Lifecycle
+
+Native `session.started` and `session.ended` events. When not supported, the daemon emits synthetic lifecycle events.
+
+#### Error Events
+
+Structured error events for runtime failures.
+
+#### Reasoning/Thinking
+
+Extended thinking or reasoning content with visibility controls.
+
+#### Command Execution
+
+Detailed command execution events with stdout/stderr.
+
+#### File Changes
+
+Structured file modification events with diffs.
+
+#### MCP Tools
+
+Model Context Protocol tool support.
+
+#### Streaming Deltas
+
+Native streaming of content deltas. When not supported, the daemon emits a single synthetic delta before `item.completed`.
+
+#### Variants
+
+Model variants such as reasoning effort or depth. Agents may expose different variant sets per model.
+
+Want support for another agent? [Open an issue](https://github.com/rivet-dev/sandbox-agent/issues/new) to request it.
 
 ## UniversalEvent
 

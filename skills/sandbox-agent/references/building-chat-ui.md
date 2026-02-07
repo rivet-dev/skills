@@ -12,7 +12,7 @@
 ```ts
 const { agents } = await client.listAgents();
 
-// Each agent has capabilities that determine what UI to show
+// Each agent exposes feature coverage via `capabilities` to determine what UI to show
 const claude = agents.find((a) => a.id === "claude");
 if (claude?.capabilities.permissions) {
   // Show permission approval UI

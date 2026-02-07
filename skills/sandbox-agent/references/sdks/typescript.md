@@ -10,8 +10,18 @@ client for sessions, events, and agent operations.
 
 ## Install
 
+#### npm
+
 ```bash
 npm install sandbox-agent
+```
+
+#### bun
+
+```bash
+bun add sandbox-agent
+# Allow Bun to run postinstall scripts for native binaries (required for SandboxAgent.start()).
+bun pm trust @sandbox-agent/cli-linux-x64 @sandbox-agent/cli-darwin-arm64 @sandbox-agent/cli-darwin-x64 @sandbox-agent/cli-win32-x64
 ```
 
 ## Create a client
@@ -52,7 +62,7 @@ await client.createSession("demo-session", {
 await client.postMessage("demo-session", { message: "Hello" });
 ```
 
-List agents and pick a compatible one:
+List agents and inspect feature coverage (available on `capabilities`):
 
 ```ts
 const agents = await client.listAgents();
@@ -133,7 +143,7 @@ const url = buildInspectorUrl({
   headers: { "X-Custom-Header": "value" },
 });
 console.log(url);
-// https://inspect.sandboxagent.dev?url=https%3A%2F%2Fyour-sandbox-agent.example.com&token=...&headers=...
+// https://your-sandbox-agent.example.com/ui/?token=...&headers=...
 ```
 
 Parameters:
@@ -143,7 +153,7 @@ Parameters:
 
 ## Types
 
-The SDK exports OpenAPI-derived types for events, items, and capabilities:
+The SDK exports OpenAPI-derived types for events, items, and feature coverage:
 
 ```ts
 import type { UniversalEvent, UniversalItem, AgentCapabilities } from "sandbox-agent";

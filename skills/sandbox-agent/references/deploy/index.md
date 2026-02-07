@@ -9,6 +9,10 @@
 
 - [E2B](/deploy/e2b) — Deploy inside an E2B sandbox with network access.
 
+- [Vercel](/deploy/vercel) — Deploy inside a Vercel Sandbox with port forwarding.
+
+- [Cloudflare](/deploy/cloudflare) — Deploy inside a Cloudflare Sandbox with port exposure.
+
 - [Daytona](/deploy/daytona) — Run in a Daytona workspace with port forwarding.
 
 - [Docker](/deploy/docker) — Build and run in a container (development only).

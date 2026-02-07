@@ -28,8 +28,16 @@ Provide the user with a pre-generated report with:
 
 ### Install skill (optional)
 
+#### npx
+
 ```bash
 npx skills add rivet-dev/skills -s sandbox-agent
+```
+
+#### bunx
+
+```bash
+bunx skills add rivet-dev/skills -s sandbox-agent
 ```
 
 ### Set environment variables
@@ -95,7 +103,7 @@ Install and run the binary directly.
 
 ```bash
 curl -fsSL https://releases.rivet.dev/sandbox-agent/latest/install.sh | sh
-sandbox-agent server --token "$SANDBOX_TOKEN" --host 127.0.0.1 --port 2468
+sandbox-agent server --no-token --host 0.0.0.0 --port 2468
 ```
 
 #### npx
@@ -103,7 +111,15 @@ sandbox-agent server --token "$SANDBOX_TOKEN" --host 127.0.0.1 --port 2468
 Run without installing globally.
 
 ```bash
-npx sandbox-agent server --token "$SANDBOX_TOKEN" --host 127.0.0.1 --port 2468
+npx @sandbox-agent/cli server --no-token --host 0.0.0.0 --port 2468
+```
+
+#### bunx
+
+Run without installing globally.
+
+```bash
+bunx @sandbox-agent/cli server --no-token --host 0.0.0.0 --port 2468
 ```
 
 #### npm i -g
@@ -112,20 +128,43 @@ Install globally, then run.
 
 ```bash
 npm install -g @sandbox-agent/cli
-sandbox-agent server --token "$SANDBOX_TOKEN" --host 127.0.0.1 --port 2468
+sandbox-agent server --no-token --host 0.0.0.0 --port 2468
 ```
 
-#### Build from source
+#### bun add -g
 
-If you're running from source instead of the installed CLI.
+Install globally, then run.
 
 ```bash
-cargo run -p sandbox-agent -- server --token "$SANDBOX_TOKEN" --host 127.0.0.1 --port 2468
+bun add -g @sandbox-agent/cli
+# Allow Bun to run postinstall scripts for native binaries (required for SandboxAgent.start()).
+bun pm -g trust @sandbox-agent/cli-linux-x64 @sandbox-agent/cli-darwin-arm64 @sandbox-agent/cli-darwin-x64 @sandbox-agent/cli-win32-x64
+sandbox-agent server --no-token --host 0.0.0.0 --port 2468
 ```
 
-#### TypeScript (local)
+#### Node.js (local)
 
 For local development, use `SandboxAgent.start()` to automatically spawn and manage the server as a subprocess.
+
+```bash
+npm install sandbox-agent
+```
+
+```typescript
+import { SandboxAgent } from "sandbox-agent";
+
+const client = await SandboxAgent.start();
+```
+
+#### Bun (local)
+
+For local development, use `SandboxAgent.start()` to automatically spawn and manage the server as a subprocess.
+
+```bash
+bun add sandbox-agent
+# Allow Bun to run postinstall scripts for native binaries (required for SandboxAgent.start()).
+bun pm trust @sandbox-agent/cli-linux-x64 @sandbox-agent/cli-darwin-arm64 @sandbox-agent/cli-darwin-x64 @sandbox-agent/cli-win32-x64
+```
 
 ```typescript
 import { SandboxAgent } from "sandbox-agent";
@@ -135,9 +174,51 @@ const client = await SandboxAgent.start();
 
 This installs the binary and starts the server for you. No manual setup required.
 
-#### Running without tokens
+#### Build from source
 
-If endpoint is not public, use `--no-token` to disable authentication. Most sandbox providers already secure their networking, so tokens are not required.
+If you're running from source instead of the installed CLI.
+
+```bash
+cargo run -p sandbox-agent -- server --no-token --host 0.0.0.0 --port 2468
+```
+
+Binding to `0.0.0.0` allows the server to accept connections from any network interface, which is required when running inside a sandbox where clients connect remotely.
+
+#### Configuring token
+
+Tokens are usually not required. Most sandbox providers (E2B, Daytona, etc.) already secure their networking at the infrastructure level, so the server endpoint is never publicly accessible. For local development, binding to `127.0.0.1` ensures only local connections are accepted.
+
+If you need to expose the server on a public endpoint, use `--token "$SANDBOX_TOKEN"` to require authentication on all requests:
+
+```bash
+sandbox-agent server --token "$SANDBOX_TOKEN" --host 0.0.0.0 --port 2468
+```
+
+Then pass the token when connecting:
+
+#### TypeScript
+
+```typescript
+const client = await SandboxAgent.connect({
+  baseUrl: "http://your-server:2468",
+  token: process.env.SANDBOX_TOKEN,
+});
+```
+
+#### curl
+
+```bash
+curl "http://your-server:2468/v1/sessions" \
+  -H "Authorization: Bearer $SANDBOX_TOKEN"
+```
+
+#### CLI
+
+```bash
+sandbox-agent api sessions list \
+  --endpoint http://your-server:2468 \
+  --token "$SANDBOX_TOKEN"
+```
 
 #### CORS
 
@@ -165,7 +246,6 @@ import { SandboxAgent } from "sandbox-agent";
 
 const client = await SandboxAgent.connect({
   baseUrl: "http://127.0.0.1:2468",
-  token: process.env.SANDBOX_TOKEN,
 });
 
 await client.createSession("my-session", {
@@ -179,7 +259,6 @@ await client.createSession("my-session", {
 
 ```bash
 curl -X POST "http://127.0.0.1:2468/v1/sessions/my-session" \
-  -H "Authorization: Bearer $SANDBOX_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"agent":"claude","agentMode":"build","permissionMode":"default"}'
 ```
@@ -189,8 +268,7 @@ curl -X POST "http://127.0.0.1:2468/v1/sessions/my-session" \
 ```bash
 sandbox-agent api sessions create my-session \
   --agent claude \
-  --endpoint http://127.0.0.1:2468 \
-  --token "$SANDBOX_TOKEN"
+  --endpoint http://127.0.0.1:2468
 ```
 
 ### Send a message
@@ -207,7 +285,6 @@ await client.postMessage("my-session", {
 
 ```bash
 curl -X POST "http://127.0.0.1:2468/v1/sessions/my-session/messages" \
-  -H "Authorization: Bearer $SANDBOX_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"message":"Summarize the repository and suggest next steps."}'
 ```
@@ -217,8 +294,7 @@ curl -X POST "http://127.0.0.1:2468/v1/sessions/my-session/messages" \
 ```bash
 sandbox-agent api sessions send-message my-session \
   --message "Summarize the repository and suggest next steps." \
-  --endpoint http://127.0.0.1:2468 \
-  --token "$SANDBOX_TOKEN"
+  --endpoint http://127.0.0.1:2468
 ```
 
 ### Read events
@@ -239,16 +315,13 @@ for await (const event of client.streamEvents("my-session", { offset: 0 })) {
 
 ```bash
 # Poll for events
-curl "http://127.0.0.1:2468/v1/sessions/my-session/events?offset=0&limit=50" \
-  -H "Authorization: Bearer $SANDBOX_TOKEN"
+curl "http://127.0.0.1:2468/v1/sessions/my-session/events?offset=0&limit=50"
 
 # Stream events via SSE
-curl "http://127.0.0.1:2468/v1/sessions/my-session/events/sse?offset=0" \
-  -H "Authorization: Bearer $SANDBOX_TOKEN"
+curl "http://127.0.0.1:2468/v1/sessions/my-session/events/sse?offset=0"
 
 # Single-turn stream (post message and get streamed response)
 curl -N -X POST "http://127.0.0.1:2468/v1/sessions/my-session/messages/stream" \
-  -H "Authorization: Bearer $SANDBOX_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"message":"Hello"}'
 ```
@@ -258,24 +331,21 @@ curl -N -X POST "http://127.0.0.1:2468/v1/sessions/my-session/messages/stream" \
 ```bash
 # Poll for events
 sandbox-agent api sessions events my-session \
-  --endpoint http://127.0.0.1:2468 \
-  --token "$SANDBOX_TOKEN"
+  --endpoint http://127.0.0.1:2468
 
 # Stream events via SSE
 sandbox-agent api sessions events-sse my-session \
-  --endpoint http://127.0.0.1:2468 \
-  --token "$SANDBOX_TOKEN"
+  --endpoint http://127.0.0.1:2468
 
 # Single-turn stream
 sandbox-agent api sessions send-message-stream my-session \
   --message "Hello" \
-  --endpoint http://127.0.0.1:2468 \
-  --token "$SANDBOX_TOKEN"
+  --endpoint http://127.0.0.1:2468
 ```
 
 ### Test with Inspector
 
-Open the [Inspector UI](https://inspect.sandboxagent.dev) to inspect session state using a GUI.
+Open the Inspector UI at `/ui/` on your server (e.g., `http://localhost:2468/ui/`) to inspect session state using a GUI.
 
 ![Sandbox Agent Inspector](https://sandboxagent.dev/docs/images/inspector.png)
 
@@ -296,25 +366,29 @@ Open the [Inspector UI](https://inspect.sandboxagent.dev) to inspect session sta
 
 ### Deploy
 
+- [Cloudflare](references/deploy/cloudflare.md)
 - [Daytona](references/deploy/daytona.md)
 - [Deploy](references/deploy/index.md)
 - [Docker](references/deploy/docker.md)
 - [E2B](references/deploy/e2b.md)
 - [Local](references/deploy/local.md)
+- [Vercel](references/deploy/vercel.md)
 
 ### General
 
-- [Agent Compatibility](references/agent-compatibility.md)
 - [Building a Chat UI](references/building-chat-ui.md)
 - [CLI Reference](references/cli.md)
 - [Conversion](references/conversion.md)
 - [CORS Configuration](references/cors.md)
+- [Daemon](references/daemon.md)
+- [Gigacode](references/gigacode.md)
 - [Inspector](references/inspector.md)
 - [Manage Sessions](references/manage-sessions.md)
+- [OpenCode SDK & UI Support](references/opencode-compatibility.md)
 - [Quickstart](references/quickstart.md)
+- [Session Transcript Schema](references/session-transcript-schema.md)
 - [Telemetry](references/telemetry.md)
 - [Troubleshooting](references/troubleshooting.md)
-- [Universal Schema](references/universal-schema.md)
 
 ### SDKs
 
