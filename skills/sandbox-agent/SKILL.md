@@ -380,6 +380,7 @@ Open the Inspector UI at `/ui/` on your server (e.g., `http://localhost:2468/ui/
 - [CLI Reference](references/cli.md)
 - [Conversion](references/conversion.md)
 - [CORS Configuration](references/cors.md)
+- [Credentials](references/credentials.md)
 - [Daemon](references/daemon.md)
 - [Gigacode](references/gigacode.md)
 - [Inspector](references/inspector.md)
