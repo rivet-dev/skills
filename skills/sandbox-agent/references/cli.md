@@ -71,7 +71,6 @@ sandbox-agent opencode [OPTIONS]
 | `-H, --host ` | `127.0.0.1` | Host to bind to |
 | `-p, --port ` | `2468` | Port to bind to |
 | `--session-title ` | - | Title for the OpenCode session |
-| `--opencode-bin ` | - | Override `opencode` binary path |
 
 ```bash
 sandbox-agent opencode --token "$TOKEN"
@@ -79,7 +78,7 @@ sandbox-agent opencode --token "$TOKEN"
 
 The daemon logs to a per-host log file under the sandbox-agent data directory (for example, `~/.local/share/sandbox-agent/daemon/daemon-127-0-0-1-2468.log`).
 
-Requires the `opencode` binary to be installed (or set `OPENCODE_BIN` / `--opencode-bin`). If it is not found on `PATH`, sandbox-agent installs it automatically.
+Existing installs are reused and missing binaries are installed automatically.
 
 ---
 
