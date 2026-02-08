@@ -60,10 +60,11 @@ sandbox-agent server --no-token --host 127.0.0.1 --port 2468 --cors-allow-origin
 ### Clone and Start the OpenCode Web App
 
 ```bash
-git clone https://github.com/opencode-ai/opencode
+git clone https://github.com/anomalyco/opencode
 cd opencode/packages/app
 export VITE_OPENCODE_SERVER_HOST=127.0.0.1
 export VITE_OPENCODE_SERVER_PORT=2468
+bun install
 bun run dev -- --host 127.0.0.1 --port 5173
 ```
 
