@@ -36,9 +36,11 @@ Events / Message Flow
 +------------------------+------------------------------+--------------------------------------------+-----------------------------------------+----------------------------------+
 | session.started        | none                         | method=thread/started                      | type=session.created                    | none                             |
 | session.ended          | SDKMessage.type=result       | no explicit session end (turn/completed)   | no explicit session end (session.deleted)| type=done                        |
+| turn.started           | synthetic on message send    | method=turn/started                        | type=session.status (busy)              | synthetic on message send        |
+| turn.ended             | synthetic after result       | method=turn/completed                      | type=session.idle                       | synthetic on done                |
 | message (user)         | SDKMessage.type=user         | item/completed (ThreadItem.type=userMessage)| message.updated (Message.role=user)    | type=message                     |
 | message (assistant)    | SDKMessage.type=assistant    | item/completed (ThreadItem.type=agentMessage)| message.updated (Message.role=assistant)| type=message                  |
-| message.delta          | stream_event (partial) or synthetic | method=item/agentMessage/delta      | type=message.part.updated (delta)       | synthetic                        |
+| message.delta          | stream_event (partial) or synthetic | method=item/agentMessage/delta      | type=message.part.updated (text-part delta) | synthetic                    |
 | tool call              | type=tool_use               | method=item/mcpToolCall/progress           | message.part.updated (part.type=tool)   | type=tool_call                   |
 | tool result            | user.message.content.tool_result | item/completed (tool result ThreadItem variants) | message.part.updated (part.type=tool, state=completed) | type=tool_result     |
 | permission.requested   | control_request.can_use_tool | none                                      | type=permission.asked                   | none                             |
@@ -59,6 +61,8 @@ Synthetics
 +------------------------------+------------------------+--------------------------+--------------------------------------------------------------+
 | session.started              | When agent emits no explicit start | session.started event | Mark source=daemon                                            |
 | session.ended                | When agent emits no explicit end   | session.ended event   | Mark source=daemon; reason may be inferred                    |
+| turn.started                 | When agent emits no explicit turn start | turn.started event | Mark source=daemon                                            |
+| turn.ended                   | When agent emits no explicit turn end   | turn.ended event   | Mark source=daemon                                            |
 | item_id (Claude)             | Claude provides no item IDs        | item_id               | Maintain provider_item_id map when possible                   |
 | user message (Claude)        | Claude emits only assistant output | item.completed        | Mark source=daemon; preserve raw input in event metadata       |
 | question events (Claude)     | AskUserQuestion tool usage         | question.requested/resolved | Derived from tool_use blocks (source=agent)                   |
@@ -67,7 +71,7 @@ Synthetics
 | message.delta (Claude)       | No native deltas emitted        | item.delta             | Synthetic delta with full message content; source=daemon       |
 | message.delta (Amp)          | No native deltas                | item.delta             | Synthetic delta with full message content; source=daemon       |
 +------------------------------+------------------------+--------------------------+--------------------------------------------------------------+
-| message.delta (OpenCode)     | part delta before message       | item.delta             | If part arrives first, create item.started stub then delta     |
+| message.delta (OpenCode)     | text part delta before message  | item.delta             | If part arrives first, create item.started stub then delta     |
 +------------------------------+------------------------+--------------------------+--------------------------------------------------------------+
 
 Delta handling
@@ -77,10 +81,11 @@ Delta handling
 - Claude can emit stream_event deltas when partial streaming is enabled; Amp does not emit deltas.
 
 Policy:
-- Always emit item.delta across all providers.
+- Emit item.delta for streamable text content across providers.
 - For providers without native deltas, emit a single synthetic delta containing the full content prior to item.completed.
 - For Claude when partial streaming is enabled, forward native deltas and skip the synthetic full-content delta.
 - For providers with native deltas, forward as-is; also emit item.completed when final content is known.
+- For OpenCode reasoning part deltas, emit typed reasoning item updates (item.started/item.completed with content.type=reasoning) instead of item.delta.
 
 Message normalization notes
 

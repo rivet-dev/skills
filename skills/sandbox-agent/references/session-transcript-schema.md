@@ -136,6 +136,13 @@ Every event from the API is wrapped in a `UniversalEvent` envelope.
 | `session.started` | Session has started | `{ metadata?: any }` |
 | `session.ended` | Session has ended | `{ reason, terminated_by, message?, exit_code? }` |
 
+### Turn Lifecycle
+
+| Type | Description | Data |
+|------|-------------|------|
+| `turn.started` | Turn has started | `{ phase: "started", turn_id?, metadata? }` |
+| `turn.ended` | Turn has ended | `{ phase: "ended", turn_id?, metadata? }` |
+
 **SessionEndedData**
 
 | Field | Type | Values |
@@ -377,6 +384,8 @@ The daemon emits synthetic events (`synthetic: true`, `source: "daemon"`) to pro
 |-----------|------|
 | `session.started` | Agent doesn't emit explicit session start |
 | `session.ended` | Agent doesn't emit explicit session end |
+| `turn.started` | Agent doesn't emit explicit turn start |
+| `turn.ended` | Agent doesn't emit explicit turn end |
 | `item.started` | Agent doesn't emit item start events |
 | `item.delta` | Agent doesn't stream deltas natively |
 | `question.*` | Claude Code plan mode (from ExitPlanMode tool) |

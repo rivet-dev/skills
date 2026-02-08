@@ -30,7 +30,7 @@ const sessionId = `session-${crypto.randomUUID()}`;
 await client.createSession(sessionId, {
   agent: "claude",
   agentMode: "code",        // Optional: agent-specific mode
-  permissionMode: "default", // Optional: "default" | "plan" | "bypass"
+  permissionMode: "default", // Optional: "default" | "plan" | "bypass" | "acceptEdits" (Claude: accept edits; Codex: auto-approve file changes; others: default)
   model: "claude-sonnet-4", // Optional: model override
 });
 ```
@@ -153,6 +153,16 @@ function handleEvent(event: UniversalEvent) {
       // Disable input, show end reason
       // reason: "completed" | "error" | "terminated"
       // terminated_by: "agent" | "daemon"
+      break;
+    }
+
+    case "turn.started": {
+      // Turn began (useful for showing per-turn loading state)
+      break;
+    }
+
+    case "turn.ended": {
+      // Turn completed (useful for ending per-turn loading state)
       break;
     }
 

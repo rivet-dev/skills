@@ -246,7 +246,7 @@ sandbox-agent api sessions create <SESSION_ID> [OPTIONS]
 |--------|-------------|
 | `-a, --agent ` | Agent identifier (required) |
 | `-g, --agent-mode ` | Agent mode |
-| `-p, --permission-mode ` | Permission mode (`default`, `plan`, `bypass`) |
+| `-p, --permission-mode ` | Permission mode (`default`, `plan`, `bypass`, `acceptEdits`) |
 | `-m, --model ` | Model override |
 | `-v, --variant ` | Model variant |
 | `-A, --agent-version ` | Agent version |
@@ -257,6 +257,8 @@ sandbox-agent api sessions create my-session \
   --agent-mode code \
   --permission-mode default
 ```
+
+`acceptEdits` passes through to Claude, auto-approves file changes for Codex, and is treated as `default` for other agents.
 
 #### Send Message
 
