@@ -71,7 +71,7 @@ Use `offset` to track the last seen `sequence` number and resume from where you 
 
 ### Bare minimum
 
-Handle these three events to render a basic chat:
+Handle item lifecycle plus turn lifecycle to render a basic chat:
 
 ```ts
 type ItemState = {
@@ -80,9 +80,20 @@ type ItemState = {
 };
 
 const items = new Map<string, ItemState>();
+let turnInProgress = false;
 
 function handleEvent(event: UniversalEvent) {
   switch (event.type) {
+    case "turn.started": {
+      turnInProgress = true;
+      break;
+    }
+
+    case "turn.ended": {
+      turnInProgress = false;
+      break;
+    }
+
     case "item.started": {
       const { item } = event.data as ItemEventData;
       items.set(item.item_id, { item, deltas: [] });
@@ -111,12 +122,14 @@ function handleEvent(event: UniversalEvent) {
 }
 ```
 
-When rendering, show a loading indicator while `item.status === "in_progress"`:
+When rendering:
+- Use `turnInProgress` for turn-level UI state (disable send button, show global "Agent is responding", etc.).
+- Use `item.status === "in_progress"` for per-item streaming state.
 
 ```ts
 function renderItem(state: ItemState) {
   const { item, deltas } = state;
-  const isLoading = item.status === "in_progress";
+  const isItemLoading = item.status === "in_progress";
 
   // For streaming text, combine item content with accumulated deltas
   const text = item.content
@@ -127,7 +140,8 @@ function renderItem(state: ItemState) {
 
   return {
     content: streamedText,
-    isLoading,
+    isItemLoading,
+    isTurnLoading: turnInProgress,
     role: item.role,
     kind: item.kind,
   };
@@ -153,16 +167,6 @@ function handleEvent(event: UniversalEvent) {
       // Disable input, show end reason
       // reason: "completed" | "error" | "terminated"
       // terminated_by: "agent" | "daemon"
-      break;
-    }
-
-    case "turn.started": {
-      // Turn began (useful for showing per-turn loading state)
-      break;
-    }
-
-    case "turn.ended": {
-      // Turn completed (useful for ending per-turn loading state)
       break;
     }
 
