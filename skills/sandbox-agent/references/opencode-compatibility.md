@@ -1,4 +1,4 @@
-# OpenCode SDK & UI Support
+# OpenCode Compatibility
 
 > Source: `docs/opencode-compatibility.mdx`
 > Canonical URL: https://sandboxagent.dev/docs/opencode-compatibility

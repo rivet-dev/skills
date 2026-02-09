@@ -250,6 +250,8 @@ sandbox-agent api sessions create <SESSION_ID> [OPTIONS]
 | `-m, --model ` | Model override |
 | `-v, --variant ` | Model variant |
 | `-A, --agent-version ` | Agent version |
+| `--mcp-config ` | JSON file with MCP server config (see `mcp` docs) |
+| `--skill ` | Skill directory or `SKILL.md` path (repeatable) |
 
 ```bash
 sandbox-agent api sessions create my-session \
@@ -381,6 +383,132 @@ sandbox-agent api sessions reply-permission my-session perm1 --reply once
 
 ---
 
+### Filesystem
+
+#### List Entries
+
+```bash
+sandbox-agent api fs entries [OPTIONS]
+```
+
+| Option | Description |
+|--------|-------------|
+| `--path ` | Directory path (default: `.`) |
+| `--session-id ` | Resolve relative paths from the session working directory |
+
+```bash
+sandbox-agent api fs entries --path ./workspace
+```
+
+#### Read File
+
+`api fs read` writes raw bytes to stdout.
+
+```bash
+sandbox-agent api fs read <PATH> [OPTIONS]
+```
+
+| Option | Description |
+|--------|-------------|
+| `--session-id ` | Resolve relative paths from the session working directory |
+
+```bash
+sandbox-agent api fs read ./notes.txt > ./notes.txt
+```
+
+#### Write File
+
+```bash
+sandbox-agent api fs write <PATH> [OPTIONS]
+```
+
+| Option | Description |
+|--------|-------------|
+| `--content ` | Write UTF-8 content |
+| `--from-file ` | Read content from a local file |
+| `--session-id ` | Resolve relative paths from the session working directory |
+
+```bash
+sandbox-agent api fs write ./hello.txt --content "hello"
+sandbox-agent api fs write ./image.bin --from-file ./image.bin
+```
+
+#### Delete Entry
+
+```bash
+sandbox-agent api fs delete <PATH> [OPTIONS]
+```
+
+| Option | Description |
+|--------|-------------|
+| `--recursive` | Delete directories recursively |
+| `--session-id ` | Resolve relative paths from the session working directory |
+
+```bash
+sandbox-agent api fs delete ./old.log
+```
+
+#### Create Directory
+
+```bash
+sandbox-agent api fs mkdir <PATH> [OPTIONS]
+```
+
+| Option | Description |
+|--------|-------------|
+| `--session-id ` | Resolve relative paths from the session working directory |
+
+```bash
+sandbox-agent api fs mkdir ./cache
+```
+
+#### Move/Rename
+
+```bash
+sandbox-agent api fs move <FROM> <TO> [OPTIONS]
+```
+
+| Option | Description |
+|--------|-------------|
+| `--overwrite` | Overwrite destination if it exists |
+| `--session-id ` | Resolve relative paths from the session working directory |
+
+```bash
+sandbox-agent api fs move ./a.txt ./b.txt --overwrite
+```
+
+#### Stat
+
+```bash
+sandbox-agent api fs stat <PATH> [OPTIONS]
+```
+
+| Option | Description |
+|--------|-------------|
+| `--session-id ` | Resolve relative paths from the session working directory |
+
+```bash
+sandbox-agent api fs stat ./notes.txt
+```
+
+#### Upload Batch (tar)
+
+```bash
+sandbox-agent api fs upload-batch --tar <PATH> [OPTIONS]
+```
+
+| Option | Description |
+|--------|-------------|
+| `--tar ` | Tar archive to extract |
+| `--path ` | Destination directory |
+| `--session-id ` | Resolve relative paths from the session working directory |
+
+```bash
+sandbox-agent api fs upload-batch --tar ./skills.tar --path ./skills
+```
+
+---
+
 ## CLI to HTTP Mapping
 
 | CLI Command | HTTP Endpoint |
@@ -399,3 +527,11 @@ sandbox-agent api sessions reply-permission my-session perm1 --reply once
 | `api sessions reply-question` | `POST /v1/sessions/{sessionId}/questions/{questionId}/reply` |
 | `api sessions reject-question` | `POST /v1/sessions/{sessionId}/questions/{questionId}/reject` |
 | `api sessions reply-permission` | `POST /v1/sessions/{sessionId}/permissions/{permissionId}/reply` |
+| `api fs entries` | `GET /v1/fs/entries` |
+| `api fs read` | `GET /v1/fs/file` |
+| `api fs write` | `PUT /v1/fs/file` |
+| `api fs delete` | `DELETE /v1/fs/entry` |
+| `api fs mkdir` | `POST /v1/fs/mkdir` |
+| `api fs move` | `POST /v1/fs/move` |
+| `api fs stat` | `GET /v1/fs/stat` |
+| `api fs upload-batch` | `POST /v1/fs/upload-batch` |

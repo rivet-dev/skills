@@ -1,0 +1,83 @@
+# Skills
+
+> Source: `docs/skills.mdx`
+> Canonical URL: https://sandboxagent.dev/docs/skills
+> Description: Auto-load skills into agent sessions.
+
+---
+Skills are local instruction bundles stored in `SKILL.md` files. Sandbox Agent can fetch, discover, and link skill directories into agent-specific skill paths at session start using the `skills.sources` field. The format is fully compatible with [skills.sh](https://skills.sh).
+
+## Session Config
+
+Pass `skills.sources` when creating a session to load skills from GitHub repos, local paths, or git URLs.
+
+```ts TypeScript
+import { SandboxAgent } from "sandbox-agent";
+
+const client = await SandboxAgent.connect({
+  baseUrl: "http://127.0.0.1:2468",
+  token: process.env.SANDBOX_TOKEN,
+});
+
+await client.createSession("claude-skills", {
+  agent: "claude",
+  skills: {
+    sources: [
+      { type: "github", source: "rivet-dev/skills", skills: ["sandbox-agent"] },
+      { type: "local", source: "/workspace/my-custom-skill" },
+    ],
+  },
+});
+```
+
+```bash cURL
+curl -X POST "http://127.0.0.1:2468/v1/sessions/claude-skills" \
+  -H "Authorization: Bearer $SANDBOX_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "agent": "claude",
+    "skills": {
+      "sources": [
+        { "type": "github", "source": "rivet-dev/skills", "skills": ["sandbox-agent"] },
+        { "type": "local", "source": "/workspace/my-custom-skill" }
+      ]
+    }
+  }'
+```
+
+Each skill directory must contain `SKILL.md`. See [Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices) for tips on writing effective skills.
+
+## Skill Sources
+
+Each entry in `skills.sources` describes where to find skills. Three source types are supported:
+
+| Type | `source` value | Example |
+|------|---------------|---------|
+| `github` | `owner/repo` | `"rivet-dev/skills"` |
+| `local` | Filesystem path | `"/workspace/my-skill"` |
+| `git` | Git clone URL | `"https://git.example.com/skills.git"` |
+
+### Optional fields
+
+- **`skills`** — Array of skill directory names to include. When omitted, all discovered skills are installed.
+- **`ref`** — Branch, tag, or commit to check out (default: HEAD). Applies to `github` and `git` types.
+- **`subpath`** — Subdirectory within the repo to search for skills.
+
+## Custom Skills
+
+To write, upload, and configure your own skills inside the sandbox, see [Custom Tools](/custom-tools).
+
+## Advanced
+
+### Discovery logic
+
+After resolving a source to a local directory (cloning if needed), Sandbox Agent discovers skills by:
+1. Checking if the directory itself contains `SKILL.md`.
+2. Scanning `skills/` subdirectory for child directories containing `SKILL.md`.
+3. Scanning immediate children of the directory for `SKILL.md`.
+
+Discovered skills are symlinked into project-local skill roots (`.claude/skills/<name>`, `.agents/skills/<name>`, `.opencode/skill/<name>`).
+
+### Caching
+
+GitHub sources are downloaded as zip archives and git sources are cloned to `~/.sandbox-agent/skills-cache/` and updated on subsequent session creations. GitHub sources do not require `git` to be installed.

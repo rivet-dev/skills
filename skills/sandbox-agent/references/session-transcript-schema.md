@@ -28,7 +28,7 @@ This table shows which agent feature coverage appears in the universal event str
 | Reasoning/Thinking |   -    |   ✓   |      -       |      -       |
 | Command Execution  |   -    |   ✓   |      -       |      -       |
 | File Changes       |   -    |   ✓   |      -       |      -       |
-| MCP Tools          |   -    |   ✓   |      -       |      -       |
+| MCP Tools          |   ✓    |   ✓   |      ✓       |      ✓       |
 | Streaming Deltas   |   ✓    |   ✓   |      ✓       |      -       |
 | Variants           |        |   ✓   |      ✓       |      ✓       |
 

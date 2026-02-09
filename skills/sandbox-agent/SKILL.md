@@ -368,7 +368,6 @@ Open the Inspector UI at `/ui/` on your server (e.g., `http://localhost:2468/ui/
 
 - [Cloudflare](references/deploy/cloudflare.md)
 - [Daytona](references/deploy/daytona.md)
-- [Deploy](references/deploy/index.md)
 - [Docker](references/deploy/docker.md)
 - [E2B](references/deploy/e2b.md)
 - [Local](references/deploy/local.md)
@@ -376,18 +375,24 @@ Open the Inspector UI at `/ui/` on your server (e.g., `http://localhost:2468/ui/
 
 ### General
 
+- [Agent Sessions](references/agent-sessions.md)
+- [Attachments](references/attachments.md)
 - [Building a Chat UI](references/building-chat-ui.md)
 - [CLI Reference](references/cli.md)
 - [Conversion](references/conversion.md)
 - [CORS Configuration](references/cors.md)
 - [Credentials](references/credentials.md)
+- [Custom Tools](references/custom-tools.md)
 - [Daemon](references/daemon.md)
+- [File System](references/file-system.md)
 - [Gigacode](references/gigacode.md)
 - [Inspector](references/inspector.md)
 - [Manage Sessions](references/manage-sessions.md)
-- [OpenCode SDK & UI Support](references/opencode-compatibility.md)
+- [MCP](references/mcp.md)
+- [OpenCode Compatibility](references/opencode-compatibility.md)
 - [Quickstart](references/quickstart.md)
 - [Session Transcript Schema](references/session-transcript-schema.md)
+- [Skills](references/skills.md)
 - [Telemetry](references/telemetry.md)
 - [Troubleshooting](references/troubleshooting.md)
 
