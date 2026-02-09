@@ -1,7 +1,7 @@
 # MCP
 
-> Source: `docs/mcp.mdx`
-> Canonical URL: https://sandboxagent.dev/docs/mcp
+> Source: `docs/mcp-config.mdx`
+> Canonical URL: https://sandboxagent.dev/docs/mcp-config
 > Description: Configure MCP servers for agent sessions.
 
 ---

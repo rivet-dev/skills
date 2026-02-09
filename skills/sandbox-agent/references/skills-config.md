@@ -1,7 +1,7 @@
 # Skills
 
-> Source: `docs/skills.mdx`
-> Canonical URL: https://sandboxagent.dev/docs/skills
+> Source: `docs/skills-config.mdx`
+> Canonical URL: https://sandboxagent.dev/docs/skills-config
 > Description: Auto-load skills into agent sessions.
 
 ---

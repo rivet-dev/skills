@@ -388,11 +388,11 @@ Open the Inspector UI at `/ui/` on your server (e.g., `http://localhost:2468/ui/
 - [Gigacode](references/gigacode.md)
 - [Inspector](references/inspector.md)
 - [Manage Sessions](references/manage-sessions.md)
-- [MCP](references/mcp.md)
+- [MCP](references/mcp-config.md)
 - [OpenCode Compatibility](references/opencode-compatibility.md)
 - [Quickstart](references/quickstart.md)
 - [Session Transcript Schema](references/session-transcript-schema.md)
-- [Skills](references/skills.md)
+- [Skills](references/skills-config.md)
 - [Telemetry](references/telemetry.md)
 - [Troubleshooting](references/troubleshooting.md)
 
