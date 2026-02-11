@@ -391,6 +391,7 @@ Open the Inspector UI at `/ui/` on your server (e.g., `http://localhost:2468/ui/
 - [Manage Sessions](references/manage-sessions.md)
 - [MCP](references/mcp-config.md)
 - [OpenCode Compatibility](references/opencode-compatibility.md)
+- [Pi Support Plan](references/pi-support-plan.md)
 - [Quickstart](references/quickstart.md)
 - [Session Transcript Schema](references/session-transcript-schema.md)
 - [Skills](references/skills-config.md)

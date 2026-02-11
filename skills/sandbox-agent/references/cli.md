@@ -139,7 +139,7 @@ sandbox-agent credentials extract [OPTIONS]
 
 | Option | Description |
 |--------|-------------|
-| `-a, --agent ` | Filter by agent (`claude`, `codex`, `opencode`, `amp`) |
+| `-a, --agent ` | Filter by agent (`claude`, `codex`, `opencode`, `amp`, `pi`) |
 | `-p, --provider ` | Filter by provider (`anthropic`, `openai`) |
 | `-d, --home-dir ` | Custom home directory for credential search |
 | `-r, --reveal` | Show full credential values (default: redacted) |
