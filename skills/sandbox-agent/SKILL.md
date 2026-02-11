@@ -367,6 +367,7 @@ Open the Inspector UI at `/ui/` on your server (e.g., `http://localhost:2468/ui/
 ### Deploy
 
 - [Cloudflare](references/deploy/cloudflare.md)
+- [ComputeSDK](references/deploy/computesdk.md)
 - [Daytona](references/deploy/daytona.md)
 - [Docker](references/deploy/docker.md)
 - [E2B](references/deploy/e2b.md)
