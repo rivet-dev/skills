@@ -2,14 +2,14 @@
 
 > Source: `docs/deploy/docker.mdx`
 > Canonical URL: https://sandboxagent.dev/docs/deploy/docker
-> Description: Build and run the daemon in a Docker container.
+> Description: Build and run Sandbox Agent in a Docker container.
 
 ---
-Docker is not recommended for production. Standard Docker containers don't provide sufficient isolation for running untrusted code. Use a dedicated sandbox provider like E2B or Daytona for production workloads.
+Docker is not recommended for production isolation of untrusted workloads. Use dedicated sandbox providers (E2B, Daytona, etc.) for stronger isolation.
 
-## Quick Start
+## Quick start
 
-Run sandbox-agent in a container with agents pre-installed:
+Run Sandbox Agent with agents pre-installed:
 
 ```bash
 docker run --rm -p 3000:3000 \
@@ -17,21 +17,19 @@ docker run --rm -p 3000:3000 \
   -e OPENAI_API_KEY="$OPENAI_API_KEY" \
   alpine:latest sh -c "\
     apk add --no-cache curl ca-certificates libstdc++ libgcc bash && \
-    curl -fsSL https://releases.rivet.dev/sandbox-agent/latest/install.sh | sh && \
+    curl -fsSL https://releases.rivet.dev/sandbox-agent/0.2.x/install.sh | sh && \
     sandbox-agent install-agent claude && \
     sandbox-agent install-agent codex && \
     sandbox-agent server --no-token --host 0.0.0.0 --port 3000"
 ```
 
-Alpine is required because Claude Code is built for musl libc. Debian/Ubuntu images use glibc and won't work.
-
-Access the API at `http://localhost:3000`.
+Alpine is required for some agent binaries that target musl libc.
 
 ## TypeScript with dockerode
 
 ```typescript
 import Docker from "dockerode";
-import { SandboxAgentClient } from "sandbox-agent";
+import { SandboxAgent } from "sandbox-agent";
 
 const docker = new Docker();
 const PORT = 3000;
@@ -40,7 +38,7 @@ const container = await docker.createContainer({
   Image: "alpine:latest",
   Cmd: ["sh", "-c", [
     "apk add --no-cache curl ca-certificates libstdc++ libgcc bash",
-    "curl -fsSL https://releases.rivet.dev/sandbox-agent/latest/install.sh | sh",
+    "curl -fsSL https://releases.rivet.dev/sandbox-agent/0.2.x/install.sh | sh",
     "sandbox-agent install-agent claude",
     "sandbox-agent install-agent codex",
     `sandbox-agent server --no-token --host 0.0.0.0 --port ${PORT}`,
@@ -58,24 +56,18 @@ const container = await docker.createContainer({
 
 await container.start();
 
-// Wait for server and connect
 const baseUrl = `http://127.0.0.1:${PORT}`;
-const client = new SandboxAgentClient({ baseUrl, agent: "mock" });
+const sdk = await SandboxAgent.connect({ baseUrl });
 
-// Use the client...
-await client.createSession("my-session", {
-  agent: "claude",
-  permissionMode: "default",
-});
+const session = await sdk.createSession({ agent: "claude" });
+await session.prompt([{ type: "text", text: "Summarize this repository." }]);
 ```
 
-## Building from Source
-
-To build a static binary for use in minimal containers:
+## Building from source
 
 ```bash
 docker build -f docker/release/linux-x86_64.Dockerfile -t sandbox-agent-build .
 docker run --rm -v "$PWD/artifacts:/artifacts" sandbox-agent-build
 ```
 
-The binary will be at `./artifacts/sandbox-agent-x86_64-unknown-linux-musl`.
+Binary output: `./artifacts/sandbox-agent-x86_64-unknown-linux-musl`.

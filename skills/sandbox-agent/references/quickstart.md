@@ -68,11 +68,11 @@ docker run -e ANTHROPIC_API_KEY="sk-ant-..." \
 
 #### Extracting API keys from current machine
 
-Use `sandbox-agent credentials extract-env --export` to extract your existing API keys (Anthropic, OpenAI, etc.) from your existing Claude Code or Codex config files on your machine.
+Use `sandbox-agent credentials extract-env --export` to extract your existing API keys (Anthropic, OpenAI, etc.) from local Claude Code or Codex config files.
 
 #### Testing without API keys
 
-If you want to test Sandbox Agent without API keys, use the `mock` agent to test the SDK without any credentials. It simulates agent responses for development and testing.
+Use the `mock` agent for SDK and integration testing without provider credentials.
 
 ### Run the server
 
@@ -81,7 +81,7 @@ If you want to test Sandbox Agent without API keys, use the `mock` agent to test
 Install and run the binary directly.
 
 ```bash
-curl -fsSL https://releases.rivet.dev/sandbox-agent/latest/install.sh | sh
+curl -fsSL https://releases.rivet.dev/sandbox-agent/0.2.x/install.sh | sh
 sandbox-agent server --no-token --host 0.0.0.0 --port 2468
 ```
 
@@ -90,7 +90,7 @@ sandbox-agent server --no-token --host 0.0.0.0 --port 2468
 Run without installing globally.
 
 ```bash
-npx @sandbox-agent/cli server --no-token --host 0.0.0.0 --port 2468
+npx @sandbox-agent/cli@0.2.x server --no-token --host 0.0.0.0 --port 2468
 ```
 
 #### bunx
@@ -98,7 +98,7 @@ npx @sandbox-agent/cli server --no-token --host 0.0.0.0 --port 2468
 Run without installing globally.
 
 ```bash
-bunx @sandbox-agent/cli server --no-token --host 0.0.0.0 --port 2468
+bunx @sandbox-agent/cli@0.2.x server --no-token --host 0.0.0.0 --port 2468
 ```
 
 #### npm i -g
@@ -106,7 +106,7 @@ bunx @sandbox-agent/cli server --no-token --host 0.0.0.0 --port 2468
 Install globally, then run.
 
 ```bash
-npm install -g @sandbox-agent/cli
+npm install -g @sandbox-agent/cli@0.2.x
 sandbox-agent server --no-token --host 0.0.0.0 --port 2468
 ```
 
@@ -115,7 +115,7 @@ sandbox-agent server --no-token --host 0.0.0.0 --port 2468
 Install globally, then run.
 
 ```bash
-bun add -g @sandbox-agent/cli
+bun add -g @sandbox-agent/cli@0.2.x
 # Allow Bun to run postinstall scripts for native binaries (required for SandboxAgent.start()).
 bun pm -g trust @sandbox-agent/cli-linux-x64 @sandbox-agent/cli-darwin-arm64 @sandbox-agent/cli-darwin-x64 @sandbox-agent/cli-win32-x64
 sandbox-agent server --no-token --host 0.0.0.0 --port 2468
@@ -123,24 +123,24 @@ sandbox-agent server --no-token --host 0.0.0.0 --port 2468
 
 #### Node.js (local)
 
-For local development, use `SandboxAgent.start()` to automatically spawn and manage the server as a subprocess.
+For local development, use `SandboxAgent.start()` to spawn and manage the server as a subprocess.
 
 ```bash
-npm install sandbox-agent
+npm install sandbox-agent@0.2.x
 ```
 
 ```typescript
 import { SandboxAgent } from "sandbox-agent";
 
-const client = await SandboxAgent.start();
+const sdk = await SandboxAgent.start();
 ```
 
 #### Bun (local)
 
-For local development, use `SandboxAgent.start()` to automatically spawn and manage the server as a subprocess.
+For local development, use `SandboxAgent.start()` to spawn and manage the server as a subprocess.
 
 ```bash
-bun add sandbox-agent
+bun add sandbox-agent@0.2.x
 # Allow Bun to run postinstall scripts for native binaries (required for SandboxAgent.start()).
 bun pm trust @sandbox-agent/cli-linux-x64 @sandbox-agent/cli-darwin-arm64 @sandbox-agent/cli-darwin-x64 @sandbox-agent/cli-win32-x64
 ```
@@ -148,10 +148,8 @@ bun pm trust @sandbox-agent/cli-linux-x64 @sandbox-agent/cli-darwin-arm64 @sandb
 ```typescript
 import { SandboxAgent } from "sandbox-agent";
 
-const client = await SandboxAgent.start();
+const sdk = await SandboxAgent.start();
 ```
-
-This installs the binary and starts the server for you. No manual setup required.
 
 #### Build from source
 
@@ -165,9 +163,9 @@ Binding to `0.0.0.0` allows the server to accept connections from any network in
 
 #### Configuring token
 
-Tokens are usually not required. Most sandbox providers (E2B, Daytona, etc.) already secure their networking at the infrastructure level, so the server endpoint is never publicly accessible. For local development, binding to `127.0.0.1` ensures only local connections are accepted.
+Tokens are usually not required. Most sandbox providers (E2B, Daytona, etc.) already secure networking at the infrastructure layer.
 
-If you need to expose the server on a public endpoint, use `--token "$SANDBOX_TOKEN"` to require authentication on all requests:
+If you expose the server publicly, use `--token "$SANDBOX_TOKEN"` to require authentication:
 
 ```bash
 sandbox-agent server --token "$SANDBOX_TOKEN" --host 0.0.0.0 --port 2468
@@ -178,33 +176,31 @@ Then pass the token when connecting:
 #### TypeScript
 
 ```typescript
-import { SandboxAgentClient } from "sandbox-agent";
+import { SandboxAgent } from "sandbox-agent";
 
-const client = new SandboxAgentClient({
+const sdk = await SandboxAgent.connect({
   baseUrl: "http://your-server:2468",
   token: process.env.SANDBOX_TOKEN,
-  agent: "mock",
 });
 ```
 
 #### curl
 
 ```bash
-curl "http://your-server:2468/v1/sessions" \
+curl "http://your-server:2468/v1/health" \
   -H "Authorization: Bearer $SANDBOX_TOKEN"
 ```
 
 #### CLI
 
 ```bash
-sandbox-agent api sessions list \
-  --endpoint http://your-server:2468 \
-  --token "$SANDBOX_TOKEN"
+sandbox-agent --token "$SANDBOX_TOKEN" api agents list \
+  --endpoint http://your-server:2468
 ```
 
 #### CORS
 
-If you're calling the server from a browser, see the [CORS configuration guide](/docs/cors).
+If you're calling the server from a browser, see the [CORS configuration guide](/cors).
 
 ### Install agents (optional)
 
@@ -217,125 +213,64 @@ sandbox-agent install-agent opencode
 sandbox-agent install-agent amp
 ```
 
-If agents are not installed up front, they will be lazily installed when creating a session. It's recommended to pre-install agents then take a snapshot of the sandbox for faster coldstarts.
+If agents are not installed up front, they are lazily installed when creating a session.
 
 ### Create a session
 
-#### TypeScript
-
 ```typescript
-import { SandboxAgentClient } from "sandbox-agent";
+import { SandboxAgent } from "sandbox-agent";
 
-const client = new SandboxAgentClient({
+const sdk = await SandboxAgent.connect({
   baseUrl: "http://127.0.0.1:2468",
-  agent: "claude",
 });
 
-await client.createSession("my-session", {
+const session = await sdk.createSession({
   agent: "claude",
-  agentMode: "build",
-  permissionMode: "default",
+  sessionInit: {
+    cwd: "/",
+    mcpServers: [],
+  },
 });
-```
 
-#### curl
-
-```bash
-curl -X POST "http://127.0.0.1:2468/v1/sessions/my-session" \
-  -H "Content-Type: application/json" \
-  -d '{"agent":"claude","agentMode":"build","permissionMode":"default"}'
-```
-
-#### CLI
-
-```bash
-sandbox-agent api sessions create my-session \
-  --agent claude \
-  --endpoint http://127.0.0.1:2468
+console.log(session.id);
 ```
 
 ### Send a message
 
-#### TypeScript
-
 ```typescript
-await client.postMessage("my-session", {
-  message: "Summarize the repository and suggest next steps.",
-});
-```
+const result = await session.prompt([
+  { type: "text", text: "Summarize the repository and suggest next steps." },
+]);
 
-#### curl
-
-```bash
-curl -X POST "http://127.0.0.1:2468/v1/sessions/my-session/messages" \
-  -H "Content-Type: application/json" \
-  -d '{"message":"Summarize the repository and suggest next steps."}'
-```
-
-#### CLI
-
-```bash
-sandbox-agent api sessions send-message my-session \
-  --message "Summarize the repository and suggest next steps." \
-  --endpoint http://127.0.0.1:2468
+console.log(result.stopReason);
 ```
 
 ### Read events
 
-#### TypeScript
-
 ```typescript
-// Poll for events
-const events = await client.getEvents("my-session", { offset: 0, limit: 50 });
+const off = session.onEvent((event) => {
+  console.log(event.sender, event.payload);
+});
 
-// Or stream events
-for await (const event of client.streamEvents("my-session", { offset: 0 })) {
-  console.log(event.type, event.data);
-}
-```
+const page = await sdk.getEvents({
+  sessionId: session.id,
+  limit: 50,
+});
 
-#### curl
-
-```bash
-# Poll for events
-curl "http://127.0.0.1:2468/v1/sessions/my-session/events?offset=0&limit=50"
-
-# Stream events via SSE
-curl "http://127.0.0.1:2468/v1/sessions/my-session/events/sse?offset=0"
-
-# Single-turn stream (post message and get streamed response)
-curl -N -X POST "http://127.0.0.1:2468/v1/sessions/my-session/messages/stream" \
-  -H "Content-Type: application/json" \
-  -d '{"message":"Hello"}'
-```
-
-#### CLI
-
-```bash
-# Poll for events
-sandbox-agent api sessions events my-session \
-  --endpoint http://127.0.0.1:2468
-
-# Stream events via SSE
-sandbox-agent api sessions events-sse my-session \
-  --endpoint http://127.0.0.1:2468
-
-# Single-turn stream
-sandbox-agent api sessions send-message-stream my-session \
-  --message "Hello" \
-  --endpoint http://127.0.0.1:2468
+console.log(page.items.length);
+off();
 ```
 
 ### Test with Inspector
 
-Open the Inspector UI at `/ui/` on your server (e.g., `http://localhost:2468/ui/`) to inspect session state using a GUI.
+Open the Inspector UI at `/ui/` on your server (for example, `http://localhost:2468/ui/`) to inspect sessions and events in a GUI.
 
 ![Sandbox Agent Inspector](https://sandboxagent.dev/docs/images/inspector.png)
 
 ## Next steps
 
-- [Build a Chat UI](/building-chat-ui) — Learn how to build a chat interface for your agent.
+- [Session Persistence](/session-persistence) — Configure in-memory, Rivet Actor state, IndexedDB, SQLite, and Postgres persistence.
 
-- [Manage Sessions](/manage-sessions) — Persist and replay agent transcripts.
+- [Deploy to a Sandbox](/deploy/local) — Deploy your agent to E2B, Daytona, Docker, Vercel, or Cloudflare.
 
-- [Deploy to a Sandbox](/deploy) — Deploy your agent to E2B, Daytona, or Vercel Sandboxes.
+- [SDK Overview](/sdk-overview) — Use the latest TypeScript SDK API.

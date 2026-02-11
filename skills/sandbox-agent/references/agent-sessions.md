@@ -2,267 +2,88 @@
 
 > Source: `docs/agent-sessions.mdx`
 > Canonical URL: https://sandboxagent.dev/docs/agent-sessions
-> Description: Create sessions and send messages to agents.
+> Description: Create sessions, prompt agents, and inspect event history.
 
 ---
-Sessions are the unit of interaction with an agent. You create one session per task, then send messages and stream events.
+Sessions are the unit of interaction with an agent. Create one session per task, send prompts, and consume event history.
 
-## Session Options
+For SDK-based flows, sessions can be restored after runtime/session loss when persistence is enabled.
+See [Session Restoration](/session-restoration).
 
-`POST /v1/sessions/{sessionId}` accepts the following fields:
+## Create a session
 
-- `agent` (required): `claude`, `codex`, `opencode`, `amp`, or `mock`
-- `agentMode`: agent mode string (for example, `build`, `plan`)
-- `permissionMode`: permission mode string (`default`, `plan`, `bypass`, etc.)
-- `model`: model override (agent-specific)
-- `variant`: model variant (agent-specific)
-- `agentVersion`: agent version override
-- `mcp`: MCP server config map (see `MCP`)
-- `skills`: skill path config (see `Skills`)
+```ts
+import { SandboxAgent } from "sandbox-agent";
 
-## Create A Session
-
-```ts TypeScript
-import { SandboxAgentClient } from "sandbox-agent";
-
-const client = new SandboxAgentClient({
+const sdk = await SandboxAgent.connect({
   baseUrl: "http://127.0.0.1:2468",
-  token: process.env.SANDBOX_TOKEN,
-  agent: "mock",
-  });
+});
 
-await client.createSession("build-session", {
+const session = await sdk.createSession({
   agent: "codex",
-  agentMode: "build",
-  permissionMode: "default",
-  model: "gpt-4.1",
-  variant: "reasoning",
-  agentVersion: "latest",
-});
-```
-
-```bash cURL
-curl -X POST "http://127.0.0.1:2468/v1/sessions/build-session" \
-  -H "Authorization: Bearer $SANDBOX_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "agent": "codex",
-    "agentMode": "build",
-    "permissionMode": "default",
-    "model": "gpt-4.1",
-    "variant": "reasoning",
-    "agentVersion": "latest"
-  }'
-```
-
-## Send A Message
-
-```ts TypeScript
-import { SandboxAgentClient } from "sandbox-agent";
-
-const client = new SandboxAgentClient({
-  baseUrl: "http://127.0.0.1:2468",
-  token: process.env.SANDBOX_TOKEN,
-  agent: "mock",
-  });
-
-await client.postMessage("build-session", {
-  message: "Summarize the repository structure.",
-});
-```
-
-```bash cURL
-curl -X POST "http://127.0.0.1:2468/v1/sessions/build-session/messages" \
-  -H "Authorization: Bearer $SANDBOX_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"message":"Summarize the repository structure."}'
-```
-
-## Stream A Turn
-
-```ts TypeScript
-import { SandboxAgentClient } from "sandbox-agent";
-
-const client = new SandboxAgentClient({
-  baseUrl: "http://127.0.0.1:2468",
-  token: process.env.SANDBOX_TOKEN,
-  agent: "mock",
-  });
-
-const response = await client.postMessageStream("build-session", {
-  message: "Explain the main entrypoints.",
+  sessionInit: {
+    cwd: "/",
+    mcpServers: [],
+  },
 });
 
-const reader = response.body?.getReader();
-if (reader) {
-  const decoder = new TextDecoder();
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    console.log(decoder.decode(value, { stream: true }));
-  }
-}
+console.log(session.id, session.agentSessionId);
 ```
 
-```bash cURL
-curl -N -X POST "http://127.0.0.1:2468/v1/sessions/build-session/messages/stream" \
-  -H "Authorization: Bearer $SANDBOX_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"message":"Explain the main entrypoints."}'
+## Send a prompt
+
+```ts
+const response = await session.prompt([
+  { type: "text", text: "Summarize the repository structure." },
+]);
+
+console.log(response.stopReason);
 ```
 
-## Fetch Events
+## Subscribe to live events
 
-```ts TypeScript
-import { SandboxAgentClient } from "sandbox-agent";
+```ts
+const unsubscribe = session.onEvent((event) => {
+  console.log(event.eventIndex, event.sender, event.payload);
+});
 
-const client = new SandboxAgentClient({
-  baseUrl: "http://127.0.0.1:2468",
-  token: process.env.SANDBOX_TOKEN,
-  agent: "mock",
-  });
+await session.prompt([
+  { type: "text", text: "Explain the main entrypoints." },
+]);
 
-const events = await client.getEvents("build-session", {
-  offset: 0,
+unsubscribe();
+```
+
+## Fetch persisted event history
+
+```ts
+const page = await sdk.getEvents({
+  sessionId: session.id,
   limit: 50,
-  includeRaw: false,
 });
 
-console.log(events.events);
-```
-
-```bash cURL
-curl -X GET "http://127.0.0.1:2468/v1/sessions/build-session/events?offset=0&limit=50" \
-  -H "Authorization: Bearer $SANDBOX_TOKEN"
-```
-
-`GET /v1/sessions/{sessionId}/get-messages` is an alias for `events`.
-
-## Stream Events (SSE)
-
-```ts TypeScript
-import { SandboxAgentClient } from "sandbox-agent";
-
-const client = new SandboxAgentClient({
-  baseUrl: "http://127.0.0.1:2468",
-  token: process.env.SANDBOX_TOKEN,
-  agent: "mock",
-  });
-
-for await (const event of client.streamEvents("build-session", { offset: 0 })) {
-  console.log(event.type, event.data);
+for (const event of page.items) {
+  console.log(event.id, event.createdAt, event.sender);
 }
 ```
 
-```bash cURL
-curl -N -X GET "http://127.0.0.1:2468/v1/sessions/build-session/events/sse?offset=0" \
-  -H "Authorization: Bearer $SANDBOX_TOKEN"
+## List and load sessions
+
+```ts
+const sessions = await sdk.listSessions({ limit: 20 });
+
+for (const item of sessions.items) {
+  console.log(item.id, item.agent, item.createdAt);
+}
+
+if (sessions.items.length > 0) {
+  const loaded = await sdk.resumeSession(sessions.items[0]!.id);
+  await loaded.prompt([{ type: "text", text: "Continue." }]);
+}
 ```
 
-## List Sessions
+## Destroy a session
 
-```ts TypeScript
-import { SandboxAgentClient } from "sandbox-agent";
-
-const client = new SandboxAgentClient({
-  baseUrl: "http://127.0.0.1:2468",
-  token: process.env.SANDBOX_TOKEN,
-  agent: "mock",
-  });
-
-const sessions = await client.listSessions();
-console.log(sessions.sessions);
-```
-
-```bash cURL
-curl -X GET "http://127.0.0.1:2468/v1/sessions" \
-  -H "Authorization: Bearer $SANDBOX_TOKEN"
-```
-
-## Reply To A Question
-
-When the agent asks a question, reply with an array of answers. Each inner array is one multi-select response.
-
-```ts TypeScript
-import { SandboxAgentClient } from "sandbox-agent";
-
-const client = new SandboxAgentClient({
-  baseUrl: "http://127.0.0.1:2468",
-  token: process.env.SANDBOX_TOKEN,
-  agent: "mock",
-  });
-
-await client.replyQuestion("build-session", "question-1", {
-  answers: [["yes"]],
-});
-```
-
-```bash cURL
-curl -X POST "http://127.0.0.1:2468/v1/sessions/build-session/questions/question-1/reply" \
-  -H "Authorization: Bearer $SANDBOX_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"answers":[["yes"]]}'
-```
-
-## Reject A Question
-
-```ts TypeScript
-import { SandboxAgentClient } from "sandbox-agent";
-
-const client = new SandboxAgentClient({
-  baseUrl: "http://127.0.0.1:2468",
-  token: process.env.SANDBOX_TOKEN,
-  agent: "mock",
-  });
-
-await client.rejectQuestion("build-session", "question-1");
-```
-
-```bash cURL
-curl -X POST "http://127.0.0.1:2468/v1/sessions/build-session/questions/question-1/reject" \
-  -H "Authorization: Bearer $SANDBOX_TOKEN"
-```
-
-## Reply To A Permission Request
-
-Use `once`, `always`, or `reject`.
-
-```ts TypeScript
-import { SandboxAgentClient } from "sandbox-agent";
-
-const client = new SandboxAgentClient({
-  baseUrl: "http://127.0.0.1:2468",
-  token: process.env.SANDBOX_TOKEN,
-  agent: "mock",
-  });
-
-await client.replyPermission("build-session", "permission-1", {
-  reply: "once",
-});
-```
-
-```bash cURL
-curl -X POST "http://127.0.0.1:2468/v1/sessions/build-session/permissions/permission-1/reply" \
-  -H "Authorization: Bearer $SANDBOX_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"reply":"once"}'
-```
-
-## Terminate A Session
-
-```ts TypeScript
-import { SandboxAgentClient } from "sandbox-agent";
-
-const client = new SandboxAgentClient({
-  baseUrl: "http://127.0.0.1:2468",
-  token: process.env.SANDBOX_TOKEN,
-  agent: "mock",
-  });
-
-await client.terminateSession("build-session");
-```
-
-```bash cURL
-curl -X POST "http://127.0.0.1:2468/v1/sessions/build-session/terminate" \
-  -H "Authorization: Bearer $SANDBOX_TOKEN"
+```ts
+await sdk.destroySession(session.id);
 ```

@@ -5,126 +5,91 @@
 > Description: Give agents custom tools inside the sandbox using MCP servers or skills.
 
 ---
-There are two ways to give agents custom tools that run inside the sandbox:
+There are two common patterns for sandbox-local custom tooling:
 
 | | MCP Server | Skill |
 |---|---|---|
-| **How it works** | Sandbox Agent spawns your MCP server process and routes tool calls to it via stdio | A markdown file that instructs the agent to run your script with `node` (or any command) |
-| **Tool discovery** | Agent sees tools automatically via MCP protocol | Agent reads instructions from the skill file |
-| **Best for** | Structured tools with typed inputs/outputs | Lightweight scripts with natural-language instructions |
-| **Requires** | `@modelcontextprotocol/sdk` dependency | Just a markdown file and a script |
+| **How it works** | Agent connects to an MCP server (`mcpServers`) | Agent follows `SKILL.md` instructions and runs scripts |
+| **Best for** | Typed tool calls and structured protocols | Lightweight task-specific guidance |
+| **Requires** | MCP server process (stdio/http/sse) | Script + `SKILL.md` |
 
-Both approaches execute code inside the sandbox, so your tools have full access to the sandbox filesystem, network, and installed system tools.
+## Option A: MCP server (stdio)
 
-## Option A: Tools via MCP
-
-### Write your MCP server
-
-Create an MCP server that exposes tools using `@modelcontextprotocol/sdk` with `StdioServerTransport`. This server will run inside the sandbox.
+### Write and bundle your MCP server
 
 ```ts src/mcp-server.ts
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 
-const server = new McpServer({
-  name: "rand",
-  version: "1.0.0",
-});
+const server = new McpServer({ name: "rand", version: "1.0.0" });
 
 server.tool(
   "random_number",
-  "Generate a random integer between min and max (inclusive)",
+  "Generate a random integer between min and max",
   {
-    min: z.number().describe("Minimum value"),
-    max: z.number().describe("Maximum value"),
+    min: z.number(),
+    max: z.number(),
   },
   async ({ min, max }) => ({
     content: [{ type: "text", text: String(Math.floor(Math.random() * (max - min + 1)) + min) }],
   }),
 );
 
-const transport = new StdioServerTransport();
-await server.connect(transport);
+await server.connect(new StdioServerTransport());
 ```
-
-This is a simple example. Your MCP server runs inside the sandbox, so you can execute any code you'd like: query databases, call internal APIs, run shell commands, or interact with any service available in the container.
-
-### Package the MCP server
-
-Bundle into a single JS file so it can be uploaded and executed without a `node_modules` folder.
 
 ```bash
-npx esbuild src/mcp-server.ts --bundle --format=cjs --platform=node --target=node18 --minify --outfile=dist/mcp-server.cjs
+npx esbuild src/mcp-server.ts --bundle --format=cjs --platform=node --target=node18 --outfile=dist/mcp-server.cjs
 ```
 
-This creates `dist/mcp-server.cjs` ready to upload.
+### Upload it into the sandbox
 
-### Create sandbox and upload MCP server
-
-Start your sandbox, then write the bundled file into it.
-
-```ts TypeScript
-import { SandboxAgentClient } from "sandbox-agent";
+```ts
+import { SandboxAgent } from "sandbox-agent";
 import fs from "node:fs";
 
-const client = new SandboxAgentClient({
-  baseUrl: "http://127.0.0.1:2468",
-  token: process.env.SANDBOX_TOKEN,
-  agent: "mock",
-  });
-
+const sdk = await SandboxAgent.connect({ baseUrl: "http://127.0.0.1:2468" });
 const content = await fs.promises.readFile("./dist/mcp-server.cjs");
-await client.writeFsFile(
-  { path: "/opt/mcp/custom-tools/mcp-server.cjs" },
-  content,
-);
+
+await sdk.writeFsFile({ path: "/opt/mcp/custom-tools/mcp-server.cjs" }, content);
 ```
 
-```bash cURL
+```bash
 curl -X PUT "http://127.0.0.1:2468/v1/fs/file?path=/opt/mcp/custom-tools/mcp-server.cjs" \
-  -H "Authorization: Bearer $SANDBOX_TOKEN" \
   --data-binary @./dist/mcp-server.cjs
 ```
 
-### Create a session
+### Register MCP config and create a session
 
-Point an MCP server config at the bundled JS file. When the session starts, Sandbox Agent spawns the MCP server process and routes tool calls to it.
+```ts
+await sdk.setMcpConfig(
+  {
+    directory: "/workspace",
+    mcpName: "customTools",
+  },
+  {
+    type: "local",
+    command: "node",
+    args: ["/opt/mcp/custom-tools/mcp-server.cjs"],
+  },
+);
 
-```ts TypeScript
-await client.createSession("custom-tools", {
+const session = await sdk.createSession({
   agent: "claude",
-  mcp: {
-    customTools: {
-      type: "local",
-      command: ["node", "/opt/mcp/custom-tools/mcp-server.cjs"],
-    },
+  sessionInit: {
+    cwd: "/workspace",
   },
 });
+
+await session.prompt([
+  { type: "text", text: "Use the random_number tool with min=1 and max=10." },
+]);
 ```
 
-```bash cURL
-curl -X POST "http://127.0.0.1:2468/v1/sessions/custom-tools" \
-  -H "Authorization: Bearer $SANDBOX_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "agent": "claude",
-    "mcp": {
-      "customTools": {
-        "type": "local",
-        "command": ["node", "/opt/mcp/custom-tools/mcp-server.cjs"]
-      }
-    }
-  }'
-```
+## Option B: Skills
 
-## Option B: Tools via Skills
-
-Skills are markdown files that instruct the agent how to use a script. Upload the script and a skill file, then point the session at the skill directory.
-
-### Write your script
-
-Write a script that the agent will execute. This runs inside the sandbox just like an MCP server, but the agent invokes it directly via its shell tool.
+### Write script + skill file
 
 ```ts src/random-number.ts
 const min = Number(process.argv[2]);
@@ -138,99 +103,51 @@ if (Number.isNaN(min) || Number.isNaN(max)) {
 console.log(Math.floor(Math.random() * (max - min + 1)) + min);
 ```
 
-### Write a skill file
-
-Create a `SKILL.md` that tells the agent what the script does and how to run it. The frontmatter `name` and `description` fields are required. See [Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices) for tips on writing effective skills.
-
-```md SKILL.md
+````md SKILL.md
 ---
 name: random-number
-description: Generate a random integer between min and max (inclusive). Use when the user asks for a random number.
+description: Generate a random integer between min and max.
 ---
 
-To generate a random number, run:
+Run:
 
 ```bash
 node /opt/skills/random-number/random-number.cjs <min> <max>
 ```
-
-  This prints a single random integer between min and max (inclusive).
-</Step>
-
-<Step title="Package the script">
-  Bundle the script just like an MCP server so it has no dependencies at runtime.
+````
 
 ```bash
-npx esbuild src/random-number.ts --bundle --format=cjs --platform=node --target=node18 --minify --outfile=dist/random-number.cjs
+npx esbuild src/random-number.ts --bundle --format=cjs --platform=node --target=node18 --outfile=dist/random-number.cjs
 ```
-</Step>
 
-<Step title="Create sandbox and upload files">
-  Upload both the bundled script and the skill file.
+### Upload files
 
-  <CodeGroup>
-```ts TypeScript
-
-const client = new SandboxAgentClient({
-baseUrl: "http://127.0.0.1:2468",
-token: process.env.SANDBOX_TOKEN,
-agent: "mock",
-});
+```ts
+import fs from "node:fs";
 
 const script = await fs.promises.readFile("./dist/random-number.cjs");
-await client.writeFsFile(
-{ path: "/opt/skills/random-number/random-number.cjs" },
-script,
-);
+await sdk.writeFsFile({ path: "/opt/skills/random-number/random-number.cjs" }, script);
 
 const skill = await fs.promises.readFile("./SKILL.md");
-await client.writeFsFile(
-{ path: "/opt/skills/random-number/SKILL.md" },
-skill,
-);
+await sdk.writeFsFile({ path: "/opt/skills/random-number/SKILL.md" }, skill);
 ```
 
-```bash cURL
-curl -X PUT "http://127.0.0.1:2468/v1/fs/file?path=/opt/skills/random-number/random-number.cjs" \
--H "Authorization: Bearer $SANDBOX_TOKEN" \
---data-binary @./dist/random-number.cjs
+### Use in a session
 
-curl -X PUT "http://127.0.0.1:2468/v1/fs/file?path=/opt/skills/random-number/SKILL.md" \
--H "Authorization: Bearer $SANDBOX_TOKEN" \
---data-binary @./SKILL.md
-```
-  </CodeGroup>
-</Step>
-
-<Step title="Create a session">
-  Point the session at the skill directory. The agent reads `SKILL.md` and learns how to use your script.
-
-  <CodeGroup>
-```ts TypeScript
-await client.createSession("custom-tools", {
-agent: "claude",
-skills: {
-sources: [
-{ type: "local", source: "/opt/skills/random-number" },
-],
-},
+```ts
+const session = await sdk.createSession({
+  agent: "claude",
+  sessionInit: {
+    cwd: "/workspace",
+  },
 });
-```
 
-```bash cURL
-curl -X POST "http://127.0.0.1:2468/v1/sessions/custom-tools" \
--H "Authorization: Bearer $SANDBOX_TOKEN" \
--H "Content-Type: application/json" \
--d '{
-"agent": "claude",
-"skills": {
-"sources": [
-{ "type": "local", "source": "/opt/skills/random-number" }
-]
-}
-}'
+await session.prompt([
+  { type: "text", text: "Use the random-number skill to pick a number from 1 to 100." },
+]);
 ```
 
 ## Notes
 
-- The sandbox image must include a Node.js runtime that can execute the bundled files.
+- The sandbox runtime must include Node.js (or your chosen runtime).
+- For persistent skill-source wiring by directory, see [Skills](/skills-config).

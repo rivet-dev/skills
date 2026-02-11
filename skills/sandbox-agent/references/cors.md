@@ -13,7 +13,6 @@ By default, no CORS origins are allowed. You must explicitly specify origins for
 
 ```bash
 sandbox-agent server \
-  --token "$SANDBOX_TOKEN" \
   --cors-allow-origin "http://localhost:5173"
 ```
 
@@ -34,7 +33,6 @@ Specify the flag multiple times to allow multiple origins:
 
 ```bash
 sandbox-agent server \
-  --token "$SANDBOX_TOKEN" \
   --cors-allow-origin "http://localhost:5173" \
   --cors-allow-origin "http://localhost:3000"
 ```
@@ -45,7 +43,6 @@ By default, all methods and headers are allowed. To restrict them:
 
 ```bash
 sandbox-agent server \
-  --token "$SANDBOX_TOKEN" \
   --cors-allow-origin "https://your-app.com" \
   --cors-allow-method "GET" \
   --cors-allow-method "POST" \
