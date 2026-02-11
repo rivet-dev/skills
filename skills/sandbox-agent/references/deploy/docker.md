@@ -31,7 +31,7 @@ Access the API at `http://localhost:3000`.
 
 ```typescript
 import Docker from "dockerode";
-import { SandboxAgent } from "sandbox-agent";
+import { SandboxAgentClient } from "sandbox-agent";
 
 const docker = new Docker();
 const PORT = 3000;
@@ -60,7 +60,7 @@ await container.start();
 
 // Wait for server and connect
 const baseUrl = `http://127.0.0.1:${PORT}`;
-const client = await SandboxAgent.connect({ baseUrl });
+const client = new SandboxAgentClient({ baseUrl, agent: "mock" });
 
 // Use the client...
 await client.createSession("my-session", {

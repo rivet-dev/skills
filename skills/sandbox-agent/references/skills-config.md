@@ -12,12 +12,13 @@ Skills are local instruction bundles stored in `SKILL.md` files. Sandbox Agent c
 Pass `skills.sources` when creating a session to load skills from GitHub repos, local paths, or git URLs.
 
 ```ts TypeScript
-import { SandboxAgent } from "sandbox-agent";
+import { SandboxAgentClient } from "sandbox-agent";
 
-const client = await SandboxAgent.connect({
+const client = new SandboxAgentClient({
   baseUrl: "http://127.0.0.1:2468",
   token: process.env.SANDBOX_TOKEN,
-});
+  agent: "mock",
+  });
 
 await client.createSession("claude-skills", {
   agent: "claude",

@@ -65,13 +65,14 @@ This creates `dist/mcp-server.cjs` ready to upload.
 Start your sandbox, then write the bundled file into it.
 
 ```ts TypeScript
-import { SandboxAgent } from "sandbox-agent";
+import { SandboxAgentClient } from "sandbox-agent";
 import fs from "node:fs";
 
-const client = await SandboxAgent.connect({
+const client = new SandboxAgentClient({
   baseUrl: "http://127.0.0.1:2468",
   token: process.env.SANDBOX_TOKEN,
-});
+  agent: "mock",
+  });
 
 const content = await fs.promises.readFile("./dist/mcp-server.cjs");
 await client.writeFsFile(
@@ -170,9 +171,10 @@ npx esbuild src/random-number.ts --bundle --format=cjs --platform=node --target=
   <CodeGroup>
 ```ts TypeScript
 
-const client = await SandboxAgent.connect({
+const client = new SandboxAgentClient({
 baseUrl: "http://127.0.0.1:2468",
 token: process.env.SANDBOX_TOKEN,
+agent: "mock",
 });
 
 const script = await fs.promises.readFile("./dist/random-number.cjs");

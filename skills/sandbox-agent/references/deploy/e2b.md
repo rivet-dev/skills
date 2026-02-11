@@ -14,7 +14,7 @@
 
 ```typescript
 import { Sandbox } from "@e2b/code-interpreter";
-import { SandboxAgent } from "sandbox-agent";
+import { SandboxAgentClient } from "sandbox-agent";
 
 // Pass API keys to the sandbox
 const envs: Record<string, string> = {};
@@ -40,7 +40,7 @@ await sandbox.commands.run(
 
 // Connect to the server
 const baseUrl = `https://${sandbox.getHost(3000)}`;
-const client = await SandboxAgent.connect({ baseUrl });
+const client = new SandboxAgentClient({ baseUrl, agent: "mock" });
 
 // Wait for server to be ready
 for (let i = 0; i < 30; i++) {

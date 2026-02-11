@@ -23,12 +23,13 @@ Sessions are the unit of interaction with an agent. You create one session per t
 ## Create A Session
 
 ```ts TypeScript
-import { SandboxAgent } from "sandbox-agent";
+import { SandboxAgentClient } from "sandbox-agent";
 
-const client = await SandboxAgent.connect({
+const client = new SandboxAgentClient({
   baseUrl: "http://127.0.0.1:2468",
   token: process.env.SANDBOX_TOKEN,
-});
+  agent: "mock",
+  });
 
 await client.createSession("build-session", {
   agent: "codex",
@@ -57,12 +58,13 @@ curl -X POST "http://127.0.0.1:2468/v1/sessions/build-session" \
 ## Send A Message
 
 ```ts TypeScript
-import { SandboxAgent } from "sandbox-agent";
+import { SandboxAgentClient } from "sandbox-agent";
 
-const client = await SandboxAgent.connect({
+const client = new SandboxAgentClient({
   baseUrl: "http://127.0.0.1:2468",
   token: process.env.SANDBOX_TOKEN,
-});
+  agent: "mock",
+  });
 
 await client.postMessage("build-session", {
   message: "Summarize the repository structure.",
@@ -79,12 +81,13 @@ curl -X POST "http://127.0.0.1:2468/v1/sessions/build-session/messages" \
 ## Stream A Turn
 
 ```ts TypeScript
-import { SandboxAgent } from "sandbox-agent";
+import { SandboxAgentClient } from "sandbox-agent";
 
-const client = await SandboxAgent.connect({
+const client = new SandboxAgentClient({
   baseUrl: "http://127.0.0.1:2468",
   token: process.env.SANDBOX_TOKEN,
-});
+  agent: "mock",
+  });
 
 const response = await client.postMessageStream("build-session", {
   message: "Explain the main entrypoints.",
@@ -111,12 +114,13 @@ curl -N -X POST "http://127.0.0.1:2468/v1/sessions/build-session/messages/stream
 ## Fetch Events
 
 ```ts TypeScript
-import { SandboxAgent } from "sandbox-agent";
+import { SandboxAgentClient } from "sandbox-agent";
 
-const client = await SandboxAgent.connect({
+const client = new SandboxAgentClient({
   baseUrl: "http://127.0.0.1:2468",
   token: process.env.SANDBOX_TOKEN,
-});
+  agent: "mock",
+  });
 
 const events = await client.getEvents("build-session", {
   offset: 0,
@@ -137,12 +141,13 @@ curl -X GET "http://127.0.0.1:2468/v1/sessions/build-session/events?offset=0&lim
 ## Stream Events (SSE)
 
 ```ts TypeScript
-import { SandboxAgent } from "sandbox-agent";
+import { SandboxAgentClient } from "sandbox-agent";
 
-const client = await SandboxAgent.connect({
+const client = new SandboxAgentClient({
   baseUrl: "http://127.0.0.1:2468",
   token: process.env.SANDBOX_TOKEN,
-});
+  agent: "mock",
+  });
 
 for await (const event of client.streamEvents("build-session", { offset: 0 })) {
   console.log(event.type, event.data);
@@ -157,12 +162,13 @@ curl -N -X GET "http://127.0.0.1:2468/v1/sessions/build-session/events/sse?offse
 ## List Sessions
 
 ```ts TypeScript
-import { SandboxAgent } from "sandbox-agent";
+import { SandboxAgentClient } from "sandbox-agent";
 
-const client = await SandboxAgent.connect({
+const client = new SandboxAgentClient({
   baseUrl: "http://127.0.0.1:2468",
   token: process.env.SANDBOX_TOKEN,
-});
+  agent: "mock",
+  });
 
 const sessions = await client.listSessions();
 console.log(sessions.sessions);
@@ -178,12 +184,13 @@ curl -X GET "http://127.0.0.1:2468/v1/sessions" \
 When the agent asks a question, reply with an array of answers. Each inner array is one multi-select response.
 
 ```ts TypeScript
-import { SandboxAgent } from "sandbox-agent";
+import { SandboxAgentClient } from "sandbox-agent";
 
-const client = await SandboxAgent.connect({
+const client = new SandboxAgentClient({
   baseUrl: "http://127.0.0.1:2468",
   token: process.env.SANDBOX_TOKEN,
-});
+  agent: "mock",
+  });
 
 await client.replyQuestion("build-session", "question-1", {
   answers: [["yes"]],
@@ -200,12 +207,13 @@ curl -X POST "http://127.0.0.1:2468/v1/sessions/build-session/questions/question
 ## Reject A Question
 
 ```ts TypeScript
-import { SandboxAgent } from "sandbox-agent";
+import { SandboxAgentClient } from "sandbox-agent";
 
-const client = await SandboxAgent.connect({
+const client = new SandboxAgentClient({
   baseUrl: "http://127.0.0.1:2468",
   token: process.env.SANDBOX_TOKEN,
-});
+  agent: "mock",
+  });
 
 await client.rejectQuestion("build-session", "question-1");
 ```
@@ -220,12 +228,13 @@ curl -X POST "http://127.0.0.1:2468/v1/sessions/build-session/questions/question
 Use `once`, `always`, or `reject`.
 
 ```ts TypeScript
-import { SandboxAgent } from "sandbox-agent";
+import { SandboxAgentClient } from "sandbox-agent";
 
-const client = await SandboxAgent.connect({
+const client = new SandboxAgentClient({
   baseUrl: "http://127.0.0.1:2468",
   token: process.env.SANDBOX_TOKEN,
-});
+  agent: "mock",
+  });
 
 await client.replyPermission("build-session", "permission-1", {
   reply: "once",
@@ -242,12 +251,13 @@ curl -X POST "http://127.0.0.1:2468/v1/sessions/build-session/permissions/permis
 ## Terminate A Session
 
 ```ts TypeScript
-import { SandboxAgent } from "sandbox-agent";
+import { SandboxAgentClient } from "sandbox-agent";
 
-const client = await SandboxAgent.connect({
+const client = new SandboxAgentClient({
   baseUrl: "http://127.0.0.1:2468",
   token: process.env.SANDBOX_TOKEN,
-});
+  agent: "mock",
+  });
 
 await client.terminateSession("build-session");
 ```

@@ -199,9 +199,12 @@ Then pass the token when connecting:
 #### TypeScript
 
 ```typescript
-const client = await SandboxAgent.connect({
+import { SandboxAgentClient } from "sandbox-agent";
+
+const client = new SandboxAgentClient({
   baseUrl: "http://your-server:2468",
   token: process.env.SANDBOX_TOKEN,
+  agent: "mock",
 });
 ```
 
@@ -242,10 +245,11 @@ If agents are not installed up front, they will be lazily installed when creatin
 #### TypeScript
 
 ```typescript
-import { SandboxAgent } from "sandbox-agent";
+import { SandboxAgentClient } from "sandbox-agent";
 
-const client = await SandboxAgent.connect({
+const client = new SandboxAgentClient({
   baseUrl: "http://127.0.0.1:2468",
+  agent: "claude",
 });
 
 await client.createSession("my-session", {
@@ -359,6 +363,10 @@ Open the Inspector UI at `/ui/` on your server (e.g., `http://localhost:2468/ui/
 
 ## Reference Map
 
+### Advanced
+
+- [ACP HTTP Client](references/advanced/acp-http-client.md)
+
 ### AI
 
 - [llms.txt](references/ai/llms-txt.md)
@@ -380,7 +388,6 @@ Open the Inspector UI at `/ui/` on your server (e.g., `http://localhost:2468/ui/
 - [Attachments](references/attachments.md)
 - [Building a Chat UI](references/building-chat-ui.md)
 - [CLI Reference](references/cli.md)
-- [Conversion](references/conversion.md)
 - [CORS Configuration](references/cors.md)
 - [Credentials](references/credentials.md)
 - [Custom Tools](references/custom-tools.md)

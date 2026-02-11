@@ -12,12 +12,13 @@ MCP (Model Context Protocol) servers extend agents with tools. Sandbox Agent can
 The `mcp` field is a map of server name to config. Use `type: "local"` for stdio servers and `type: "remote"` for HTTP/SSE servers:
 
 ```ts TypeScript
-import { SandboxAgent } from "sandbox-agent";
+import { SandboxAgentClient } from "sandbox-agent";
 
-const client = await SandboxAgent.connect({
+const client = new SandboxAgentClient({
   baseUrl: "http://127.0.0.1:2468",
   token: process.env.SANDBOX_TOKEN,
-});
+  agent: "mock",
+  });
 
 await client.createSession("claude-mcp", {
   agent: "claude",

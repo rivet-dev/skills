@@ -6,6 +6,17 @@
 
 ---
 The filesystem API lets you list, read, write, move, and delete files inside the sandbox, plus upload batches of files via tar archives.
+Control operations (`list`, `mkdir`, `move`, `stat`, `delete`) are ACP extensions on `/v2/rpc` and require an active ACP connection in the SDK.
+
+Binary transfer is intentionally a separate HTTP API (not ACP extension methods):
+
+- `GET /v2/fs/file`
+- `PUT /v2/fs/file`
+- `POST /v2/fs/upload-batch`
+
+Reason: these are host/runtime capabilities implemented by Sandbox Agent for cross-agent-consistent behavior, and they may require streaming very large binary payloads that ACP JSON-RPC is not suited to transport efficiently.
+This is intentionally separate from ACP native `fs/read_text_file` and `fs/write_text_file`.
+ACP extension variants may exist in parallel for compatibility, but SDK defaults should use the HTTP endpoints above for binary transfer.
 
 ## Path Resolution
 
@@ -18,13 +29,14 @@ The session working directory is the server process current working directory at
 
 ## List Entries
 
-```ts TypeScript
-import { SandboxAgent } from "sandbox-agent";
+`listFsEntries()` uses ACP extension method `_sandboxagent/fs/list_entries`.
 
-const client = await SandboxAgent.connect({
-  baseUrl: "http://127.0.0.1:2468",
+```ts TypeScript
+import { SandboxAgentClient } from "sandbox-agent";
+
+const client = new SandboxAgentClient({ baseUrl: "http://127.0.0.1:2468",
   token: process.env.SANDBOX_TOKEN,
-});
+  agent: "mock" });
 
 const entries = await client.listFsEntries({
   path: "./workspace",
@@ -35,21 +47,23 @@ console.log(entries);
 ```
 
 ```bash cURL
-curl -X GET "http://127.0.0.1:2468/v1/fs/entries?path=./workspace&sessionId=my-session" \
-  -H "Authorization: Bearer $SANDBOX_TOKEN"
+curl -X POST "http://127.0.0.1:2468/v2/rpc" \
+  -H "Authorization: Bearer $SANDBOX_TOKEN" \
+  -H "x-acp-connection-id: acp_conn_1" \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"_sandboxagent/fs/list_entries","params":{"path":"./workspace","sessionId":"my-session"}}'
 ```
 
 ## Read And Write Files
 
-`PUT /v1/fs/file` writes raw bytes. `GET /v1/fs/file` returns raw bytes.
+`PUT /v2/fs/file` writes raw bytes. `GET /v2/fs/file` returns raw bytes.
 
 ```ts TypeScript
-import { SandboxAgent } from "sandbox-agent";
+import { SandboxAgentClient } from "sandbox-agent";
 
-const client = await SandboxAgent.connect({
-  baseUrl: "http://127.0.0.1:2468",
+const client = new SandboxAgentClient({ baseUrl: "http://127.0.0.1:2468",
   token: process.env.SANDBOX_TOKEN,
-});
+  agent: "mock" });
 
 await client.writeFsFile({ path: "./notes.txt", sessionId: "my-session" }, "hello");
 
@@ -63,24 +77,25 @@ console.log(text);
 ```
 
 ```bash cURL
-curl -X PUT "http://127.0.0.1:2468/v1/fs/file?path=./notes.txt&sessionId=my-session" \
+curl -X PUT "http://127.0.0.1:2468/v2/fs/file?path=./notes.txt&sessionId=my-session" \
   -H "Authorization: Bearer $SANDBOX_TOKEN" \
   --data-binary "hello"
 
-curl -X GET "http://127.0.0.1:2468/v1/fs/file?path=./notes.txt&sessionId=my-session" \
+curl -X GET "http://127.0.0.1:2468/v2/fs/file?path=./notes.txt&sessionId=my-session" \
   -H "Authorization: Bearer $SANDBOX_TOKEN" \
   --output ./notes.txt
 ```
 
 ## Create Directories
 
-```ts TypeScript
-import { SandboxAgent } from "sandbox-agent";
+`mkdirFs()` uses ACP extension method `_sandboxagent/fs/mkdir`.
 
-const client = await SandboxAgent.connect({
-  baseUrl: "http://127.0.0.1:2468",
+```ts TypeScript
+import { SandboxAgentClient } from "sandbox-agent";
+
+const client = new SandboxAgentClient({ baseUrl: "http://127.0.0.1:2468",
   token: process.env.SANDBOX_TOKEN,
-});
+  agent: "mock" });
 
 await client.mkdirFs({
   path: "./data",
@@ -89,19 +104,23 @@ await client.mkdirFs({
 ```
 
 ```bash cURL
-curl -X POST "http://127.0.0.1:2468/v1/fs/mkdir?path=./data&sessionId=my-session" \
-  -H "Authorization: Bearer $SANDBOX_TOKEN"
+curl -X POST "http://127.0.0.1:2468/v2/rpc" \
+  -H "Authorization: Bearer $SANDBOX_TOKEN" \
+  -H "x-acp-connection-id: acp_conn_1" \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":2,"method":"_sandboxagent/fs/mkdir","params":{"path":"./data","sessionId":"my-session"}}'
 ```
 
 ## Move, Delete, And Stat
 
-```ts TypeScript
-import { SandboxAgent } from "sandbox-agent";
+`moveFs()`, `statFs()`, and `deleteFsEntry()` use ACP extension methods (`_sandboxagent/fs/move`, `_sandboxagent/fs/stat`, `_sandboxagent/fs/delete_entry`).
 
-const client = await SandboxAgent.connect({
-  baseUrl: "http://127.0.0.1:2468",
+```ts TypeScript
+import { SandboxAgentClient } from "sandbox-agent";
+
+const client = new SandboxAgentClient({ baseUrl: "http://127.0.0.1:2468",
   token: process.env.SANDBOX_TOKEN,
-});
+  agent: "mock" });
 
 await client.moveFs(
   { from: "./notes.txt", to: "./notes-old.txt", overwrite: true },
@@ -122,16 +141,23 @@ console.log(stat);
 ```
 
 ```bash cURL
-curl -X POST "http://127.0.0.1:2468/v1/fs/move?sessionId=my-session" \
+curl -X POST "http://127.0.0.1:2468/v2/rpc" \
   -H "Authorization: Bearer $SANDBOX_TOKEN" \
+  -H "x-acp-connection-id: acp_conn_1" \
   -H "Content-Type: application/json" \
-  -d '{"from":"./notes.txt","to":"./notes-old.txt","overwrite":true}'
+  -d '{"jsonrpc":"2.0","id":3,"method":"_sandboxagent/fs/move","params":{"from":"./notes.txt","to":"./notes-old.txt","overwrite":true,"sessionId":"my-session"}}'
 
-curl -X GET "http://127.0.0.1:2468/v1/fs/stat?path=./notes-old.txt&sessionId=my-session" \
-  -H "Authorization: Bearer $SANDBOX_TOKEN"
+curl -X POST "http://127.0.0.1:2468/v2/rpc" \
+  -H "Authorization: Bearer $SANDBOX_TOKEN" \
+  -H "x-acp-connection-id: acp_conn_1" \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":4,"method":"_sandboxagent/fs/stat","params":{"path":"./notes-old.txt","sessionId":"my-session"}}'
 
-curl -X DELETE "http://127.0.0.1:2468/v1/fs/entry?path=./notes-old.txt&sessionId=my-session" \
-  -H "Authorization: Bearer $SANDBOX_TOKEN"
+curl -X POST "http://127.0.0.1:2468/v2/rpc" \
+  -H "Authorization: Bearer $SANDBOX_TOKEN" \
+  -H "x-acp-connection-id: acp_conn_1" \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":5,"method":"_sandboxagent/fs/delete_entry","params":{"path":"./notes-old.txt","sessionId":"my-session"}}'
 ```
 
 ## Batch Upload (Tar)
@@ -139,15 +165,14 @@ curl -X DELETE "http://127.0.0.1:2468/v1/fs/entry?path=./notes-old.txt&sessionId
 Batch upload accepts `application/x-tar` only and extracts into the destination directory. The response returns absolute paths for extracted files, capped at 1024 entries.
 
 ```ts TypeScript
-import { SandboxAgent } from "sandbox-agent";
+import { SandboxAgentClient } from "sandbox-agent";
 import fs from "node:fs";
 import path from "node:path";
 import tar from "tar";
 
-const client = await SandboxAgent.connect({
-  baseUrl: "http://127.0.0.1:2468",
+const client = new SandboxAgentClient({ baseUrl: "http://127.0.0.1:2468",
   token: process.env.SANDBOX_TOKEN,
-});
+  agent: "mock" });
 
 const archivePath = path.join(process.cwd(), "skills.tar");
 await tar.c({
@@ -167,7 +192,7 @@ console.log(result);
 ```bash cURL
 tar -cf skills.tar -C ./skills .
 
-curl -X POST "http://127.0.0.1:2468/v1/fs/upload-batch?path=./skills&sessionId=my-session" \
+curl -X POST "http://127.0.0.1:2468/v2/fs/upload-batch?path=./skills&sessionId=my-session" \
   -H "Authorization: Bearer $SANDBOX_TOKEN" \
   -H "Content-Type: application/x-tar" \
   --data-binary @skills.tar

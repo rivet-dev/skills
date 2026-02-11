@@ -10,13 +10,14 @@ Use the filesystem API to upload files, then reference them as attachments when 
 ### Upload a file
 
 ```ts TypeScript
-import { SandboxAgent } from "sandbox-agent";
+import { SandboxAgentClient } from "sandbox-agent";
 import fs from "node:fs";
 
-const client = await SandboxAgent.connect({
+const client = new SandboxAgentClient({
   baseUrl: "http://127.0.0.1:2468",
   token: process.env.SANDBOX_TOKEN,
-});
+  agent: "mock",
+  });
 
 const buffer = await fs.promises.readFile("./data.csv");
 
@@ -39,12 +40,13 @@ The response returns the absolute path that you should use for attachments.
 ### Attach the file in a prompt
 
 ```ts TypeScript
-import { SandboxAgent } from "sandbox-agent";
+import { SandboxAgentClient } from "sandbox-agent";
 
-const client = await SandboxAgent.connect({
+const client = new SandboxAgentClient({
   baseUrl: "http://127.0.0.1:2468",
   token: process.env.SANDBOX_TOKEN,
-});
+  agent: "mock",
+  });
 
 await client.postMessage("my-session", {
   message: "Please analyze the attached CSV.",
