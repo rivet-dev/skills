@@ -342,8 +342,3 @@ Open the Inspector UI at `/ui/` on your server (for example, `http://localhost:2
 - [Skills](references/skills-config.md)
 - [Telemetry](references/telemetry.md)
 - [Troubleshooting](references/troubleshooting.md)
-
-### SDKs
-
-- [Python](references/sdks/python.md)
-- [TypeScript](references/sdks/typescript.md)
