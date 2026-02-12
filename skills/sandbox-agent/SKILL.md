@@ -298,10 +298,6 @@ Open the Inspector UI at `/ui/` on your server (for example, `http://localhost:2
 
 ## Reference Map
 
-### Advanced
-
-- [ACP HTTP Client](references/advanced/acp-http-client.md)
-
 ### AI
 
 - [llms.txt](references/ai/llms-txt.md)
