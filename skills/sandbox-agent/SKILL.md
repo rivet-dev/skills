@@ -138,7 +138,7 @@ Install globally, then run.
 ```bash
 bun add -g @sandbox-agent/cli@0.2.x
 # Allow Bun to run postinstall scripts for native binaries (required for SandboxAgent.start()).
-bun pm -g trust @sandbox-agent/cli-linux-x64 @sandbox-agent/cli-darwin-arm64 @sandbox-agent/cli-darwin-x64 @sandbox-agent/cli-win32-x64
+bun pm -g trust @sandbox-agent/cli-linux-x64 @sandbox-agent/cli-linux-arm64 @sandbox-agent/cli-darwin-arm64 @sandbox-agent/cli-darwin-x64 @sandbox-agent/cli-win32-x64
 sandbox-agent server --no-token --host 0.0.0.0 --port 2468
 ```
 
@@ -163,7 +163,7 @@ For local development, use `SandboxAgent.start()` to spawn and manage the server
 ```bash
 bun add sandbox-agent@0.2.x
 # Allow Bun to run postinstall scripts for native binaries (required for SandboxAgent.start()).
-bun pm trust @sandbox-agent/cli-linux-x64 @sandbox-agent/cli-darwin-arm64 @sandbox-agent/cli-darwin-x64 @sandbox-agent/cli-win32-x64
+bun pm trust @sandbox-agent/cli-linux-x64 @sandbox-agent/cli-linux-arm64 @sandbox-agent/cli-darwin-arm64 @sandbox-agent/cli-darwin-x64 @sandbox-agent/cli-win32-x64
 ```
 
 ```typescript
