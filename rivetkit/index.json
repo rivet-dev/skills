@@ -2,7 +2,7 @@
   "name": "rivetkit",
   "description": "RivetKit backend and Rivet Actor runtime guidance. Use for building, modifying, debugging, or testing Rivet Actors, registries, serverless/runner modes, deployment, or actor-based workflows.",
   "skill_url": "/metadata/skills/rivetkit/SKILL.md",
-  "generated_at": "2026-01-31T05:30:59.421Z",
+  "generated_at": "2026-02-13T22:34:26.701Z",
   "references": [
     {
       "name": "actors/actions",
@@ -271,6 +271,13 @@
       "reference_url": "/metadata/skills/rivetkit/reference/general/http-server.md"
     },
     {
+      "name": "actors/appearance",
+      "title": "Icons & Names",
+      "description": "Customize actors with display names and icons for the Rivet inspector and dashboard.",
+      "canonical_url": "https://rivet.dev/docs/actors/appearance",
+      "reference_url": "/metadata/skills/rivetkit/reference/actors/appearance.md"
+    },
+    {
       "name": "actors/input",
       "title": "Input Parameters",
       "description": "Pass initialization data to actors when creating instances",
@@ -294,7 +301,7 @@
     {
       "name": "actors/lifecycle",
       "title": "Lifecycle",
-      "description": "Actors follow a well-defined lifecycle with hooks at each stage. Understanding these hooks is essential for proper initialization, state management, and cleanup.",
+      "description": "Learn about actor lifecycle hooks for initialization, state management, and cleanup.",
       "canonical_url": "https://rivet.dev/docs/actors/lifecycle",
       "reference_url": "/metadata/skills/rivetkit/reference/actors/lifecycle.md"
     },
@@ -367,6 +374,13 @@
       "description": "PostgreSQL is the recommended database backend for production deployments.",
       "canonical_url": "https://rivet.dev/docs/self-hosting/postgres",
       "reference_url": "/metadata/skills/rivetkit/reference/self-hosting/postgres.md"
+    },
+    {
+      "name": "actors/queue",
+      "title": "Queue Messages",
+      "description": "Send durable messages to Rivet Actors and optionally wait for completion.",
+      "canonical_url": "https://rivet.dev/docs/actors/queue",
+      "reference_url": "/metadata/skills/rivetkit/reference/actors/queue.md"
     },
     {
       "name": "self-hosting/railway",

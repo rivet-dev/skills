@@ -2,9 +2,13 @@
 
 > Source: `src/content/docs/actors/lifecycle.mdx`
 > Canonical URL: https://rivet.dev/docs/actors/lifecycle
-> Description: Actors follow a well-defined lifecycle with hooks at each stage. Understanding these hooks is essential for proper initialization, state management, and cleanup.
+> Description: Learn about actor lifecycle hooks for initialization, state management, and cleanup.
 
 ---
+# Lifecycle
+
+Actors follow a well-defined lifecycle with hooks at each stage. Understanding these hooks is essential for proper initialization, state management, and cleanup.
+
 ## Lifecycle
 
 Actors transition through several states during their lifetime. Each transition triggers specific hooks that let you initialize resources, manage connections, and clean up state.
@@ -15,6 +19,7 @@ Actors transition through several states during their lifetime. Each transition 
 2. `onCreate`
 3. `createVars`
 4. `onWake`
+5. `run` (background, does not block)
 
 **On Destroy**
 
@@ -24,10 +29,12 @@ Actors transition through several states during their lifetime. Each transition 
 
 1. `createVars`
 2. `onWake`
+3. `run` (background, does not block)
 
 **On Sleep** (after idle period)
 
-1. `onSleep`
+1. Wait for `run` to complete (with timeout)
+2. `onSleep`
 
 **On Connect** (per client)
 
@@ -232,6 +239,87 @@ const counter = actor({
 });
 ```
 
+### `run`
+
+[API Reference](/typedoc/interfaces/rivetkit.mod.ActorDefinition.html)
+
+The `run` hook is called after the actor starts and runs in the background without blocking actor startup. This is ideal for long-running background tasks like:
+
+- Reading from message queues in a loop
+- Tick loops for periodic work
+- Custom workflow logic
+- Background processing
+
+The handler receives an abort signal via `c.abortSignal` that fires when the actor is stopping. You should always check or listen to this signal to exit gracefully.
+
+**Important behavior:**
+- If the `run` handler exits (returns), the actor will crash and reschedule
+- If the `run` handler throws an error, the actor will crash and reschedule
+- On shutdown, the actor waits for the `run` handler to complete (with configurable timeout via `options.runStopTimeout`)
+
+```typescript
+import { actor } from "rivetkit";
+
+// Example: Tick loop
+const tickActor = actor({
+  state: { tickCount: 0 },
+
+  run: async (c) => {
+    c.log.info("Background loop started");
+
+    while (!c.abortSignal.aborted) {
+      c.state.tickCount++;
+      c.log.info({ msg: "tick", count: c.state.tickCount });
+
+      // Wait 1 second, but exit early if aborted
+      await new Promise<void>((resolve) => {
+        const timeout = setTimeout(resolve, 1000);
+        c.abortSignal.addEventListener("abort", () => {
+          clearTimeout(timeout);
+          resolve();
+        }, { once: true });
+      });
+    }
+
+    c.log.info("Background loop exiting gracefully");
+  },
+
+  actions: {
+    getTickCount: (c) => c.state.tickCount
+  }
+});
+```
+
+```typescript
+import { actor } from "rivetkit";
+
+// Example: Queue consumer
+const queueConsumer = actor({
+  state: { processedCount: 0 },
+
+  run: async (c) => {
+    c.log.info("Queue consumer started");
+
+    while (!c.abortSignal.aborted) {
+      // Wait for next message with timeout
+      const message = await c.queue.next("tasks", { timeout: 1000 });
+
+      if (message) {
+        c.log.info({ msg: "processing message", body: message.body });
+        // Process the message...
+        c.state.processedCount++;
+      }
+    }
+
+    c.log.info("Queue consumer exiting gracefully");
+  },
+
+  actions: {
+    getProcessedCount: (c) => c.state.processedCount
+  }
+});
+```
+
 ### `onStateChange`
 
 [API Reference](/typedoc/interfaces/rivetkit.mod.ActorDefinition.html)
@@ -279,35 +367,17 @@ The `onBeforeConnect` hook does NOT return connection state - it's used solely f
 ```typescript
 import { actor } from "rivetkit";
 
-// Helper function to validate tokens
-function validateToken(token: string): boolean {
-  return token.startsWith("valid_");
-}
-
-interface ConnParams {
-  authToken?: string;
-  userId?: string;
-  role?: string;
-}
-
-interface ConnState {
-  userId: string;
-  role: string;
-  joinTime: number;
-}
-
 const chatRoom = actor({
-  state: { messages: [] as string[] },
+  state: { messages: [] },
 
   // Method 1: Use a static default connection state
   connState: {
-    userId: "anonymous",
     role: "guest",
     joinTime: 0,
-  } as ConnState,
+  },
 
   // Method 2: Dynamically create connection state
-  createConnState: (c, params: ConnParams): ConnState => {
+  createConnState: (c, params: { userId?: string, role?: string }) => {
     return {
       userId: params.userId || "anonymous",
       role: params.role || "guest",
@@ -316,7 +386,7 @@ const chatRoom = actor({
   },
 
   // Validate connections before accepting them
-  onBeforeConnect: (c, params: ConnParams) => {
+  onBeforeConnect: (c, params: { authToken?: string }) => {
     // Validate authentication
     const authToken = params.authToken;
     if (!authToken || !validateToken(authToken)) {
@@ -327,7 +397,7 @@ const chatRoom = actor({
     // The actual connection state will come from connState or createConnState
   },
 
-  actions: {}
+  actions: { /* ... */ }
 });
 ```
 
@@ -342,18 +412,8 @@ Executed after the client has successfully connected. Can be async. Receives the
 ```typescript
 import { actor } from "rivetkit";
 
-interface ConnState {
-  userId: string;
-}
-
-interface UserInfo {
-  online: boolean;
-  lastSeen: number;
-}
-
 const chatRoom = actor({
-  state: { users: {} as Record<string, UserInfo>, messages: [] as string[] },
-  connState: { userId: "" } as ConnState,
+  state: { users: {}, messages: [] },
 
   onConnect: (c, conn) => {
     // Add user to the room's user list using connection state
@@ -369,7 +429,7 @@ const chatRoom = actor({
     console.log(`User ${userId} connected`);
   },
 
-  actions: {}
+  actions: { /* ... */ }
 });
 ```
 
@@ -384,18 +444,8 @@ Called when a client disconnects from the actor. Can be async. Receives the conn
 ```typescript
 import { actor } from "rivetkit";
 
-interface ConnState {
-  userId: string;
-}
-
-interface UserInfo {
-  online: boolean;
-  lastSeen: number;
-}
-
 const chatRoom = actor({
-  state: { users: {} as Record<string, UserInfo>, messages: [] as string[] },
-  connState: { userId: "" } as ConnState,
+  state: { users: {}, messages: [] },
 
   onDisconnect: (c, conn) => {
     // Update user status when they disconnect
@@ -411,7 +461,7 @@ const chatRoom = actor({
     console.log(`User ${userId} disconnected`);
   },
 
-  actions: {}
+  actions: { /* ... */ }
 });
 ```
 
@@ -442,11 +492,11 @@ const apiActor = actor({
       });
     }
 
-    // Return a default response for unhandled paths
-    return new Response("Not Found", { status: 404 });
+    // Return void to continue to default routing
+    return;
   },
 
-  actions: {}
+  actions: { /* ... */ }
 });
 ```
 
@@ -507,27 +557,37 @@ import { actor } from "rivetkit";
 const loggingActor = actor({
   state: { requestCount: 0 },
 
-  onBeforeActionResponse: <Out>(c: unknown, actionName: string, args: unknown[], output: Out): Out => {
+  onBeforeActionResponse: (c, actionName, args, output) => {
     // Log action calls
     console.log(`Action ${actionName} called with args:`, args);
     console.log(`Action ${actionName} returned:`, output);
 
-    // Return the output unchanged (or transform as needed)
-    return output;
+    // Add metadata to all responses
+    return {
+      data: output,
+      metadata: {
+        actionName,
+        timestamp: Date.now(),
+        requestId: crypto.randomUUID(),
+        userId: c.conn.state?.userId
+      }
+    };
   },
-
+  
   actions: {
     getUserData: (c, userId: string) => {
       c.state.requestCount++;
-
+      
+      // This will be wrapped with metadata by onBeforeActionResponse
       return {
         userId,
         profile: { name: "John Doe", email: "john@example.com" },
         lastActive: Date.now()
       };
     },
-
+    
     getStats: (c) => {
+      // This will also be wrapped with metadata
       return {
         requestCount: c.state.requestCount,
         uptime: process.uptime()
@@ -572,6 +632,9 @@ const myActor = actor({
     // Max time to wait for background promises during shutdown (default: 15000ms)
     waitUntilTimeout: 15_000,
 
+    // Max time to wait for run handler to stop during shutdown (default: 15000ms)
+    runStopTimeout: 15_000,
+
     // Timeout for connection liveness check (default: 2500ms)
     connectionLivenessTimeout: 2500,
 
@@ -603,6 +666,7 @@ const myActor = actor({
 | `stateSaveInterval` | 10000ms | Interval for persisting state |
 | `actionTimeout` | 60000ms | Timeout for action execution |
 | `waitUntilTimeout` | 15000ms | Max time to wait for background promises during shutdown |
+| `runStopTimeout` | 15000ms | Max time to wait for run handler to stop during shutdown |
 | `connectionLivenessTimeout` | 2500ms | Timeout for connection liveness check |
 | `connectionLivenessInterval` | 5000ms | Interval for connection liveness check |
 | `noSleep` | false | Prevent actor from sleeping |
@@ -613,7 +677,9 @@ const myActor = actor({
 
 ### Running Background Tasks
 
-The `c.runInBackground` method allows you to execute promises asynchronously without blocking the actor's main execution flow. The actor is prevented from sleeping while the promise passed to `runInBackground` is still active. This is useful for fire-and-forget operations where you don't need to wait for completion.
+#### `waitUntil`
+
+The `c.waitUntil` method allows you to execute promises asynchronously without blocking the actor's main execution flow. This is useful for fire-and-forget operations where you don't need to wait for completion.
 
 Common use cases:
 - **Analytics and logging**: Send events to external services without delaying responses
@@ -622,21 +688,14 @@ Common use cases:
 ```typescript
 import { actor } from "rivetkit";
 
-interface PlayerInfo {
-  joinedAt: number;
-}
-
 const gameRoom = actor({
-  state: {
-    players: {} as Record<string, PlayerInfo>,
-    scores: {} as Record<string, number>
-  },
+  state: { players: {}, scores: {} },
 
   actions: {
     playerJoined: (c, playerId: string) => {
       c.state.players[playerId] = { joinedAt: Date.now() };
 
-      // Send analytics event without blocking using waitUntil
+      // Send analytics event without blocking
       c.waitUntil(
         fetch('https://analytics.example.com/events', {
           method: 'POST',
@@ -653,6 +712,48 @@ const gameRoom = actor({
   }
 });
 ```
+
+Note that errors thrown in `waitUntil` promises are logged but not propagated to the caller.
+
+#### `keepAwake`
+
+The `c.keepAwake` method prevents the actor from sleeping while a promise is running, and returns the resolved value. Unlike `waitUntil`, errors are propagated to the caller, making it suitable for tracked background work where you need to handle the result.
+
+Common use cases:
+- **Background work with results**: Perform async work that you need to await and handle errors for
+- **Preventing sleep during critical operations**: Keep the actor awake during important async operations
+
+```typescript
+import { actor } from "rivetkit";
+
+const dataProcessor = actor({
+  state: { processedCount: 0 },
+
+  actions: {
+    processData: async (c, data: string) => {
+      // Keep actor awake while processing, and get the result
+      const result = await c.keepAwake(
+        fetch('https://api.example.com/process', {
+          method: 'POST',
+          body: JSON.stringify({ data })
+        }).then(res => res.json())
+      );
+
+      c.state.processedCount++;
+
+      // Errors from the promise will propagate here
+      return result;
+    },
+  }
+});
+```
+
+| Aspect | `waitUntil` | `keepAwake` |
+|--------|-------------|-------------|
+| Return type | `void` | `Promise` |
+| Error handling | Logs and swallows | Propagates to caller |
+| Prevents sleep | Yes (during shutdown) | Yes (prevents sleep timer) |
+| Use case | Fire-and-forget | Tracked background work |
 
 ### Actor Shutdown Abort Signal
 
@@ -685,25 +786,17 @@ When extracting logic from lifecycle hooks or actions into external functions, y
 ```typescript
 import { actor, ActorContextOf } from "rivetkit";
 
-// Define the actor first
 const myActor = actor({
   state: { count: 0 },
-  actions: {}
+  
+  // Use external function in lifecycle hook
+  onWake: (c) => logActorStarted(c)
 });
 
-// Then define functions using the actor's context type
+// Simple external function with typed context
 function logActorStarted(c: ActorContextOf<typeof myActor>) {
   console.log(`Actor started with count: ${c.state.count}`);
 }
-
-// Usage example: call the function from inside the actor
-const myActorWithHook = actor({
-  state: { count: 0 },
-  onWake: (c) => {
-    console.log(`Actor woke up with count: ${c.state.count}`);
-  },
-  actions: {}
-});
 ```
 
 See [Types](/docs/actors/types) for more details on using `ActorContextOf`.
@@ -711,7 +804,7 @@ See [Types](/docs/actors/types) for more details on using `ActorContextOf`.
 ## Full Example
 
 ```typescript
-import { actor } from "rivetkit";
+import { actor, CreateContext } from "rivetkit";
 
 interface CounterInput {
   initialCount?: number;
@@ -738,23 +831,8 @@ interface ConnState {
 }
 
 const counter = actor({
-  // Default state (needed for type inference)
-  state: {
-    count: 0,
-    stepSize: 1,
-    name: "Unnamed Counter",
-    requestCount: 0,
-  } as CounterState,
-
-  // Default connection state (needed for type inference)
-  connState: {
-    userId: "",
-    role: "",
-    connectedAt: 0,
-  } as ConnState,
-
   // Initialize state with input
-  createState: (c, input: CounterInput): CounterState => ({
+  createState: (c: CreateContext, input: CounterInput): CounterState => ({
     count: input.initialCount ?? 0,
     stepSize: input.stepSize ?? 1,
     name: input.name ?? "Unnamed Counter",
@@ -781,6 +859,21 @@ const counter = actor({
     console.log(`Counter "${c.state.name}" started with count:`, c.state.count);
   },
 
+  // Background task (does not block startup)
+  run: async (c) => {
+    while (!c.abortSignal.aborted) {
+      // Example: periodic logging
+      console.log(`Counter "${c.state.name}" is at ${c.state.count}`);
+      await new Promise<void>((resolve) => {
+        const timeout = setTimeout(resolve, 60000);
+        c.abortSignal.addEventListener("abort", () => {
+          clearTimeout(timeout);
+          resolve();
+        }, { once: true });
+      });
+    }
+  },
+
   onStateChange: (c, newState) => {
     c.broadcast('countUpdated', {
       count: newState.count,
@@ -805,10 +898,17 @@ const counter = actor({
   },
 
   // Transform all action responses
-  onBeforeActionResponse: <Out>(c: unknown, actionName: string, args: unknown[], output: Out): Out => {
-    // Log action calls
-    console.log(`Action ${actionName} called`);
-    return output;
+  onBeforeActionResponse: (c, actionName, args, output) => {
+    c.state.requestCount++;
+
+    return {
+      data: output,
+      metadata: {
+        action: actionName,
+        timestamp: Date.now(),
+        requestNumber: c.state.requestCount
+      }
+    };
   },
 
   // Define actions

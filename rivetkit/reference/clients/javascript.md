@@ -118,7 +118,7 @@ await conn.dispose();
 
 For actors that implement `onRequest` or `onWebSocket`, call them directly:
 
-```ts
+```ts @nocheck
 import { createClient } from "rivetkit/client";
 
 const client = createClient();
@@ -127,7 +127,7 @@ const handle = client.chatRoom.getOrCreate(["general"]);
 const response = await handle.fetch("history");
 const history = await response.json();
 
-const ws = await handle.websocket("stream");
+const ws = await handle.webSocket("stream");
 ws.addEventListener("message", (event) => {
   console.log("message:", event.data);
 });

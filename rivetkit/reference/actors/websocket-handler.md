@@ -48,7 +48,7 @@ See also the [raw WebSocket handler example](https://github.com/rivet-dev/rivet/
 
 Use the `.websocket()` method on an actor handle to open a WebSocket connection to the actor's `onWebSocket` handler. This can be executed from either your frontend or backend.
 
-```typescript {{"title":"registry.ts"}} @hide
+```typescript {{"title":"registry.ts"}} @hide @nocheck
 import { actor, setup } from "rivetkit";
 
 export const chat = actor({
@@ -64,7 +64,7 @@ export const chat = actor({
 export const registry = setup({ use: { chat } });
 ```
 
-```typescript {{"title":"client.ts"}}
+```typescript {{"title":"client.ts"}} @nocheck
 import { createClient } from "rivetkit/client";
 import type { registry } from "./registry";
 
@@ -73,7 +73,7 @@ const client = createClient<typeof registry>();
 const actor = client.chat.getOrCreate(["my-chat"]);
 
 // Open WebSocket connection
-const ws = await actor.websocket("/");
+const ws = await actor.webSocket("/");
 
 // Listen for messages
 ws.addEventListener("message", (event) => {
@@ -91,7 +91,7 @@ The `.websocket()` method returns a standard WebSocket.
 
 Use `.getGatewayUrl()` to get the raw gateway URL for the actor. This is useful when you need to use the URL with external tools or custom WebSocket clients.
 
-```typescript {{"title":"registry.ts"}} @hide
+```typescript {{"title":"registry.ts"}} @hide @nocheck
 import { actor, setup } from "rivetkit";
 
 export const chat = actor({
@@ -107,7 +107,7 @@ export const chat = actor({
 export const registry = setup({ use: { chat } });
 ```
 
-```typescript {{"title":"client.ts"}}
+```typescript {{"title":"client.ts"}} @nocheck
 import { createClient } from "rivetkit/client";
 import type { registry } from "./registry";
 
@@ -205,7 +205,7 @@ const app = new Hono();
 app.get("/ws/:id", upgradeWebSocket(async (c) => {
     const actorId = c.req.param("id");
     const actorHandle = client.chat.get([actorId]);
-    const actorWs = await actorHandle.websocket("/");
+    const actorWs = await actorHandle.webSocket("/");
 
     return {
         onOpen: (evt: Event, ws: WSContext) => {

@@ -865,7 +865,7 @@ const client = createClient<typeof registry>();
 const actor = client.chat.getOrCreate(["my-chat"]);
 
 // Use built-in websocket method
-const ws = await actor.websocket("/");
+const ws = await actor.webSocket("/");
 
 // Or get raw URL for external tools
 const url = await actor.getGatewayUrl();
@@ -907,6 +907,22 @@ Find the full client guides here:
 - [JavaScript Client](/docs/clients/javascript)
 - [React Client](/docs/clients/react)
 - [Swift Client](/docs/clients/swift)
+
+### Icons & Names
+
+Customize how actors appear in the UI with display names and icons:
+
+```typescript
+const chatRoom = actor({
+  options: {
+    name: "Chat Room",
+    icon: "💬",  // or FontAwesome: "comments", "chart-line", etc.
+  },
+  // ...
+});
+```
+
+[Documentation](/docs/actors/appearance).
 
 ## Authentication & Security
 
@@ -988,6 +1004,7 @@ The RivetKit OpenAPI specification is available in the skill directory at `opena
 - [External SQL Database](reference/actors/external-sql.md)
 - [Fetch and WebSocket Handler](reference/actors/fetch-and-websocket-handler.md)
 - [Helper Types](reference/actors/helper-types.md)
+- [Icons & Names](reference/actors/appearance.md)
 - [Input Parameters](reference/actors/input.md)
 - [Lifecycle](reference/actors/lifecycle.md)
 - [Low-Level HTTP Request Handler](reference/actors/request-handler.md)
@@ -996,6 +1013,7 @@ The RivetKit OpenAPI specification is available in the skill directory at `opena
 - [Metadata](reference/actors/metadata.md)
 - [Next.js Quickstart](reference/actors/quickstart/next-js.md)
 - [Node.js & Bun Quickstart](reference/actors/quickstart/backend.md)
+- [Queue Messages](reference/actors/queue.md)
 - [React Quickstart](reference/actors/quickstart/react.md)
 - [Scaling & Concurrency](reference/actors/scaling.md)
 - [Sharing and Joining State](reference/actors/sharing-and-joining-state.md)
