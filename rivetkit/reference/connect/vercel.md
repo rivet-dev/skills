@@ -25,7 +25,7 @@ Your Next.js project should have the following structure:
 - `src/app/api/rivet/[...all]/route.ts`: RivetKit route handler
 - `src/actors.ts`: Actor definitions and registry
 
-See the [Next.js quickstart](/docs/actors/quickstart/next-js) or the [Next.js template](/templates/next-js) to get started.
+See the [Next.js quickstart](/docs/actors/quickstart/next-js) or the [Next.js example](https://github.com/rivet-dev/rivet/tree/main/examples/next-js) to get started.
 
 ### Hono
 
@@ -62,7 +62,7 @@ export default app;
 }
 ```
 
-See the [Hello World template](/templates/hello-world) for a complete example.
+See the [Hello World example](https://github.com/rivet-dev/rivet/tree/main/examples/hello-world) for a complete example.
 
 For more details on Hono deployments, see [Vercel's Hono documentation](https://vercel.com/docs/frameworks/backend/hono).
 
