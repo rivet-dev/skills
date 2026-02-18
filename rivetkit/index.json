@@ -2,7 +2,7 @@
   "name": "rivetkit",
   "description": "RivetKit backend and Rivet Actor runtime guidance. Use for building, modifying, debugging, or testing Rivet Actors, registries, serverless/runner modes, deployment, or actor-based workflows.",
   "skill_url": "/metadata/skills/rivetkit/SKILL.md",
-  "generated_at": "2026-02-17T23:25:04.031Z",
+  "generated_at": "2026-02-18T01:23:12.639Z",
   "references": [
     {
       "name": "actors/actions",
@@ -87,6 +87,13 @@
       "description": "Cross-Origin Resource Sharing (CORS) controls which origins (domains) can access your actors. When actors are exposed to the public internet, proper origin validation is critical to prevent security breaches and denial of service attacks.",
       "canonical_url": "https://rivet.dev/docs/general/cors",
       "reference_url": "/metadata/skills/rivetkit/reference/general/cors.md"
+    },
+    {
+      "name": "actors/debugging",
+      "title": "Debugging",
+      "description": "Inspect and debug running Rivet Actors using the management and actor inspector HTTP APIs.",
+      "canonical_url": "https://rivet.dev/docs/actors/debugging",
+      "reference_url": "/metadata/skills/rivetkit/reference/actors/debugging.md"
     },
     {
       "name": "connect/aws-lambda",
