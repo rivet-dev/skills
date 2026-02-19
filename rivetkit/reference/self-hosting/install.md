@@ -13,7 +13,7 @@ For more options:
 ## Docker
 
 ```bash
-docker run -p 6420:6420 rivetkit/engine
+docker run -p 6420:6420 rivetdev/engine
 ```
 
 ## Prebuilt Binaries

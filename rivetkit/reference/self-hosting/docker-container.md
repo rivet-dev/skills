@@ -10,7 +10,7 @@ Run with ephemeral storage:
 ## Quick Start
 
 ```bash
-docker run -p 6420:6420 rivetkit/engine
+docker run -p 6420:6420 rivetdev/engine
 ```
 
 Run with persistent storage:
@@ -20,7 +20,7 @@ docker run \
   -p 6420:6420 \
   -v rivet-data:/data \
   -e RIVET__FILE_SYSTEM__PATH="/data" \
-  rivetkit/engine
+  rivetdev/engine
 ```
 
 ## Configuration
@@ -33,7 +33,7 @@ Configure Rivet using environment variables:
 docker run -p 6420:6420 \
   -v rivet-data:/data \
   -e RIVET__POSTGRES__URL="postgresql://postgres:password@localhost:5432/db" \
-  rivetkit/engine
+  rivetdev/engine
 ```
 
 ### Config File
@@ -54,7 +54,7 @@ EOF
 docker run -p 6420:6420 \
   -v rivet-data:/data \
   -v $(pwd)/rivet-config.json:/etc/rivet/config.json:ro \
-  rivetkit/engine
+  rivetdev/engine
 ```
 
 ## Production Setup
@@ -81,7 +81,7 @@ docker run -d \
   --network rivet-net \
   -p 6420:6420 \
   -e RIVET__POSTGRES__URL="postgresql://rivet:rivet_password@postgres:5432/rivet" \
-  rivetkit/engine
+  rivetdev/engine
 ```
 
 ## Next Steps

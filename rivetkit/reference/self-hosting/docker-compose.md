@@ -12,7 +12,7 @@ Run with ephemeral storage:
 ```yaml
 services:
   rivet-engine:
-    image: rivetkit/engine:latest
+    image: rivetdev/engine:latest
     ports:
       - "6420:6420"
     restart: unless-stopped
@@ -23,7 +23,7 @@ Run with persistent storage:
 ```yaml
 services:
   rivet-engine:
-    image: rivetkit/engine:latest
+    image: rivetdev/engine:latest
     ports:
       - "6420:6420"
     volumes:
@@ -51,7 +51,7 @@ Configure Rivet using environment variables in your compose file:
 ```yaml
 services:
   rivet-engine:
-    image: rivetkit/engine:latest
+    image: rivetdev/engine:latest
     ports:
       - "6420:6420"
     volumes:
@@ -88,7 +88,7 @@ Mount a JSON configuration file:
 ```yaml
 services:
   rivet-engine:
-    image: rivetkit/engine:latest
+    image: rivetdev/engine:latest
     ports:
       - "6420:6420"
     volumes:
@@ -127,7 +127,7 @@ services:
     restart: unless-stopped
 
   rivet-engine:
-    image: rivetkit/engine:latest
+    image: rivetdev/engine:latest
     ports:
       - "6420:6420"
     environment:

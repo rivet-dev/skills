@@ -46,6 +46,8 @@ export const registry = setup({
 
 Choose your preferred web framework:
 
+### Default
+
 ```ts {{"title":"registry.ts"}} @hide
 import { actor, setup } from "rivetkit";
 
@@ -65,7 +67,7 @@ export const registry = setup({
 });
 ```
 
-```ts Default
+```ts {{"title":"index.ts"}}
 import { createHandler } from "@rivetkit/cloudflare-workers";
 import { registry } from "./registry";
 
@@ -74,6 +76,8 @@ const { handler, ActorHandler } = createHandler(registry);
 export { handler as default, ActorHandler };
 ```
 
+### Hono
+
 ```ts {{"title":"registry.ts"}} @hide
 import { actor, setup } from "rivetkit";
 
@@ -93,7 +97,7 @@ export const registry = setup({
 });
 ```
 
-```ts Hono
+```ts {{"title":"index.ts"}}
 import { createHandler, type Client } from "@rivetkit/cloudflare-workers";
 import { Hono } from "hono";
 import { registry } from "./registry";
@@ -116,6 +120,8 @@ const { handler, ActorHandler } = createHandler(registry, { fetch: app.fetch });
 export { handler as default, ActorHandler };
 ```
 
+### Manual Routing
+
 ```ts {{"title":"registry.ts"}} @hide
 import { actor, setup } from "rivetkit";
 
@@ -135,7 +141,7 @@ export const registry = setup({
 });
 ```
 
-```ts Manual-Routing @nocheck
+```ts {{"title":"index.ts"}} @nocheck
 import { createHandler } from "@rivetkit/cloudflare-workers";
 import { registry } from "./registry";
 
@@ -163,6 +169,8 @@ const { handler, ActorHandler } = createHandler(registry, {
 export { handler as default, ActorHandler };
 ```
 
+### Advanced
+
 ```ts {{"title":"registry.ts"}} @hide
 import { actor, setup } from "rivetkit";
 
@@ -182,7 +190,7 @@ export const registry = setup({
 });
 ```
 
-```ts Advanced @nocheck
+```ts {{"title":"index.ts"}} @nocheck
 import { createInlineClient } from "@rivetkit/cloudflare-workers";
 import { registry } from "./registry";
 
