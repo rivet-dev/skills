@@ -2,7 +2,7 @@
   "name": "rivetkit",
   "description": "RivetKit backend and Rivet Actor runtime guidance. Use for building, modifying, debugging, or testing Rivet Actors, registries, serverless/runner modes, deployment, or actor-based workflows.",
   "skill_url": "/metadata/skills/rivetkit/SKILL.md",
-  "generated_at": "2026-02-19T19:54:25.986Z",
+  "generated_at": "2026-02-19T22:48:16.537Z",
   "references": [
     {
       "name": "actors/actions",
@@ -385,7 +385,7 @@
     {
       "name": "actors/queue",
       "title": "Queue Messages",
-      "description": "Send durable messages to Rivet Actors and optionally wait for completion.",
+      "description": "Send durable queue messages to Rivet Actors and consume them from run loops.",
       "canonical_url": "https://rivet.dev/docs/actors/queue",
       "reference_url": "/metadata/skills/rivetkit/reference/actors/queue.md"
     },

@@ -268,7 +268,7 @@ const tickActor = actor({
   run: async (c) => {
     c.log.info("Background loop started");
 
-    while (!c.abortSignal.aborted) {
+    while (!c.aborted) {
       c.state.tickCount++;
       c.log.info({ msg: "tick", count: c.state.tickCount });
 
@@ -301,9 +301,10 @@ const queueConsumer = actor({
   run: async (c) => {
     c.log.info("Queue consumer started");
 
-    while (!c.abortSignal.aborted) {
-      // Wait for next message with timeout
-      const message = await c.queue.next("tasks", { timeout: 1000 });
+    while (!c.aborted) {
+      // Wait for next message with timeout.
+      const messages = await c.queue.next({ names: ["tasks"], timeout: 1000 });
+      const message = messages[0];
 
       if (message) {
         c.log.info({ msg: "processing message", body: message.body });
@@ -859,7 +860,7 @@ const counter = actor({
 
   // Background task (does not block startup)
   run: async (c) => {
-    while (!c.abortSignal.aborted) {
+    while (!c.aborted) {
       // Example: periodic logging
       console.log(`Counter "${c.state.name}" is at ${c.state.count}`);
       await new Promise<void>((resolve) => {

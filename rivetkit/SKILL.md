@@ -1086,6 +1086,10 @@ The RivetKit OpenAPI specification is available in the skill directory at `opena
 - [PostgreSQL](reference/self-hosting/postgres.md)
 - [Railway Deployment](reference/self-hosting/railway.md)
 
+## Code Style
+
+- Use object property syntax (arrow functions) for lifecycle hooks and `run`, not method shorthand. For example, use `onWake: async (c) => { ... }` instead of `async onWake(c) { ... }`. This applies to `onCreate`, `onDestroy`, `onWake`, `onSleep`, `onStateChange`, `onBeforeConnect`, `onConnect`, `onDisconnect`, `onBeforeActionResponse`, `onRequest`, `onWebSocket`, and `run`.
+
 ## Misc Notes
 
 - The Rivet domain is rivet.dev, not rivet.gg
