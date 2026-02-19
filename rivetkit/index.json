@@ -2,8 +2,15 @@
   "name": "rivetkit",
   "description": "RivetKit backend and Rivet Actor runtime guidance. Use for building, modifying, debugging, or testing Rivet Actors, registries, serverless/runner modes, deployment, or actor-based workflows.",
   "skill_url": "/metadata/skills/rivetkit/SKILL.md",
-  "generated_at": "2026-02-19T22:48:16.537Z",
+  "generated_at": "2026-02-19T22:58:01.545Z",
   "references": [
+    {
+      "name": "actors/access-control",
+      "title": "Access Control",
+      "description": "Authorize inbound actor entrypoints with the canInvoke hook.",
+      "canonical_url": "https://rivet.dev/docs/actors/access-control",
+      "reference_url": "/metadata/skills/rivetkit/reference/actors/access-control.md"
+    },
     {
       "name": "actors/actions",
       "title": "Actions",

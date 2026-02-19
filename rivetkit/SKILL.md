@@ -1003,6 +1003,7 @@ The RivetKit OpenAPI specification is available in the skill directory at `opena
 
 ### Actors
 
+- [Access Control](reference/actors/access-control.md)
 - [Actions](reference/actors/actions.md)
 - [Actor Keys](reference/actors/keys.md)
 - [Actor Scheduling](reference/actors/schedule.md)
