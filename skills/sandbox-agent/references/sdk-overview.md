@@ -39,6 +39,14 @@ const sdk = await SandboxAgent.connect({
 });
 ```
 
+With a custom fetch handler (for example, proxying requests inside Workers):
+
+```ts
+const sdk = await SandboxAgent.connect({
+  fetch: (input, init) => customFetch(input, init),
+});
+```
+
 With persistence:
 
 ```ts
@@ -158,9 +166,10 @@ console.log(url);
 
 Parameters:
 
-- `baseUrl` (required): Sandbox Agent server URL
+- `baseUrl` (required unless `fetch` is provided): Sandbox Agent server URL
 - `token` (optional): Bearer token for authenticated servers
 - `headers` (optional): Additional request headers
+- `fetch` (optional): Custom fetch implementation used by SDK HTTP and ACP calls
 
 ## Types
 

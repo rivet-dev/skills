@@ -31,18 +31,23 @@ RUN sandbox-agent install-agent claude && sandbox-agent install-agent codex
 EXPOSE 8000
 ```
 
-## TypeScript proxy example
+## TypeScript example
 
 ```typescript
 import { getSandbox, type Sandbox } from "@cloudflare/sandbox";
+import { Hono } from "hono";
+import { SandboxAgent } from "sandbox-agent";
+
 export { Sandbox } from "@cloudflare/sandbox";
 
-type Env = {
+type Bindings = {
   Sandbox: DurableObjectNamespace<Sandbox>;
+  ASSETS: Fetcher;
   ANTHROPIC_API_KEY?: string;
   OPENAI_API_KEY?: string;
 };
 
+const app = new Hono<{ Bindings: Bindings }>();
 const PORT = 8000;
 
 async function isServerRunning(sandbox: Sandbox): Promise<boolean> {
@@ -54,63 +59,49 @@ async function isServerRunning(sandbox: Sandbox): Promise<boolean> {
   }
 }
 
-async function ensureRunning(sandbox: Sandbox, env: Env): Promise<void> {
-  if (await isServerRunning(sandbox)) return;
-
-  const envVars: Record<string, string> = {};
-  if (env.ANTHROPIC_API_KEY) envVars.ANTHROPIC_API_KEY = env.ANTHROPIC_API_KEY;
-  if (env.OPENAI_API_KEY) envVars.OPENAI_API_KEY = env.OPENAI_API_KEY;
-  await sandbox.setEnvVars(envVars);
-
-  await sandbox.startProcess(`sandbox-agent server --no-token --host 0.0.0.0 --port ${PORT}`);
-
-  for (let i = 0; i < 30; i++) {
-    if (await isServerRunning(sandbox)) return;
-    await new Promise((r) => setTimeout(r, 200));
+async function getReadySandbox(name: string, env: Bindings): Promise<Sandbox> {
+  const sandbox = getSandbox(env.Sandbox, name);
+  if (!(await isServerRunning(sandbox))) {
+    const envVars: Record<string, string> = {};
+    if (env.ANTHROPIC_API_KEY) envVars.ANTHROPIC_API_KEY = env.ANTHROPIC_API_KEY;
+    if (env.OPENAI_API_KEY) envVars.OPENAI_API_KEY = env.OPENAI_API_KEY;
+    await sandbox.setEnvVars(envVars);
+    await sandbox.startProcess(`sandbox-agent server --no-token --host 0.0.0.0 --port ${PORT}`);
   }
-
-  throw new Error("sandbox-agent failed to start");
+  return sandbox;
 }
 
-export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
-    const url = new URL(request.url);
-    const match = url.pathname.match(/^\/sandbox\/([^/]+)(\/.*)?$/);
+app.post("/sandbox/:name/prompt", async (c) => {
+  const sandbox = await getReadySandbox(c.req.param("name"), c.env);
 
-    if (!match) {
-      return new Response("Not found", { status: 404 });
-    }
+  const sdk = await SandboxAgent.connect({
+    fetch: (input, init) => sandbox.containerFetch(input as Request | string | URL, init, PORT),
+  });
 
-    const [, name, path = "/"] = match;
-    const sandbox = getSandbox(env.Sandbox, name);
-    await ensureRunning(sandbox, env);
+  const session = await sdk.createSession({ agent: "codex" });
+  const response = await session.prompt([{ type: "text", text: "Summarize this repository" }]);
+  await sdk.destroySession(session.id);
+  await sdk.dispose();
 
-    return sandbox.containerFetch(
-      new Request(`http://localhost${path}${url.search}`, request),
-      PORT,
-    );
-  },
-};
-```
-
-## Connect from a client
-
-```typescript
-import { SandboxAgent } from "sandbox-agent";
-
-const sdk = await SandboxAgent.connect({
-  baseUrl: "http://localhost:8787/sandbox/my-sandbox",
+  return c.json(response);
 });
 
-const session = await sdk.createSession({ agent: "claude" });
+app.all("/sandbox/:name/proxy/*", async (c) => {
+  const sandbox = await getReadySandbox(c.req.param("name"), c.env);
+  const wildcard = c.req.param("*");
+  const path = wildcard ? `/${wildcard}` : "/";
+  const query = new URL(c.req.raw.url).search;
 
-const off = session.onEvent((event) => {
-  console.log(event.sender, event.payload);
+  return sandbox.containerFetch(new Request(`http://localhost${path}${query}`, c.req.raw), PORT);
 });
 
-await session.prompt([{ type: "text", text: "Summarize this repository" }]);
-off();
+app.all("*", (c) => c.env.ASSETS.fetch(c.req.raw));
+
+export default app;
 ```
+
+Create the SDK client inside the Worker using custom `fetch` backed by `sandbox.containerFetch(...)`.
+This keeps all Sandbox Agent calls inside the Cloudflare sandbox routing path and does not require a `baseUrl`.
 
 ## Local development
 
@@ -121,7 +112,7 @@ npm run dev
 Test health:
 
 ```bash
-curl http://localhost:8787/sandbox/demo/v1/health
+curl http://localhost:8787/sandbox/demo/proxy/v1/health
 ```
 
 ## Production deployment
