@@ -66,9 +66,9 @@ Use that canonical URL when citing, not the reference file path.
 
 ## First Steps
 
-1. Install RivetKit (latest: 2.0.42)
+1. Install RivetKit (latest: 2.1.0-rc.2)
    ```bash
-   npm install rivetkit@2.0.42
+   npm install rivetkit@2.1.0-rc.2
    ```
 2. Define a registry with `setup({ use: { /* actors */ } })`.
 3. Expose `registry.serve()` or `registry.handler()` (serverless) or `registry.startRunner()` (runner mode). Prefer serverless mode unless the user has a specific reason to use runner mode.
@@ -456,30 +456,30 @@ Use workflows when your `run` logic needs durable, replayable multi-step executi
 
 ```ts
 import { actor, queue } from "rivetkit";
-import { Loop, workflow } from "rivetkit/workflow";
+import { workflow } from "rivetkit/workflow";
 
-const workflowCounter = actor({
-  state: { value: 0, processed: 0 },
+const worker = actor({
+  state: { processed: 0 },
   queues: {
-    counter: queue<{ delta: number }>(),
+    tasks: queue<{ url: string }>(),
   },
   run: workflow(async (ctx) => {
-    await ctx.loop({
-      name: "counter-loop",
-      run: async (loopCtx) => {
-        const [message] = await loopCtx.queue.next("wait-counter-command");
-        if (!message) return Loop.continue(undefined);
+    await ctx.loop("task-loop", async (loopCtx) => {
+        const message = await loopCtx.queue.next("wait-task");
 
-        await loopCtx.step("apply-counter-command", async () => {
-          loopCtx.state.value += message.body.delta;
+        await loopCtx.step("process-task", async () => {
+          await processTask(message.body.url);
           loopCtx.state.processed += 1;
         });
 
-        return Loop.continue(undefined);
-      },
-    });
+      });
   }),
 });
+
+async function processTask(url: string): Promise<void> {
+  const res = await fetch(url, { method: "POST" });
+  if (!res.ok) throw new Error(`Task failed: ${res.status}`);
+}
 ```
 
 [Documentation](/docs/actors/workflows)
@@ -882,32 +882,33 @@ const worker = actor({
   },
   run: workflow(async (ctx) => {
     await ctx.step("setup", async () => {
+      await fetch("https://api.example.com/workers/init", { method: "POST" });
       ctx.state.phase = "running";
       ctx.state.stopReason = null;
     });
 
-    const stopReason = await ctx.loop({
-      name: "worker-loop",
-      run: async (loopCtx) => {
-        const [message] = await loopCtx.queue.next("wait-command", {
+    const stopReason = await ctx.loop("worker-loop", async (loopCtx) => {
+        const message = await loopCtx.queue.next("wait-command", {
           names: ["work", "control"],
         });
 
-        if (!message) return Loop.continue(undefined);
-
         if (message.name === "work") {
           await loopCtx.step("apply-work", async () => {
+            await fetch("https://api.example.com/workers/process", {
+              method: "POST",
+              body: JSON.stringify({ amount: message.body.amount }),
+            });
             loopCtx.state.processed += 1;
             loopCtx.state.total += message.body.amount;
           });
-          return Loop.continue(undefined);
+          return;
         }
 
         return Loop.break((message.body as ControlMessage).reason);
-      },
-    });
+      });
 
     await ctx.step("teardown", async () => {
+      await fetch("https://api.example.com/workers/shutdown", { method: "POST" });
       ctx.state.phase = "stopped";
       ctx.state.stopReason = stopReason;
     });

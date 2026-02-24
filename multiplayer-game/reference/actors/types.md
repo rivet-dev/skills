@@ -97,9 +97,15 @@ Each lifecycle hook and handler has a corresponding `*ContextOf` type, exported 
 | `onBeforeActionResponse` | `BeforeActionResponseContextOf` |
 | `actions.*` | `ActionContextOf` |
 | `run` | `RunContextOf` |
+| `workflow` root context helpers | `WorkflowContextOf` |
+| `workflow` loop helpers | `WorkflowLoopContextOf` |
+| `workflow` branch helpers | `WorkflowBranchContextOf` |
+| `workflow` standalone step helpers | `WorkflowStepContextOf` |
 | `onRequest` | `RequestContextOf` |
 | `onWebSocket` | `WebSocketContextOf` |
 
 `ActorContextOf`, `ConnContextOf`, and `ConnInitContextOf` are general-purpose base context types useful for helper functions that don't correspond to a specific hook.
+
+Workflow context extractors are exported from both `"rivetkit"` and `"rivetkit/workflow"`.
 
 _Source doc path: /docs/actors/types_
