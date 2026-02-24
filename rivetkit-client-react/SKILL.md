@@ -15,6 +15,12 @@ Use this skill when building React apps that connect to Rivet Actors with `@rive
    ```
 2. Create hooks with `createRivetKit()` and connect with `useActor()`.
 
+## Error Handling Policy
+
+- Prefer fail-fast behavior by default.
+- Avoid `try/catch` unless absolutely needed.
+- If a `catch` is used, handle the error explicitly, at minimum by logging it.
+
 ## Getting Started
 
 See the [React quickstart guide](/docs/actors/quickstart/react) for getting started.
@@ -23,9 +29,9 @@ See the [React quickstart guide](/docs/actors/quickstart/react) for getting star
 
 ## Minimal Client
 
-```tsx {{"title":"Counter.tsx"}}
+```tsx Counter.tsx
 import { createRivetKit } from "@rivetkit/react";
-import type { registry } from "./registry";
+import type { registry } from "./actors";
 
 const { useActor } = createRivetKit<typeof registry>({
   endpoint: "https://my-namespace:pk_...@api.rivet.dev",
@@ -39,7 +45,7 @@ function Counter() {
 }
 ```
 
-```ts {{"title":"registry.ts"}} @hide
+```ts actors.ts @hide
 import { actor, setup } from "rivetkit";
 
 export const counter = actor({
@@ -219,9 +225,9 @@ function Profile() {
 
 Keys uniquely identify actor instances. Use compound keys (arrays) for hierarchical addressing:
 
-```tsx {{"title":"ChatRoom.tsx"}}
+```tsx ChatRoom.tsx
 import { createRivetKit } from "@rivetkit/react";
-import type { registry } from "./registry";
+import type { registry } from "./actors";
 
 const { useActor } = createRivetKit<typeof registry>();
 
@@ -231,7 +237,7 @@ function ChatRoom() {
 }
 ```
 
-```ts {{"title":"registry.ts"}} @hide
+```ts actors.ts @hide
 import { actor, setup } from "rivetkit";
 
 export const chatRoom = actor({

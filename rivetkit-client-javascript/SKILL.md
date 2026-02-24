@@ -15,15 +15,21 @@ Use this skill when building JavaScript clients (browser, Node.js, or Bun) that 
    ```
 2. Create a client with `createClient()` and call actor actions.
 
+## Error Handling Policy
+
+- Prefer fail-fast behavior by default.
+- Avoid `try/catch` unless absolutely needed.
+- If a `catch` is used, handle the error explicitly, at minimum by logging it.
+
 ## Getting Started
 
 See the [backend quickstart guide](/docs/actors/quickstart/backend) for getting started.
 
 ## Minimal Client
 
-```ts {{"title":"client.ts"}}
+```ts client.ts
 import { createClient } from "rivetkit/client";
-import type { registry } from "./registry";
+import type { registry } from "./actors";
 
 const client = createClient<typeof registry>({
   endpoint: "https://my-namespace:pk_...@api.rivet.dev",
@@ -32,7 +38,7 @@ const counter = client.counter.getOrCreate(["my-counter"]);
 const count = await counter.increment(1);
 ```
 
-```ts {{"title":"registry.ts"}} @hide
+```ts actors.ts @hide
 import { actor, setup } from "rivetkit";
 
 export const counter = actor({
@@ -183,9 +189,9 @@ try {
 
 Keys uniquely identify actor instances. Use compound keys (arrays) for hierarchical addressing:
 
-```ts {{"title":"client.ts"}}
+```ts client.ts
 import { createClient } from "rivetkit/client";
-import type { registry } from "./registry";
+import type { registry } from "./actors";
 
 const client = createClient<typeof registry>();
 
@@ -193,7 +199,7 @@ const client = createClient<typeof registry>();
 client.chatRoom.getOrCreate(["org-acme", "general"]);
 ```
 
-```ts {{"title":"registry.ts"}} @hide
+```ts actors.ts @hide
 import { actor, setup } from "rivetkit";
 
 export const chatRoom = actor({

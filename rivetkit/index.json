@@ -2,19 +2,19 @@
   "name": "rivetkit",
   "description": "RivetKit backend and Rivet Actor runtime guidance. Use for building, modifying, debugging, or testing Rivet Actors, registries, serverless/runner modes, deployment, or actor-based workflows.",
   "skill_url": "/metadata/skills/rivetkit/SKILL.md",
-  "generated_at": "2026-02-19T22:58:01.545Z",
+  "generated_at": "2026-02-24T06:45:24.211Z",
   "references": [
     {
       "name": "actors/access-control",
       "title": "Access Control",
-      "description": "Authorize inbound actor entrypoints with the canInvoke hook.",
+      "description": "Authorize actions, queue publishes, and event subscriptions with explicit hooks.",
       "canonical_url": "https://rivet.dev/docs/actors/access-control",
       "reference_url": "/metadata/skills/rivetkit/reference/actors/access-control.md"
     },
     {
       "name": "actors/actions",
       "title": "Actions",
-      "description": "Actions are how your backend, frontend, or other actors can communicate with actors. Actions are defined as functions in the actor configuration and can be called from clients.",
+      "description": "Actions are how your backend, frontend, or other actors can communicate with actors.",
       "canonical_url": "https://rivet.dev/docs/actors/actions",
       "reference_url": "/metadata/skills/rivetkit/reference/actors/actions.md"
     },
@@ -243,18 +243,11 @@
       "reference_url": "/metadata/skills/rivetkit/reference/actors/errors.md"
     },
     {
-      "name": "actors/events",
-      "title": "Events",
-      "description": "Events enable real-time communication from actors to clients. While clients use actions to send data to actors, events allow actors to push updates to connected clients instantly.",
-      "canonical_url": "https://rivet.dev/docs/actors/events",
-      "reference_url": "/metadata/skills/rivetkit/reference/actors/events.md"
-    },
-    {
-      "name": "actors/external-sql",
+      "name": "actors/postgres",
       "title": "External SQL Database",
       "description": "While actors can serve as a complete database solution, they can also complement your existing databases. For example, you might use actors to handle frequently-changing data that needs real-time access, while keeping less frequently accessed data in your traditional database.",
-      "canonical_url": "https://rivet.dev/docs/actors/external-sql",
-      "reference_url": "/metadata/skills/rivetkit/reference/actors/external-sql.md"
+      "canonical_url": "https://rivet.dev/docs/actors/postgres",
+      "reference_url": "/metadata/skills/rivetkit/reference/actors/postgres.md"
     },
     {
       "name": "actors/fetch-and-websocket-handler",
@@ -292,6 +285,13 @@
       "reference_url": "/metadata/skills/rivetkit/reference/actors/appearance.md"
     },
     {
+      "name": "actors/state",
+      "title": "In-Memory State",
+      "description": "Actor state provides the best of both worlds: it's stored in-memory and persisted automatically. This lets you work with the data without added latency while still being able to survive crashes & upgrades.",
+      "canonical_url": "https://rivet.dev/docs/actors/state",
+      "reference_url": "/metadata/skills/rivetkit/reference/actors/state.md"
+    },
+    {
       "name": "actors/input",
       "title": "Input Parameters",
       "description": "Pass initialization data to actors when creating instances",
@@ -318,6 +318,13 @@
       "description": "Learn about actor lifecycle hooks for initialization, state management, and cleanup.",
       "canonical_url": "https://rivet.dev/docs/actors/lifecycle",
       "reference_url": "/metadata/skills/rivetkit/reference/actors/lifecycle.md"
+    },
+    {
+      "name": "actors/limits",
+      "title": "Limits",
+      "description": "Size limits and constraints for Rivet Actors.",
+      "canonical_url": "https://rivet.dev/docs/actors/limits",
+      "reference_url": "/metadata/skills/rivetkit/reference/actors/limits.md"
     },
     {
       "name": "general/logging",
@@ -362,6 +369,13 @@
       "reference_url": "/metadata/skills/rivetkit/reference/self-hosting/multi-region.md"
     },
     {
+      "name": "cookbook/multiplayer-game",
+      "title": "Multiplayer Game",
+      "description": "Pragmatic patterns for building multiplayer games: matchmaking, tick loops, realtime state, interest management, and validation.",
+      "canonical_url": "https://rivet.dev/cookbook/multiplayer-game",
+      "reference_url": "/metadata/skills/rivetkit/reference/cookbook/multiplayer-game.md"
+    },
+    {
       "name": "actors/quickstart/next-js",
       "title": "Next.js Quickstart",
       "description": "Get started with Rivet Actors in Next.js",
@@ -390,11 +404,11 @@
       "reference_url": "/metadata/skills/rivetkit/reference/self-hosting/postgres.md"
     },
     {
-      "name": "actors/queue",
-      "title": "Queue Messages",
-      "description": "Send durable queue messages to Rivet Actors and consume them from run loops.",
-      "canonical_url": "https://rivet.dev/docs/actors/queue",
-      "reference_url": "/metadata/skills/rivetkit/reference/actors/queue.md"
+      "name": "actors/queues",
+      "title": "Queues & Run Loops",
+      "description": "Use actor-local durable queues for serial run loops and request/response workflows.",
+      "canonical_url": "https://rivet.dev/docs/actors/queues",
+      "reference_url": "/metadata/skills/rivetkit/reference/actors/queues.md"
     },
     {
       "name": "self-hosting/railway",
@@ -416,6 +430,13 @@
       "description": "Build realtime React applications with Rivet Actors",
       "canonical_url": "https://rivet.dev/docs/actors/quickstart/react",
       "reference_url": "/metadata/skills/rivetkit/reference/actors/quickstart/react.md"
+    },
+    {
+      "name": "actors/events",
+      "title": "Realtime",
+      "description": "Events enable realtime communication from actors to clients. While clients use actions to send data to actors, events allow actors to push updates to connected clients instantly.",
+      "canonical_url": "https://rivet.dev/docs/actors/events",
+      "reference_url": "/metadata/skills/rivetkit/reference/actors/events.md"
     },
     {
       "name": "general/registry-configuration",
@@ -446,11 +467,18 @@
       "reference_url": "/metadata/skills/rivetkit/reference/actors/sharing-and-joining-state.md"
     },
     {
-      "name": "actors/state",
-      "title": "State",
-      "description": "Actor state provides the best of both worlds: it's stored in-memory and persisted automatically. This lets you work with the data without added latency while still being able to survive crashes & upgrades.",
-      "canonical_url": "https://rivet.dev/docs/actors/state",
-      "reference_url": "/metadata/skills/rivetkit/reference/actors/state.md"
+      "name": "actors/sqlite",
+      "title": "SQLite",
+      "description": "Use embedded SQLite in Rivet Actors with raw SQL queries.",
+      "canonical_url": "https://rivet.dev/docs/actors/sqlite",
+      "reference_url": "/metadata/skills/rivetkit/reference/actors/sqlite.md"
+    },
+    {
+      "name": "actors/sqlite-drizzle",
+      "title": "SQLite + Drizzle",
+      "description": "Use Drizzle ORM with embedded SQLite in Rivet Actors.",
+      "canonical_url": "https://rivet.dev/docs/actors/sqlite-drizzle",
+      "reference_url": "/metadata/skills/rivetkit/reference/actors/sqlite-drizzle.md"
     },
     {
       "name": "connect/supabase",
@@ -500,6 +528,13 @@
       "description": "When you deploy new code, Rivet ensures actors are upgraded seamlessly without downtime.",
       "canonical_url": "https://rivet.dev/docs/actors/versions",
       "reference_url": "/metadata/skills/rivetkit/reference/actors/versions.md"
+    },
+    {
+      "name": "actors/workflows",
+      "title": "Workflows",
+      "description": "Build durable, replayable run loops in Rivet Actors with steps, queue waits, timers, and rollback.",
+      "canonical_url": "https://rivet.dev/docs/actors/workflows",
+      "reference_url": "/metadata/skills/rivetkit/reference/actors/workflows.md"
     }
   ]
 }

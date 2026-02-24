@@ -1,7 +1,7 @@
 # External SQL Database
 
-> Source: `src/content/docs/actors/external-sql.mdx`
-> Canonical URL: https://rivet.dev/docs/actors/external-sql
+> Source: `src/content/docs/actors/postgres.mdx`
+> Canonical URL: https://rivet.dev/docs/actors/postgres
 > Description: While actors can serve as a complete database solution, they can also complement your existing databases. For example, you might use actors to handle frequently-changing data that needs real-time access, while keeping less frequently accessed data in your traditional database.
 
 ---
@@ -37,7 +37,7 @@ There are several options for places to host your SQL database:
 
 Here's a basic example of a user actor that creates a database record on start and tracks request counts:
 
-```typescript registry.ts @nocheck
+```typescript actors.ts @nocheck
 import { actor, setup } from "rivetkit";
 import { Pool } from "pg";
 
@@ -112,7 +112,7 @@ export const registry = setup({
 
 ```typescript client.ts @nocheck
 import { createClient } from "rivetkit/client";
-import type { registry } from "./registry";
+import type { registry } from "./actors";
 
 const client = createClient<typeof registry>("http://localhost:8080");
 
@@ -142,7 +142,7 @@ const bobData = await bob.getUser();
 
 Here's the same user actor pattern using Drizzle ORM for more type-safe database operations:
 
-```typescript registry.ts @nocheck
+```typescript actors.ts @nocheck
 import { actor, setup } from "rivetkit";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
@@ -230,7 +230,7 @@ export const registry = setup({
 
 ```typescript client.ts @nocheck
 import { createClient } from "rivetkit/client";
-import type { registry } from "./registry";
+import type { registry } from "./actors";
 
 const client = createClient<typeof registry>("http://localhost:8080");
 
@@ -257,4 +257,4 @@ const bob = await client.userActor.create("bob", {
 const bobData = await bob.getUser();
 ```
 
-_Source doc path: /docs/actors/external-sql_
+_Source doc path: /docs/actors/postgres_

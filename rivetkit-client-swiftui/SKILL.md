@@ -11,6 +11,12 @@ Use this skill when building SwiftUI apps that connect to Rivet Actors with `Riv
 
 RivetKit version: 2.0.42
 
+## Error Handling Policy
+
+- Prefer fail-fast behavior by default.
+- Avoid broad `do/catch` unless absolutely needed.
+- If a catch block is used, handle the error explicitly, at minimum by logging it.
+
 ## Install
 
 Add the Swift package dependency and import `RivetKitSwiftUI`:
@@ -35,7 +41,7 @@ targets: [
 
 ## Minimal Client
 
-```swift {{"title":"HelloWorldApp.swift"}}
+```swift HelloWorldApp.swift
 import RivetKitSwiftUI
 import SwiftUI
 
@@ -50,7 +56,7 @@ struct HelloWorldApp: App {
 }
 ```
 
-```swift {{"title":"ContentView.swift"}}
+```swift ContentView.swift
 import RivetKitSwiftUI
 import SwiftUI
 
