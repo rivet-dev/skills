@@ -2,7 +2,7 @@
   "name": "multiplayer-game",
   "description": "Pragmatic patterns for building multiplayer games: matchmaking, tick loops, realtime state, interest management, and validation.",
   "skill_url": "/metadata/skills/multiplayer-game/SKILL.md",
-  "generated_at": "2026-02-24T06:45:24.220Z",
+  "generated_at": "2026-02-24T07:42:41.085Z",
   "references": [
     {
       "name": "actors/access-control",
@@ -322,7 +322,7 @@
     {
       "name": "actors/limits",
       "title": "Limits",
-      "description": "Size limits and constraints for Rivet Actors.",
+      "description": "Limits and constraints for Rivet Actors.",
       "canonical_url": "https://rivet.dev/docs/actors/limits",
       "reference_url": "/metadata/skills/multiplayer-game/reference/actors/limits.md"
     },
