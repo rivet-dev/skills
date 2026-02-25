@@ -305,6 +305,7 @@ Open the Inspector UI at `/ui/` on your server (for example, `http://localhost:2
 
 ### Deploy
 
+- [BoxLite](references/deploy/boxlite.md)
 - [Cloudflare](references/deploy/cloudflare.md)
 - [ComputeSDK](references/deploy/computesdk.md)
 - [Daytona](references/deploy/daytona.md)
