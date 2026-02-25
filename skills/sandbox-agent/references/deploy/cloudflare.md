@@ -75,7 +75,16 @@ app.post("/sandbox/:name/prompt", async (c) => {
   const sandbox = await getReadySandbox(c.req.param("name"), c.env);
 
   const sdk = await SandboxAgent.connect({
-    fetch: (input, init) => sandbox.containerFetch(input as Request | string | URL, init, PORT),
+    fetch: (input, init) =>
+      sandbox.containerFetch(
+        input as Request | string | URL,
+        {
+          ...(init ?? {}),
+          // Avoid passing AbortSignal through containerFetch; it can drop streamed session updates.
+          signal: undefined,
+        },
+        PORT,
+      ),
   });
 
   const session = await sdk.createSession({ agent: "codex" });
@@ -102,6 +111,33 @@ export default app;
 
 Create the SDK client inside the Worker using custom `fetch` backed by `sandbox.containerFetch(...)`.
 This keeps all Sandbox Agent calls inside the Cloudflare sandbox routing path and does not require a `baseUrl`.
+
+## Troubleshooting streaming updates
+
+If you only receive:
+- outbound `session/prompt`
+- final `{ stopReason: "end_turn" }`
+
+then the streamed update channel dropped. In Cloudflare sandbox paths, this is typically caused by forwarding `AbortSignal` from SDK fetch init into `containerFetch(...)`.
+
+Fix:
+
+```ts
+const sdk = await SandboxAgent.connect({
+  fetch: (input, init) =>
+    sandbox.containerFetch(
+      input as Request | string | URL,
+      {
+        ...(init ?? {}),
+        // Avoid passing AbortSignal through containerFetch; it can drop streamed session updates.
+        signal: undefined,
+      },
+      PORT,
+    ),
+});
+```
+
+This keeps prompt completion behavior the same, but restores streamed text/tool updates.
 
 ## Local development
 
