@@ -210,9 +210,10 @@ export const worker = actor({
 export const registry = setup({ use: { worker } });
 ```
 
-## Pull messages with `next`
+## Pull messages with `next` and `nextBatch`
 
-Use `next` when you want to wait for queue messages.
+Use `next` when you want to wait for one queue message.
+Use `nextBatch` when you want to wait for multiple queue messages.
 
 - Waits until messages are available unless timeout is hit.
 - Omit `timeout` to wait indefinitely.
@@ -227,18 +228,16 @@ export const queueWorker = actor({
   },
   actions: {
     pull: async (c) => {
-      const batch = await c.queue.next({
+      const batch = await c.queue.nextBatch({
         count: 10,
         timeout: 1_000,
       });
 
-      const oneWithoutTimeout = await c.queue.next({
-        count: 1,
-      });
+      const oneWithoutTimeout = await c.queue.next();
 
       return {
         batchCount: batch.length,
-        oneWithoutTimeoutCount: oneWithoutTimeout.length,
+        receivedOneWithoutTimeout: oneWithoutTimeout !== undefined,
       };
     },
   },
@@ -249,7 +248,8 @@ export const registry = setup({ use: { queueWorker } });
 
 ## Poll messages
 
-Use `tryNext` when you need a non-blocking read.
+Use `tryNext` when you need one non-blocking read.
+Use `tryNextBatch` for non-blocking batch reads.
 
 - Returns immediately and never waits.
 
@@ -263,12 +263,15 @@ export const queueWorker = actor({
   },
   actions: {
     poll: async (c) => {
-      const immediate = await c.queue.tryNext({
+      const immediate = await c.queue.tryNext();
+
+      const immediateBatch = await c.queue.tryNextBatch({
         count: 10,
       });
 
       return {
-        immediateCount: immediate.length,
+        hasImmediate: immediate !== undefined,
+        immediateBatchCount: immediateBatch.length,
       };
     },
   },
@@ -303,7 +306,7 @@ export const signalWorker = actor({
       const signal = joinSignals(c.abortSignal, c.vars.cancelController.signal);
 
       try {
-        const [message] = await c.queue.next({ signal });
+        const message = await c.queue.next({ signal });
         if (!message) continue;
         console.log("Processing job", message.body.id);
       } catch (error) {
@@ -358,7 +361,7 @@ export const agent = actor({
       // Watch for stop messages while generation is running.
       const stopWatcher = c.queue
         .next({ names: ["stop"], signal: runSignal })
-        .then(([stopMessage]) => {
+        .then((stopMessage) => {
           if (stopMessage) stopController.abort();
         })
         .catch(() => {});
