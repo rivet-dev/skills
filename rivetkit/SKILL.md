@@ -66,9 +66,9 @@ Use that canonical URL when citing, not the reference file path.
 
 ## First Steps
 
-1. Install RivetKit (latest: 2.1.3)
+1. Install RivetKit (latest: 2.1.4)
    ```bash
-   npm install rivetkit@2.1.3
+   npm install rivetkit@2.1.4
    ```
 2. Define a registry with `setup({ use: { /* actors */ } })`.
 3. Expose `registry.serve()` or `registry.handler()` (serverless) or `registry.startRunner()` (runner mode). Prefer serverless mode unless the user has a specific reason to use runner mode.
@@ -957,6 +957,7 @@ Actors are long-lived and maintain state across requests. Creating a new actor f
 - [Actions](reference/actors/actions.md)
 - [Actor Keys](reference/actors/keys.md)
 - [Actor Scheduling](reference/actors/schedule.md)
+- [Actor Statuses](reference/actors/statuses.md)
 - [AI and User-Generated Rivet Actors](reference/actors/ai-and-user-generated-actors.md)
 - [Authentication](reference/actors/authentication.md)
 - [Cloudflare Workers Quickstart](reference/actors/quickstart/cloudflare-workers.md)
@@ -989,6 +990,7 @@ Actors are long-lived and maintain state across requests. Creating a new actor f
 - [SQLite](reference/actors/sqlite.md)
 - [SQLite + Drizzle](reference/actors/sqlite-drizzle.md)
 - [Testing](reference/actors/testing.md)
+- [Troubleshooting](reference/actors/troubleshooting.md)
 - [Types](reference/actors/types.md)
 - [Vanilla HTTP API](reference/actors/http-api.md)
 - [Versions & Upgrades](reference/actors/versions.md)

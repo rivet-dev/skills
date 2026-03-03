@@ -2,7 +2,7 @@
   "name": "rivetkit",
   "description": "RivetKit backend and Rivet Actor runtime guidance. Use for building, modifying, debugging, or testing Rivet Actors, registries, serverless/runner modes, deployment, or actor-based workflows.",
   "skill_url": "/metadata/skills/rivetkit/SKILL.md",
-  "generated_at": "2026-02-27T00:35:34.075Z",
+  "generated_at": "2026-03-03T05:09:19.476Z",
   "references": [
     {
       "name": "actors/access-control",
@@ -38,6 +38,13 @@
       "description": "Schedule actor actions in the future with persistent timers that survive restarts and upgrades.",
       "canonical_url": "https://rivet.dev/docs/actors/schedule",
       "reference_url": "/metadata/skills/rivetkit/reference/actors/schedule.md"
+    },
+    {
+      "name": "actors/statuses",
+      "title": "Actor Statuses",
+      "description": "Understand the lifecycle statuses of Rivet Actors, what they mean, how they appear in the API, and how to troubleshoot common issues.",
+      "canonical_url": "https://rivet.dev/docs/actors/statuses",
+      "reference_url": "/metadata/skills/rivetkit/reference/actors/statuses.md"
     },
     {
       "name": "actors/ai-and-user-generated-actors",
@@ -507,6 +514,13 @@
       "description": "Rivet provides a straightforward testing framework to build reliable and maintainable applications. This guide covers how to write effective tests for your actor-based services.",
       "canonical_url": "https://rivet.dev/docs/actors/testing",
       "reference_url": "/metadata/skills/rivetkit/reference/actors/testing.md"
+    },
+    {
+      "name": "actors/troubleshooting",
+      "title": "Troubleshooting",
+      "description": "Common issues with Rivet Actors and how to resolve them.",
+      "canonical_url": "https://rivet.dev/docs/actors/troubleshooting",
+      "reference_url": "/metadata/skills/rivetkit/reference/actors/troubleshooting.md"
     },
     {
       "name": "actors/types",
