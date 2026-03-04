@@ -2,7 +2,7 @@
   "name": "multiplayer-game",
   "description": "Pragmatic patterns for building multiplayer games: matchmaking, tick loops, realtime state, interest management, and validation.",
   "skill_url": "/metadata/skills/multiplayer-game/SKILL.md",
-  "generated_at": "2026-03-04T03:26:35.268Z",
+  "generated_at": "2026-03-04T05:11:20.242Z",
   "references": [
     {
       "name": "actors/access-control",
