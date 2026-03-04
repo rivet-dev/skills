@@ -9,9 +9,9 @@ Use this skill when building JavaScript clients (browser, Node.js, or Bun) that 
 
 ## First Steps
 
-1. Install the client (latest: 2.1.4)
+1. Install the client (latest: 2.1.5)
    ```bash
-   npm install rivetkit@2.1.4
+   npm install rivetkit@2.1.5
    ```
 2. Create a client with `createClient()` and call actor actions.
 

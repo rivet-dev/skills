@@ -2,7 +2,7 @@
   "name": "multiplayer-game",
   "description": "Pragmatic patterns for building multiplayer games: matchmaking, tick loops, realtime state, interest management, and validation.",
   "skill_url": "/metadata/skills/multiplayer-game/SKILL.md",
-  "generated_at": "2026-03-03T05:09:19.486Z",
+  "generated_at": "2026-03-04T03:26:35.268Z",
   "references": [
     {
       "name": "actors/access-control",
@@ -315,7 +315,7 @@
     {
       "name": "self-hosting/kubernetes",
       "title": "Kubernetes",
-      "description": "Deploy Rivet Engine to Kubernetes with PostgreSQL storage.",
+      "description": "Deploy production-ready Rivet Engine to Kubernetes with PostgreSQL storage.",
       "canonical_url": "https://rivet.dev/docs/self-hosting/kubernetes",
       "reference_url": "/metadata/skills/multiplayer-game/reference/self-hosting/kubernetes.md"
     },
