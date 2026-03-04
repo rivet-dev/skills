@@ -809,4 +809,5 @@ sequenceDiagram
 - [Multi-Region](reference/self-hosting/multi-region.md)
 - [PostgreSQL](reference/self-hosting/postgres.md)
 - [Railway Deployment](reference/self-hosting/railway.md)
+- [Render Deployment](reference/self-hosting/render.md)
 

@@ -2,7 +2,7 @@
   "name": "rivetkit",
   "description": "RivetKit backend and Rivet Actor runtime guidance. Use for building, modifying, debugging, or testing Rivet Actors, registries, serverless/runner modes, deployment, or actor-based workflows.",
   "skill_url": "/metadata/skills/rivetkit/SKILL.md",
-  "generated_at": "2026-03-04T05:11:20.232Z",
+  "generated_at": "2026-03-04T08:42:48.389Z",
   "references": [
     {
       "name": "actors/access-control",
@@ -451,6 +451,13 @@
       "description": "This page documents the configuration options available when setting up a RivetKit registry. The registry configuration is passed to the `setup()` function.",
       "canonical_url": "https://rivet.dev/docs/general/registry-configuration",
       "reference_url": "/metadata/skills/rivetkit/reference/general/registry-configuration.md"
+    },
+    {
+      "name": "self-hosting/render",
+      "title": "Render Deployment",
+      "description": "Deploy Rivet Engine to Render with managed PostgreSQL and automatic HTTPS.",
+      "canonical_url": "https://rivet.dev/docs/self-hosting/render",
+      "reference_url": "/metadata/skills/rivetkit/reference/self-hosting/render.md"
     },
     {
       "name": "general/runtime-modes",
