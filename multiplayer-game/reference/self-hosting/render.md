@@ -115,4 +115,9 @@ RIVET_PUBLIC_ENDPOINT=https://<namespace>@rivet-engine-xxxx.onrender.com
 
 See the [Connect guide](/docs/connect/custom) for more details on connecting your application.
 
+## Next Steps
+
+- Review the [Production Checklist](/docs/self-hosting/production-checklist) before going live
+- See [Configuration](/docs/self-hosting/configuration) for all options
+
 _Source doc path: /docs/self-hosting/render_

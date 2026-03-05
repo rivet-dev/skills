@@ -2,7 +2,7 @@
   "name": "multiplayer-game",
   "description": "Pragmatic patterns for building multiplayer games: matchmaking, tick loops, realtime state, interest management, and validation.",
   "skill_url": "/metadata/skills/multiplayer-game/SKILL.md",
-  "generated_at": "2026-03-05T21:43:33.716Z",
+  "generated_at": "2026-03-05T23:34:48.065Z",
   "references": [
     {
       "name": "actors/access-control",
@@ -409,6 +409,20 @@
       "description": "PostgreSQL is the recommended database backend for production deployments.",
       "canonical_url": "https://rivet.dev/docs/self-hosting/postgres",
       "reference_url": "/metadata/skills/multiplayer-game/reference/self-hosting/postgres.md"
+    },
+    {
+      "name": "general/production-checklist",
+      "title": "Production Checklist",
+      "description": "Checklist for deploying Rivet Actors to production.",
+      "canonical_url": "https://rivet.dev/docs/general/production-checklist",
+      "reference_url": "/metadata/skills/multiplayer-game/reference/general/production-checklist.md"
+    },
+    {
+      "name": "self-hosting/production-checklist",
+      "title": "Production Checklist",
+      "description": "Checklist for deploying a self-hosted Rivet Engine to production.",
+      "canonical_url": "https://rivet.dev/docs/self-hosting/production-checklist",
+      "reference_url": "/metadata/skills/multiplayer-game/reference/self-hosting/production-checklist.md"
     },
     {
       "name": "actors/queues",

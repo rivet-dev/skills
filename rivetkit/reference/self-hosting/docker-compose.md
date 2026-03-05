@@ -142,6 +142,7 @@ volumes:
 
 ## Next Steps
 
+- Review the [Production Checklist](/docs/self-hosting/production-checklist) before going live
 - See [Configuration](/docs/self-hosting/configuration) for all options
 
 _Source doc path: /docs/self-hosting/docker-compose_

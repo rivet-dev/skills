@@ -795,6 +795,7 @@ sequenceDiagram
 - [Environment Variables](reference/general/environment-variables.md)
 - [HTTP Server](reference/general/http-server.md)
 - [Logging](reference/general/logging.md)
+- [Production Checklist](reference/general/production-checklist.md)
 - [Registry Configuration](reference/general/registry-configuration.md)
 - [Runtime Modes](reference/general/runtime-modes.md)
 
@@ -808,6 +809,7 @@ sequenceDiagram
 - [Kubernetes](reference/self-hosting/kubernetes.md)
 - [Multi-Region](reference/self-hosting/multi-region.md)
 - [PostgreSQL](reference/self-hosting/postgres.md)
+- [Production Checklist](reference/self-hosting/production-checklist.md)
 - [Railway Deployment](reference/self-hosting/railway.md)
 - [Render Deployment](reference/self-hosting/render.md)
 

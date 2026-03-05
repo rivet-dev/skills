@@ -198,6 +198,7 @@ kubectl -n rivet-engine rollout restart deployment/rivet-engine
 
 ## Next Steps
 
+- Review the [Production Checklist](/docs/self-hosting/production-checklist) before going live
 - See [Configuration](/docs/self-hosting/configuration) for all engine config options
 
 _Source doc path: /docs/self-hosting/kubernetes_

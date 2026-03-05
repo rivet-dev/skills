@@ -86,6 +86,7 @@ docker run -d \
 
 ## Next Steps
 
+- Review the [Production Checklist](/docs/self-hosting/production-checklist) before going live
 - Use [Docker Compose](/docs/self-hosting/docker-compose) for multi-container setups
 - See [Configuration](/docs/self-hosting/configuration) for all options
 
