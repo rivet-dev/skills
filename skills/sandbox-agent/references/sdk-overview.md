@@ -39,12 +39,27 @@ const sdk = await SandboxAgent.connect({
 });
 ```
 
+`SandboxAgent.connect(...)` now waits for `/v1/health` by default before other SDK requests proceed. To disable that gate, pass `waitForHealth: false`. To keep the default gate but fail after a bounded wait, pass `waitForHealth: { timeoutMs: 120_000 }`. To cancel the startup wait early, pass `signal: abortController.signal`.
+
 With a custom fetch handler (for example, proxying requests inside Workers):
 
 ```ts
 const sdk = await SandboxAgent.connect({
   fetch: (input, init) => customFetch(input, init),
 });
+```
+
+With an abort signal for the startup health gate:
+
+```ts
+const controller = new AbortController();
+
+const sdk = await SandboxAgent.connect({
+  baseUrl: "http://127.0.0.1:2468",
+  signal: controller.signal,
+});
+
+controller.abort();
 ```
 
 With persistence:
@@ -170,6 +185,8 @@ Parameters:
 - `token` (optional): Bearer token for authenticated servers
 - `headers` (optional): Additional request headers
 - `fetch` (optional): Custom fetch implementation used by SDK HTTP and ACP calls
+- `waitForHealth` (optional, defaults to enabled): waits for `/v1/health` before HTTP helpers and ACP session setup proceed; pass `false` to disable or `{ timeoutMs }` to bound the wait
+- `signal` (optional): aborts the startup `/v1/health` wait used by `connect()`
 
 ## Types
 
