@@ -316,6 +316,7 @@ Open the Inspector UI at `/ui/` on your server (for example, `http://localhost:2
 
 ### General
 
+- [Agent Capabilities](references/agent-capabilities.md)
 - [Agent Sessions](references/agent-sessions.md)
 - [Architecture](references/architecture.md)
 - [Attachments](references/attachments.md)

@@ -115,6 +115,25 @@ await restored.prompt([{ type: "text", text: "Continue from previous context." }
 await sdk.destroySession(restored.id);
 ```
 
+## Session configuration
+
+Set model, mode, or thought level at creation or on an existing session:
+
+```ts
+const session = await sdk.createSession({
+  agent: "codex",
+  model: "gpt-5.3-codex",
+});
+
+await session.setModel("gpt-5.2-codex");
+await session.setMode("auto");
+
+const options = await session.getConfigOptions();
+const modes = await session.getModes();
+```
+
+See [Agent Sessions](/agent-sessions) for full details on config options and error handling.
+
 ## Events
 
 Subscribe to live events:
@@ -187,14 +206,3 @@ Parameters:
 - `fetch` (optional): Custom fetch implementation used by SDK HTTP and ACP calls
 - `waitForHealth` (optional, defaults to enabled): waits for `/v1/health` before HTTP helpers and ACP session setup proceed; pass `false` to disable or `{ timeoutMs }` to bound the wait
 - `signal` (optional): aborts the startup `/v1/health` wait used by `connect()`
-
-## Types
-
-```ts
-import type {
-  AgentInfo,
-  HealthResponse,
-  SessionEvent,
-  SessionRecord,
-} from "sandbox-agent";
-```
