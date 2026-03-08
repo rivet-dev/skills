@@ -10,7 +10,7 @@
 ## Install
 
 ```bash
-npm install @sandbox-agent/react@0.2.x
+npm install @sandbox-agent/react@0.3.x
 ```
 
 ## Full example

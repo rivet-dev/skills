@@ -39,7 +39,7 @@ const sdk = await SandboxAgent.connect({
 Recommended for sandbox orchestration with actor state.
 
 ```bash
-npm install @sandbox-agent/persist-rivet@0.2.x
+npm install @sandbox-agent/persist-rivet@0.3.x
 ```
 
 ```ts
@@ -91,7 +91,7 @@ export default actor({
 Best for browser apps that should survive reloads.
 
 ```bash
-npm install @sandbox-agent/persist-indexeddb@0.2.x
+npm install @sandbox-agent/persist-indexeddb@0.3.x
 ```
 
 ```ts
@@ -113,7 +113,7 @@ const sdk = await SandboxAgent.connect({
 Best for local/server Node apps that need durable storage without a DB server.
 
 ```bash
-npm install @sandbox-agent/persist-sqlite@0.2.x
+npm install @sandbox-agent/persist-sqlite@0.3.x
 ```
 
 ```ts
@@ -135,7 +135,7 @@ const sdk = await SandboxAgent.connect({
 Use when you already run Postgres and want shared relational storage.
 
 ```bash
-npm install @sandbox-agent/persist-postgres@0.2.x
+npm install @sandbox-agent/persist-postgres@0.3.x
 ```
 
 ```ts

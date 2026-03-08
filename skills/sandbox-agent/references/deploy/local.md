@@ -11,7 +11,7 @@ For local development, run Sandbox Agent directly on your machine.
 
 ```bash
 # Install
-curl -fsSL https://releases.rivet.dev/sandbox-agent/0.2.x/install.sh | sh
+curl -fsSL https://releases.rivet.dev/sandbox-agent/0.3.x/install.sh | sh
 
 # Run
 sandbox-agent server --no-token --host 127.0.0.1 --port 2468
@@ -22,13 +22,13 @@ Or with npm/Bun:
 #### npx
 
 ```bash
-npx @sandbox-agent/cli@0.2.x server --no-token --host 127.0.0.1 --port 2468
+npx @sandbox-agent/cli@0.3.x server --no-token --host 127.0.0.1 --port 2468
 ```
 
 #### bunx
 
 ```bash
-bunx @sandbox-agent/cli@0.2.x server --no-token --host 127.0.0.1 --port 2468
+bunx @sandbox-agent/cli@0.3.x server --no-token --host 127.0.0.1 --port 2468
 ```
 
 ## With the TypeScript SDK

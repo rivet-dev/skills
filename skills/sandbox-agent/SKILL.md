@@ -102,7 +102,7 @@ Use the `mock` agent for SDK and integration testing without provider credential
 Install and run the binary directly.
 
 ```bash
-curl -fsSL https://releases.rivet.dev/sandbox-agent/0.2.x/install.sh | sh
+curl -fsSL https://releases.rivet.dev/sandbox-agent/0.3.x/install.sh | sh
 sandbox-agent server --no-token --host 0.0.0.0 --port 2468
 ```
 
@@ -111,7 +111,7 @@ sandbox-agent server --no-token --host 0.0.0.0 --port 2468
 Run without installing globally.
 
 ```bash
-npx @sandbox-agent/cli@0.2.x server --no-token --host 0.0.0.0 --port 2468
+npx @sandbox-agent/cli@0.3.x server --no-token --host 0.0.0.0 --port 2468
 ```
 
 #### bunx
@@ -119,7 +119,7 @@ npx @sandbox-agent/cli@0.2.x server --no-token --host 0.0.0.0 --port 2468
 Run without installing globally.
 
 ```bash
-bunx @sandbox-agent/cli@0.2.x server --no-token --host 0.0.0.0 --port 2468
+bunx @sandbox-agent/cli@0.3.x server --no-token --host 0.0.0.0 --port 2468
 ```
 
 #### npm i -g
@@ -127,7 +127,7 @@ bunx @sandbox-agent/cli@0.2.x server --no-token --host 0.0.0.0 --port 2468
 Install globally, then run.
 
 ```bash
-npm install -g @sandbox-agent/cli@0.2.x
+npm install -g @sandbox-agent/cli@0.3.x
 sandbox-agent server --no-token --host 0.0.0.0 --port 2468
 ```
 
@@ -136,7 +136,7 @@ sandbox-agent server --no-token --host 0.0.0.0 --port 2468
 Install globally, then run.
 
 ```bash
-bun add -g @sandbox-agent/cli@0.2.x
+bun add -g @sandbox-agent/cli@0.3.x
 # Allow Bun to run postinstall scripts for native binaries (required for SandboxAgent.start()).
 bun pm -g trust @sandbox-agent/cli-linux-x64 @sandbox-agent/cli-linux-arm64 @sandbox-agent/cli-darwin-arm64 @sandbox-agent/cli-darwin-x64 @sandbox-agent/cli-win32-x64
 sandbox-agent server --no-token --host 0.0.0.0 --port 2468
@@ -147,7 +147,7 @@ sandbox-agent server --no-token --host 0.0.0.0 --port 2468
 For local development, use `SandboxAgent.start()` to spawn and manage the server as a subprocess.
 
 ```bash
-npm install sandbox-agent@0.2.x
+npm install sandbox-agent@0.3.x
 ```
 
 ```typescript
@@ -161,7 +161,7 @@ const sdk = await SandboxAgent.start();
 For local development, use `SandboxAgent.start()` to spawn and manage the server as a subprocess.
 
 ```bash
-bun add sandbox-agent@0.2.x
+bun add sandbox-agent@0.3.x
 # Allow Bun to run postinstall scripts for native binaries (required for SandboxAgent.start()).
 bun pm trust @sandbox-agent/cli-linux-x64 @sandbox-agent/cli-linux-arm64 @sandbox-agent/cli-darwin-arm64 @sandbox-agent/cli-darwin-x64 @sandbox-agent/cli-win32-x64
 ```

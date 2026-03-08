@@ -17,7 +17,7 @@ docker run --rm -p 3000:3000 \
   -e OPENAI_API_KEY="$OPENAI_API_KEY" \
   alpine:latest sh -c "\
     apk add --no-cache curl ca-certificates libstdc++ libgcc bash nodejs npm && \
-    curl -fsSL https://releases.rivet.dev/sandbox-agent/0.2.x/install.sh | sh && \
+    curl -fsSL https://releases.rivet.dev/sandbox-agent/0.3.x/install.sh | sh && \
     sandbox-agent server --no-token --host 0.0.0.0 --port 3000"
 ```
 
@@ -36,7 +36,7 @@ const container = await docker.createContainer({
     "apt-get update",
     "DEBIAN_FRONTEND=noninteractive apt-get install -y curl ca-certificates bash libstdc++6",
     "rm -rf /var/lib/apt/lists/*",
-    "curl -fsSL https://releases.rivet.dev/sandbox-agent/0.2.x/install.sh | sh",
+    "curl -fsSL https://releases.rivet.dev/sandbox-agent/0.3.x/install.sh | sh",
     `sandbox-agent server --no-token --host 0.0.0.0 --port ${PORT}`,
   ].join(" && ")],
   Env: [
