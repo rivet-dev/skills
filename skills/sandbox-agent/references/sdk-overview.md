@@ -29,6 +29,12 @@ bun pm trust @sandbox-agent/cli-linux-x64 @sandbox-agent/cli-linux-arm64 @sandbo
 npm install @sandbox-agent/persist-indexeddb@0.2.x @sandbox-agent/persist-sqlite@0.2.x @sandbox-agent/persist-postgres@0.2.x
 ```
 
+## Optional React components
+
+```bash
+npm install @sandbox-agent/react@0.2.x
+```
+
 ## Create a client
 
 ```ts
