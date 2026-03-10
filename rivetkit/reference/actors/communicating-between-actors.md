@@ -13,6 +13,8 @@ We recommend reading the [clients documentation](/docs/clients) first. This guid
 
 The server-side actor client allows actors to call other actors within the same registry. Access it via `c.client()` in your actor context:
 
+If two actors call each other and their return types are inferred from the other actor's response, you may hit circular type errors (`TS2322`, `TS2722`, or `c.state` becoming `unknown`). Fix this by writing explicit return types on those actions.
+
 ```typescript
 import { actor, setup } from "rivetkit";
 
