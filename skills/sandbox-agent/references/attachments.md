@@ -54,4 +54,4 @@ await session.prompt([
 
 - Use absolute file URIs in `resource_link` blocks.
 - If `mimeType` is omitted, the agent/runtime may infer a default.
-- Support for non-text resources depends on each agent's ACP prompt capabilities.
+- Support for non-text resources depends on each agent's prompt capabilities.

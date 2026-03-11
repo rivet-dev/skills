@@ -138,6 +138,19 @@ const options = await session.getConfigOptions();
 const modes = await session.getModes();
 ```
 
+Handle permission requests from agents that ask before executing tools:
+
+```ts
+const claude = await sdk.createSession({
+  agent: "claude",
+  mode: "default",
+});
+
+claude.onPermissionRequest((request) => {
+  void claude.respondPermission(request.id, "once");
+});
+```
+
 See [Agent Sessions](/agent-sessions) for full details on config options and error handling.
 
 ## Events
@@ -209,6 +222,6 @@ Parameters:
 - `baseUrl` (required unless `fetch` is provided): Sandbox Agent server URL
 - `token` (optional): Bearer token for authenticated servers
 - `headers` (optional): Additional request headers
-- `fetch` (optional): Custom fetch implementation used by SDK HTTP and ACP calls
-- `waitForHealth` (optional, defaults to enabled): waits for `/v1/health` before HTTP helpers and ACP session setup proceed; pass `false` to disable or `{ timeoutMs }` to bound the wait
+- `fetch` (optional): Custom fetch implementation used by SDK HTTP and session calls
+- `waitForHealth` (optional, defaults to enabled): waits for `/v1/health` before HTTP helpers and session setup proceed; pass `false` to disable or `{ timeoutMs }` to bound the wait
 - `signal` (optional): aborts the startup `/v1/health` wait used by `connect()`

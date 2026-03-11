@@ -63,7 +63,7 @@ When prompting, Sandbox Agent does not pre-validate provider credentials. Agent-
 
 ### API
 
-`GET /v1/agents` includes `credentialsAvailable` per agent.
+`sdk.listAgents()` includes `credentialsAvailable` per agent.
 
 ```json
 {

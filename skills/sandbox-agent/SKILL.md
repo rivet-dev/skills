@@ -320,7 +320,6 @@ Open the Inspector UI at `/ui/` on your server (for example, `http://localhost:2
 - [Agent Sessions](references/agent-sessions.md)
 - [Architecture](references/architecture.md)
 - [Attachments](references/attachments.md)
-- [Building a Chat UI](references/building-chat-ui.md)
 - [CLI Reference](references/cli.md)
 - [CORS Configuration](references/cors.md)
 - [Credentials](references/credentials.md)

@@ -7,8 +7,6 @@
 ---
 Sandbox Agent stores sessions in memory only. When the server restarts or the sandbox is destroyed, all session data is lost. It's your responsibility to persist events to your own database.
 
-See the [Building a Chat UI](/building-chat-ui) guide for understanding session lifecycle events like `session.started` and `session.ended`.
-
 ## Recommended approach
 
 1. Store events to your database as they arrive
@@ -19,11 +17,11 @@ This prevents duplicate writes and lets you recover from disconnects.
 
 ## Receiving Events
 
-Two ways to receive events: SSE streaming (recommended) or polling.
+Two ways to receive events: streaming (recommended) or polling.
 
 ### Streaming
 
-Use SSE for real-time events with automatic reconnection support.
+Use streaming for real-time events with automatic reconnection support.
 
 ```typescript
 import { SandboxAgentClient } from "sandbox-agent";
@@ -45,7 +43,7 @@ for await (const event of client.streamEvents("my-session", { offset })) {
 
 ### Polling
 
-If you can't use SSE streaming, poll the events endpoint:
+If you can't use streaming, poll the events endpoint:
 
 ```typescript
 const lastEvent = await db.getLastEvent("my-session");
@@ -241,7 +239,7 @@ const events = await redis.lrange(`session:${sessionId}`, offset, -1);
 
 ## Handling disconnects
 
-The SSE stream may disconnect due to network issues. Handle reconnection gracefully:
+The event stream may disconnect due to network issues. Handle reconnection gracefully:
 
 ```typescript
 async function streamWithRetry(sessionId: string) {

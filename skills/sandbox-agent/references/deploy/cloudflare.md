@@ -115,8 +115,8 @@ This keeps all Sandbox Agent calls inside the Cloudflare sandbox routing path an
 ## Troubleshooting streaming updates
 
 If you only receive:
-- outbound `session/prompt`
-- final `{ stopReason: "end_turn" }`
+- the outbound prompt request
+- the final `{ stopReason: "end_turn" }` response
 
 then the streamed update channel dropped. In Cloudflare sandbox paths, this is typically caused by forwarding `AbortSignal` from SDK fetch init into `containerFetch(...)`.
 

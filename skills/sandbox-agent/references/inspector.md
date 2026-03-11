@@ -34,6 +34,7 @@ console.log(url);
 - Event JSON inspector
 - Prompt testing
 - Request/response debugging
+- Interactive permission prompts (approve, always-allow, or reject tool-use requests)
 - Process management (create, stop, kill, delete, view logs)
 - Interactive PTY terminal for tty processes
 - One-shot command execution

@@ -125,6 +125,40 @@ for (const opt of options) {
 await session.setConfigOption("some-agent-option", "value");
 ```
 
+## Handle permission requests
+
+For agents that request tool-use permissions, register a permission listener and reply with `once`, `always`, or `reject`:
+
+```ts
+const session = await sdk.createSession({
+  agent: "claude",
+  mode: "default",
+});
+
+session.onPermissionRequest((request) => {
+  console.log(request.toolCall.title, request.availableReplies);
+  void session.respondPermission(request.id, "once");
+});
+
+await session.prompt([
+  { type: "text", text: "Create ./permission-example.txt with the text hello." },
+]);
+```
+
+### Auto-approving permissions
+
+To auto-approve all permission requests, respond with `"once"` or `"always"` in your listener:
+
+```ts
+session.onPermissionRequest((request) => {
+  void session.respondPermission(request.id, "always");
+});
+```
+
+See `examples/permissions/src/index.ts` for a complete permissions example that works with Claude and Codex.
+
+Some agents like Claude allow configuring permission behavior through modes (e.g. `bypassPermissions`, `acceptEdits`). We recommend leaving the mode as `default` and handling permission decisions explicitly in `onPermissionRequest` instead.
+
 ## Destroy a session
 
 ```ts

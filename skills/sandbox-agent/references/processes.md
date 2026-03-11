@@ -9,7 +9,7 @@ The process API supports:
 
 - **One-shot execution** — run a command to completion and capture stdout, stderr, and exit code
 - **Managed processes** — spawn, list, stop, kill, and delete long-lived processes
-- **Log streaming** — fetch buffered logs or follow live output via SSE
+- **Log streaming** — fetch buffered logs or follow live output
 - **Terminals** — full PTY support with bidirectional WebSocket I/O
 - **Configurable limits** — control concurrency, timeouts, and buffer sizes per runtime
 
@@ -143,7 +143,7 @@ for (const entry of logs.entries) {
 curl "http://127.0.0.1:2468/v1/processes/proc_1/logs?tail=50&stream=combined"
 ```
 
-### Follow logs via SSE
+### Follow logs
 
 Stream log entries in real time. The subscription replays buffered entries first, then streams new output as it arrives.
 

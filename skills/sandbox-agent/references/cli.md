@@ -182,7 +182,7 @@ sandbox-agent api agents list
 
 #### api agents report
 
-Emit a JSON report of available models, modes, and thought levels for every agent. Calls `GET /v1/agents?config=true` and groups each agent's config options by category.
+Emit a JSON report of available models, modes, and thought levels for every agent, grouped by category.
 
 ```bash
 sandbox-agent api agents report --endpoint http://127.0.0.1:2468 | jq .
