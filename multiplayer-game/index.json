@@ -2,7 +2,7 @@
   "name": "multiplayer-game",
   "description": "Pragmatic patterns for building multiplayer games: matchmaking, tick loops, realtime state, interest management, and validation.",
   "skill_url": "/metadata/skills/multiplayer-game/SKILL.md",
-  "generated_at": "2026-03-12T07:54:14.211Z",
+  "generated_at": "2026-03-12T07:59:17.899Z",
   "references": [
     {
       "name": "actors/access-control",
@@ -406,7 +406,7 @@
     {
       "name": "self-hosting/postgres",
       "title": "PostgreSQL",
-      "description": "PostgreSQL is the recommended database backend for production deployments.",
+      "description": "Configure PostgreSQL for self-hosted Rivet deployments.",
       "canonical_url": "https://rivet.dev/docs/self-hosting/postgres",
       "reference_url": "/metadata/skills/multiplayer-game/reference/self-hosting/postgres.md"
     },
@@ -469,7 +469,7 @@
     {
       "name": "self-hosting/render",
       "title": "Render Deployment",
-      "description": "Deploy Rivet Engine to Render with managed PostgreSQL and automatic HTTPS.",
+      "description": "Deploy Rivet Engine to Render with managed PostgreSQL and automatic HTTPS, using the experimental PostgreSQL backend.",
       "canonical_url": "https://rivet.dev/docs/self-hosting/render",
       "reference_url": "/metadata/skills/multiplayer-game/reference/self-hosting/render.md"
     },

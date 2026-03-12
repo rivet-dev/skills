@@ -46,7 +46,7 @@ rivet-engine --config /etc/rivet/base.json --config /etc/rivet/override.json
 
 ## Related
 
-- [PostgreSQL](/docs/self-hosting/postgres): Configure PostgreSQL for production
+- [PostgreSQL](/docs/self-hosting/postgres): Configure the experimental PostgreSQL backend
 - [File System](/docs/self-hosting/filesystem): Configure file system storage for development
 
 _Source doc path: /docs/self-hosting/configuration_

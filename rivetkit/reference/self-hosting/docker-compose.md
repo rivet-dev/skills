@@ -110,9 +110,9 @@ Create the config file (`rivet-config.json`):
 }
 ```
 
-## Production Setup
+## Postgres Setup
 
-#### With PostgreSQL
+PostgreSQL is the recommended backend for multi-node self-hosted deployments today, but it remains experimental. For a production-ready single-node Rivet deployment, use the file system backend (RocksDB-based). Enterprise teams can contact [enterprise support](https://rivet.dev/sales) about FoundationDB for the most scalable production-ready deployment.
 
 ```yaml
 services:

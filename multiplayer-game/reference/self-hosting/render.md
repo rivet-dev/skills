@@ -2,9 +2,11 @@
 
 > Source: `src/content/docs/self-hosting/render.mdx`
 > Canonical URL: https://rivet.dev/docs/self-hosting/render
-> Description: Deploy Rivet Engine to Render with managed PostgreSQL and automatic HTTPS.
+> Description: Deploy Rivet Engine to Render with managed PostgreSQL and automatic HTTPS, using the experimental PostgreSQL backend.
 
 ---
+PostgreSQL is the recommended backend for multi-node self-hosted deployments today, but it remains experimental. For a production-ready single-node Rivet deployment, use the file system backend (RocksDB-based). Enterprise teams can contact [enterprise support](https://rivet.dev/sales) about FoundationDB for the most scalable production-ready deployment.
+
 ## Prerequisites
 
 1. A [Render account](https://render.com)
