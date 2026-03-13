@@ -62,7 +62,7 @@ curl -X DELETE "https://api.rivet.dev/actors/{actorId}?namespace={namespace}" \
   -H "Authorization: Bearer {token}"
 ```
 
-	Creating admin tokens is currently not supported on Rivet Cloud. See the [tracking issue](https://github.com/rivet-dev/rivet/issues/3530).
+	On Rivet Cloud, create an API token from Settings > Advanced > Cloud API Tokens > Create API Token, then use it as the bearer token above.
 
 ### Destroy via Dashboard
 
