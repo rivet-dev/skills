@@ -74,6 +74,7 @@ Use that canonical URL when citing, not the reference file path.
 3. Expose `registry.serve()` or `registry.handler()` (serverless) or `registry.startRunner()` (runner mode). Prefer serverless mode unless the user has a specific reason to use runner mode.
 4. Verify `/api/rivet/metadata` returns 200 before deploying.
 5. Configure Rivet Cloud or self-hosted engine
+   - You must configure versioning for production builds. This is not needed for local development. See [Versions & Upgrades](https://rivet.dev/docs/actors/versions).
 6. Integrate clients (see client guides below for JavaScript, React, or Swift)
 7. Prompt the user if they want to deploy. If so, go to Deploying Rivet Backends.
 
@@ -943,7 +944,7 @@ const registry = setup({ use: { worker } });
 
 ### Versions & Upgrades
 
-When deploying new code, set a version number so Rivet can route new actors to the latest runner and optionally drain old ones. Use a build timestamp, git commit count, or CI build number as the version.
+When deploying new code, set a version number so Rivet can route new actors to the latest runner and optionally drain old ones. Use a build timestamp, git commit count, or CI build number as the version. It is very important to [configure versioning](/docs/actors/versions) before deploying to production. Without versioning, actors can regress by running on older runner versions, and existing actors will never be forced to migrate to new runners. They will continue running indefinitely on the old runners until they exit.
 
 [Documentation](/docs/actors/versions)
 

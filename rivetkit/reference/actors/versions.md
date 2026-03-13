@@ -71,11 +71,109 @@ const registry = setup({
 });
 ```
 
-We recommend injecting a value at built time that increments every deployment, such as:
+The version **must** be set at build time, not at runtime. Do not use `Date.now()` or similar runtime values in your registry setup code. This would assign a different version every time the server starts, causing actors to be drained and rescheduled on every restart instead of only on new deployments.
 
-- Build timestamp
-- Git commit number (`git rev-list --count HEAD`)
-- CI build number ([`github.run_number`](https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#:~:text=github%2Erun%5Fnumber))
+### Example Configurations
+
+We recommend injecting a build-time value that increments with every deployment. Here are concrete examples for common setups:
+
+### Dockerfile
+
+Generate the version at build time and bake it into the image as an environment variable:
+
+```bash @nocheck
+docker build --build-arg RIVET_RUNNER_VERSION=$(date +%s) .
+```
+
+```dockerfile @nocheck
+FROM node:20-slim
+ARG RIVET_RUNNER_VERSION
+ENV RIVET_RUNNER_VERSION=$RIVET_RUNNER_VERSION
+WORKDIR /app
+COPY . .
+RUN npm install && npm run build
+CMD ["node", "dist/server.js"]
+```
+
+All containers from this image will share the same version.
+
+### Next.js
+
+Set the version in `next.config.ts`. Next.js evaluates this file once at build time and inlines the value into the bundle:
+
+```typescript @nocheck
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  env: {
+    RIVET_RUNNER_VERSION: String(Math.floor(Date.now() / 1000)),
+  },
+};
+
+export default nextConfig;
+```
+
+### Vite
+
+Use `define` in your Vite config. This is evaluated once at build time and inlined into the bundle:
+
+```typescript @nocheck
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  define: {
+    "process.env.RIVET_RUNNER_VERSION": JSON.stringify(
+      String(Math.floor(Date.now() / 1000))
+    ),
+  },
+});
+```
+
+### CI/CD
+
+Set the version from your CI pipeline:
+
+```yaml @nocheck
+# GitHub Actions
+env:
+  RIVET_RUNNER_VERSION: ${{ github.run_number }}
+```
+
+```bash @nocheck
+# Railway / Render / generic CI
+export RIVET_RUNNER_VERSION=$(date +%s)
+```
+
+```bash @nocheck
+# Git commit count
+export RIVET_RUNNER_VERSION=$(git rev-list --count HEAD)
+```
+
+### Build Script
+
+Generate a version file during your build step and import it:
+
+```json @nocheck
+{
+  "scripts": {
+    "build": "echo \"export const BUILD_VERSION = $(date +%s);\" > src/build-version.ts && tsc"
+  }
+}
+```
+
+```typescript @nocheck
+import { actor, setup } from "rivetkit";
+import { BUILD_VERSION } from "./build-version";
+
+const myActor = actor({ state: {}, actions: {} });
+
+const registry = setup({
+  use: { myActor },
+  runner: {
+    version: BUILD_VERSION,
+  },
+});
+```
 
 ### Drain on Version Upgrade
 
