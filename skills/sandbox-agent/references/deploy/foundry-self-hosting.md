@@ -38,9 +38,9 @@ That recipe sets `NODE_ENV=development`, which enables the dotenv loader.
 These values can be safely defaulted for local development:
 
 - `APP_URL=http://localhost:4173`
-- `BETTER_AUTH_URL=http://localhost:4173`
+- `BETTER_AUTH_URL=http://localhost:7741`
 - `BETTER_AUTH_SECRET=sandbox-agent-foundry-development-only-change-me`
-- `GITHUB_REDIRECT_URI=http://localhost:4173/api/rivet/app/auth/github/callback`
+- `GITHUB_REDIRECT_URI=http://localhost:7741/v1/auth/github/callback`
 
 These should be treated as development-only values.
 
@@ -92,7 +92,7 @@ Recommended GitHub App permissions:
 - Repository `Checks: Read`
 - Repository `Commit statuses: Read`
 
-Set the webhook URL to `https://<your-backend-host>/api/rivet/app/webhooks/github` and generate a webhook secret. Store the secret as `GITHUB_WEBHOOK_SECRET`.
+Set the webhook URL to `https://<your-backend-host>/v1/webhooks/github` and generate a webhook secret. Store the secret as `GITHUB_WEBHOOK_SECRET`.
 
 Recommended webhook subscriptions:
 
