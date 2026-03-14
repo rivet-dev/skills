@@ -94,6 +94,8 @@ Recommended GitHub App permissions:
 
 Set the webhook URL to `https://<your-backend-host>/v1/webhooks/github` and generate a webhook secret. Store the secret as `GITHUB_WEBHOOK_SECRET`.
 
+This is required, not optional. Foundry depends on GitHub App webhook delivery for installation lifecycle changes, repo access changes, and ongoing repo / pull request sync. If the GitHub App is not installed for the workspace, or webhook delivery is misconfigured, Foundry will remain in an install / reconnect state and core GitHub-backed functionality will not work correctly.
+
 Recommended webhook subscriptions:
 
 - `installation`
