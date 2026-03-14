@@ -40,7 +40,7 @@ These values can be safely defaulted for local development:
 - `APP_URL=http://localhost:4173`
 - `BETTER_AUTH_URL=http://localhost:7741`
 - `BETTER_AUTH_SECRET=sandbox-agent-foundry-development-only-change-me`
-- `GITHUB_REDIRECT_URI=http://localhost:7741/v1/auth/github/callback`
+- `GITHUB_REDIRECT_URI=http://localhost:7741/v1/auth/callback/github`
 
 These should be treated as development-only values.
 

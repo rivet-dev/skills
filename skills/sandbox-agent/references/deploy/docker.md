@@ -9,17 +9,17 @@ Docker is not recommended for production isolation of untrusted workloads. Use d
 
 ## Quick start
 
-Run Sandbox Agent with agents pre-installed:
+Run the published full image with all supported agents pre-installed:
 
 ```bash
 docker run --rm -p 3000:3000 \
   -e ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY" \
   -e OPENAI_API_KEY="$OPENAI_API_KEY" \
-  alpine:latest sh -c "\
-    apk add --no-cache curl ca-certificates libstdc++ libgcc bash nodejs npm && \
-    curl -fsSL https://releases.rivet.dev/sandbox-agent/0.3.x/install.sh | sh && \
-    sandbox-agent server --no-token --host 0.0.0.0 --port 3000"
+  rivetdev/sandbox-agent:0.3.1-full \
+  server --no-token --host 0.0.0.0 --port 3000
 ```
+
+The `0.3.1-full` tag pins the exact version. The moving `full` tag is also published for contributors who want the latest full image.
 
 ## TypeScript with dockerode
 
@@ -31,14 +31,8 @@ const docker = new Docker();
 const PORT = 3000;
 
 const container = await docker.createContainer({
-  Image: "node:22-bookworm-slim",
-  Cmd: ["sh", "-c", [
-    "apt-get update",
-    "DEBIAN_FRONTEND=noninteractive apt-get install -y curl ca-certificates bash libstdc++6",
-    "rm -rf /var/lib/apt/lists/*",
-    "curl -fsSL https://releases.rivet.dev/sandbox-agent/0.3.x/install.sh | sh",
-    `sandbox-agent server --no-token --host 0.0.0.0 --port ${PORT}`,
-  ].join(" && ")],
+  Image: "rivetdev/sandbox-agent:0.3.1-full",
+  Cmd: ["server", "--no-token", "--host", "0.0.0.0", "--port", `${PORT}`],
   Env: [
     `ANTHROPIC_API_KEY=${process.env.ANTHROPIC_API_KEY}`,
     `OPENAI_API_KEY=${process.env.OPENAI_API_KEY}`,
@@ -58,6 +52,29 @@ const sdk = await SandboxAgent.connect({ baseUrl });
 
 const session = await sdk.createSession({ agent: "codex" });
 await session.prompt([{ type: "text", text: "Summarize this repository." }]);
+```
+
+## Building a custom image with everything preinstalled
+
+If you need to extend your own base image, install Sandbox Agent and preinstall every supported agent in one step:
+
+```dockerfile
+FROM node:22-bookworm-slim
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    bash ca-certificates curl git && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL https://releases.rivet.dev/sandbox-agent/0.3.x/install.sh | sh && \
+    sandbox-agent install-agent --all
+
+RUN useradd -m -s /bin/bash sandbox
+USER sandbox
+WORKDIR /home/sandbox
+
+EXPOSE 2468
+ENTRYPOINT ["sandbox-agent"]
+CMD ["server", "--host", "0.0.0.0", "--port", "2468"]
 ```
 
 ## Building from source

@@ -61,9 +61,11 @@ const sandbox = await daytona.create({
 #### Docker
 
 ```bash
-docker run -e ANTHROPIC_API_KEY="sk-ant-..." \
+docker run -p 2468:2468 \
+  -e ANTHROPIC_API_KEY="sk-ant-..." \
   -e OPENAI_API_KEY="sk-..." \
-  your-image
+  rivetdev/sandbox-agent:0.3.1-full \
+  server --no-token --host 0.0.0.0 --port 2468
 ```
 
 #### Extracting API keys from current machine
@@ -207,10 +209,7 @@ If you're calling the server from a browser, see the [CORS configuration guide](
 To preinstall agents:
 
 ```bash
-sandbox-agent install-agent claude
-sandbox-agent install-agent codex
-sandbox-agent install-agent opencode
-sandbox-agent install-agent amp
+sandbox-agent install-agent --all
 ```
 
 If agents are not installed up front, they are lazily installed when creating a session.

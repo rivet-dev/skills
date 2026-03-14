@@ -40,20 +40,24 @@ Notes:
 
 ## install-agent
 
-Install or reinstall a single agent.
+Install or reinstall a single agent, or every supported agent with `--all`.
 
 ```bash
-sandbox-agent install-agent <AGENT> [OPTIONS]
+sandbox-agent install-agent [<AGENT>] [OPTIONS]
 ```
 
 | Option | Description |
 |--------|-------------|
+| `--all` | Install every supported agent |
 | `-r, --reinstall` | Force reinstall |
-| `--agent-version ` | Override agent package version |
-| `--agent-process-version ` | Override agent process version |
+| `--agent-version ` | Override agent package version (conflicts with `--all`) |
+| `--agent-process-version ` | Override agent process version (conflicts with `--all`) |
+
+Examples:
 
 ```bash
 sandbox-agent install-agent claude --reinstall
+sandbox-agent install-agent --all
 ```
 
 ## opencode (experimental)
