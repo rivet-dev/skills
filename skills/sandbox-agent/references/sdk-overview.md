@@ -225,3 +225,7 @@ Parameters:
 - `fetch` (optional): Custom fetch implementation used by SDK HTTP and session calls
 - `waitForHealth` (optional, defaults to enabled): waits for `/v1/health` before HTTP helpers and session setup proceed; pass `false` to disable or `{ timeoutMs }` to bound the wait
 - `signal` (optional): aborts the startup `/v1/health` wait used by `connect()`
+
+## LLM credentials
+
+Sandbox Agent supports personal API keys, shared organization keys, and per-tenant gateway keys with budget enforcement. See [LLM Credentials](/llm-credentials) for setup details.

@@ -76,6 +76,10 @@ Use `sandbox-agent credentials extract-env --export` to extract your existing AP
 
 Use the `mock` agent for SDK and integration testing without provider credentials.
 
+#### Multi-tenant and per-user billing
+
+For per-tenant token tracking, budget enforcement, or usage-based billing, see [LLM Credentials](/llm-credentials) for gateway options like OpenRouter, LiteLLM, and Portkey.
+
 ### Run the server
 
 #### curl

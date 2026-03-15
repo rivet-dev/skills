@@ -97,6 +97,10 @@ Use `sandbox-agent credentials extract-env --export` to extract your existing AP
 
 Use the `mock` agent for SDK and integration testing without provider credentials.
 
+#### Multi-tenant and per-user billing
+
+For per-tenant token tracking, budget enforcement, or usage-based billing, see [LLM Credentials](/llm-credentials) for gateway options like OpenRouter, LiteLLM, and Portkey.
+
 ### Run the server
 
 #### curl
@@ -322,12 +326,12 @@ Open the Inspector UI at `/ui/` on your server (for example, `http://localhost:2
 - [Attachments](references/attachments.md)
 - [CLI Reference](references/cli.md)
 - [CORS Configuration](references/cors.md)
-- [Credentials](references/credentials.md)
 - [Custom Tools](references/custom-tools.md)
 - [Daemon](references/daemon.md)
 - [File System](references/file-system.md)
 - [Gigacode](references/gigacode.md)
 - [Inspector](references/inspector.md)
+- [LLM Credentials](references/llm-credentials.md)
 - [Manage Sessions](references/manage-sessions.md)
 - [MCP](references/mcp-config.md)
 - [Multiplayer](references/multiplayer.md)
