@@ -13,6 +13,7 @@ Current exports:
 - `ProcessTerminal` for attaching to a running tty process
 - `AgentTranscript` for rendering session/message timelines without bundling any styles
 - `ChatComposer` for a reusable prompt input/send surface
+- `useTranscriptVirtualizer` for wiring large transcript lists to a scroll container
 
 ## Install
 
@@ -185,10 +186,19 @@ Useful props:
 
 - `className`: root class hook
 - `classNames`: slot-level class hooks for styling from outside the package
+- `scrollRef` + `virtualize`: opt into TanStack Virtual against an external scroll container
 - `renderMessageText`: custom text or markdown renderer
 - `renderToolItemIcon`, `renderToolGroupIcon`, `renderChevron`, `renderEventLinkContent`: presentation overrides
 - `renderInlinePendingIndicator`, `renderThinkingState`: loading/thinking UI overrides
 - `isDividerEntry`, `canOpenEvent`, `getToolGroupSummary`: behavior overrides for grouping and labels
+
+## Transcript virtualization hook
+
+`useTranscriptVirtualizer` exposes the same TanStack Virtual behavior used by `AgentTranscript` when `virtualize` is enabled.
+
+- Pass the grouped transcript rows you want to virtualize
+- Pass a `scrollRef` that points at the actual scrollable element
+- Use it when you need transcript-aware virtualization outside the stock `AgentTranscript` renderer
 
 ## Composer and conversation
 
