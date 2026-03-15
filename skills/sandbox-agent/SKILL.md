@@ -316,6 +316,7 @@ Open the Inspector UI at `/ui/` on your server (for example, `http://localhost:2
 - [E2B](references/deploy/e2b.md)
 - [Foundry Self-Hosting](references/deploy/foundry-self-hosting.md)
 - [Local](references/deploy/local.md)
+- [Modal](references/deploy/modal.md)
 - [Vercel](references/deploy/vercel.md)
 
 ### General
