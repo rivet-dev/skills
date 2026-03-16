@@ -231,6 +231,8 @@ If you're calling the server from a browser, see the [CORS configuration guide](
 
 ### Install agents (optional)
 
+Supported agent IDs: `claude`, `codex`, `opencode`, `amp`, `pi`, `cursor`, `mock`.
+
 To preinstall agents:
 
 ```bash

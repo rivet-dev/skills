@@ -60,6 +60,39 @@ sandbox-agent install-agent claude --reinstall
 sandbox-agent install-agent --all
 ```
 
+### Custom Pi implementation path
+
+If you use a forked/custom `pi` binary with `pi-acp`, you can override what executable gets launched.
+
+#### Option 1: explicit command override (recommended)
+
+Set `PI_ACP_PI_COMMAND` in the environment where `sandbox-agent` runs:
+
+```bash
+PI_ACP_PI_COMMAND=/absolute/path/to/your/pi-fork sandbox-agent server
+```
+
+This is forwarded to `pi-acp`, which uses it instead of looking up `pi` on `PATH`.
+
+#### Option 2: PATH override
+
+Put your custom `pi` first on `PATH` before starting `sandbox-agent`:
+
+```bash
+export PATH="/path/to/custom-pi-dir:$PATH"
+sandbox-agent server
+```
+
+#### Option 3: symlink override
+
+Point `pi` to your custom binary via symlink in a directory that is early on `PATH`:
+
+```bash
+ln -sf /absolute/path/to/your/pi-fork /usr/local/bin/pi
+```
+
+Then start `sandbox-agent` normally.
+
 ## opencode (experimental)
 
 Start/reuse daemon and run `opencode attach` against `/opencode`.
