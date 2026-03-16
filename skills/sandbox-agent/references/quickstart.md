@@ -242,7 +242,7 @@ npx @sandbox-agent/cli@0.3.x server --no-token --host 0.0.0.0 --port 2468
 docker run -p 2468:2468 \
   -e ANTHROPIC_API_KEY="sk-ant-..." \
   -e OPENAI_API_KEY="sk-..." \
-  rivetdev/sandbox-agent:0.4.0-rc.2-full \
+  rivetdev/sandbox-agent:0.4.0-rc.3-full \
   server --no-token --host 0.0.0.0 --port 2468
 ```
 

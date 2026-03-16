@@ -58,7 +58,7 @@ Agents are installed lazily on first use. To avoid the cold-start delay, pre-ins
 sandbox-agent install-agent --all
 ```
 
-The `rivetdev/sandbox-agent:0.4.0-rc.2-full` Docker image ships with all agents pre-installed.
+The `rivetdev/sandbox-agent:0.4.0-rc.3-full` Docker image ships with all agents pre-installed.
 
 ## Production-ready agent orchestration
 
