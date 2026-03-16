@@ -260,7 +260,7 @@ Example output:
 }
 ```
 
-See [Agent Capabilities](/agent-capabilities) for a full reference of supported models, modes, and thought levels per agent.
+See individual agent pages (e.g. [Claude](/agents/claude), [Codex](/agents/codex)) for supported models, modes, and thought levels.
 
 #### api agents install
 

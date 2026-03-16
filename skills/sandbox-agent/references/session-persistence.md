@@ -11,14 +11,22 @@ With persistence enabled, sessions can be restored after runtime/session loss. S
 
 Each driver stores:
 
-- `SessionRecord` (`id`, `agent`, `agentSessionId`, `lastConnectionId`, `createdAt`, optional `destroyedAt`, optional `sessionInit`)
+- `SessionRecord` (`id`, `agent`, `agentSessionId`, `lastConnectionId`, `createdAt`, optional `destroyedAt`, optional `sandboxId`, optional `sessionInit`, optional `configOptions`, optional `modes`)
 - `SessionEvent` (`id`, `eventIndex`, `sessionId`, `connectionId`, `sender`, `payload`, `createdAt`)
 
 ## Persistence drivers
 
-### In-memory
+### Rivet
 
-Best for local dev and ephemeral workloads.
+Recommended for sandbox orchestration with actor state. See [Multiplayer](/multiplayer) for a full Rivet actor example with persistence in actor state.
+
+### IndexedDB (browser)
+
+Best for browser apps that should survive reloads. See the [Inspector source](https://github.com/rivet-dev/sandbox-agent/tree/main/frontend/packages/inspector/src/persist-indexeddb.ts) for a complete IndexedDB driver you can copy into your project.
+
+### In-memory (built-in)
+
+Best for local dev and ephemeral workloads. No extra dependencies required.
 
 ```ts
 import { InMemorySessionPersistDriver, SandboxAgent } from "sandbox-agent";
@@ -34,91 +42,17 @@ const sdk = await SandboxAgent.connect({
 });
 ```
 
-### Rivet
-
-Recommended for sandbox orchestration with actor state.
-
-```bash
-npm install @sandbox-agent/persist-rivet@0.3.x
-```
-
-```ts
-import { actor } from "rivetkit";
-import { SandboxAgent } from "sandbox-agent";
-import { RivetSessionPersistDriver, type RivetPersistState } from "@sandbox-agent/persist-rivet";
-
-type PersistedState = RivetPersistState & {
-  sandboxId: string;
-  baseUrl: string;
-};
-
-export default actor({
-  createState: async () => {
-    return {
-      sandboxId: "sbx_123",
-      baseUrl: "http://127.0.0.1:2468",
-    } satisfies Partial<PersistedState>;
-  },
-  createVars: async (c) => {
-    const persist = new RivetSessionPersistDriver(c);
-    const sdk = await SandboxAgent.connect({
-      baseUrl: c.state.baseUrl,
-      persist,
-    });
-
-    const session = await sdk.resumeOrCreateSession({ id: "default", agent: "codex" });
-
-    const unsubscribe = session.onEvent((event) => {
-      c.broadcast("session.event", event);
-    });
-
-    return { sdk, session, unsubscribe };
-  },
-  actions: {
-    sendMessage: async (c, message: string) => {
-      await c.vars.session.prompt([{ type: "text", text: message }]);
-    },
-  },
-  onSleep: async (c) => {
-    c.vars.unsubscribe?.();
-    await c.vars.sdk.dispose();
-  },
-});
-```
-
-### IndexedDB
-
-Best for browser apps that should survive reloads.
-
-```bash
-npm install @sandbox-agent/persist-indexeddb@0.3.x
-```
-
-```ts
-import { SandboxAgent } from "sandbox-agent";
-import { IndexedDbSessionPersistDriver } from "@sandbox-agent/persist-indexeddb";
-
-const persist = new IndexedDbSessionPersistDriver({
-  databaseName: "sandbox-agent-session-store",
-});
-
-const sdk = await SandboxAgent.connect({
-  baseUrl: "http://127.0.0.1:2468",
-  persist,
-});
-```
-
 ### SQLite
 
 Best for local/server Node apps that need durable storage without a DB server.
 
 ```bash
-npm install @sandbox-agent/persist-sqlite@0.3.x
+npm install better-sqlite3
 ```
 
 ```ts
 import { SandboxAgent } from "sandbox-agent";
-import { SQLiteSessionPersistDriver } from "@sandbox-agent/persist-sqlite";
+import { SQLiteSessionPersistDriver } from "./persist.ts";
 
 const persist = new SQLiteSessionPersistDriver({
   filename: "./sandbox-agent.db",
@@ -130,17 +64,19 @@ const sdk = await SandboxAgent.connect({
 });
 ```
 
+See the [full SQLite example](https://github.com/rivet-dev/sandbox-agent/tree/main/examples/persist-sqlite) for the complete driver implementation you can copy into your project.
+
 ### Postgres
 
 Use when you already run Postgres and want shared relational storage.
 
 ```bash
-npm install @sandbox-agent/persist-postgres@0.3.x
+npm install pg
 ```
 
 ```ts
 import { SandboxAgent } from "sandbox-agent";
-import { PostgresSessionPersistDriver } from "@sandbox-agent/persist-postgres";
+import { PostgresSessionPersistDriver } from "./persist.ts";
 
 const persist = new PostgresSessionPersistDriver({
   connectionString: process.env.DATABASE_URL,
@@ -153,6 +89,8 @@ const sdk = await SandboxAgent.connect({
 });
 ```
 
+See the [full Postgres example](https://github.com/rivet-dev/sandbox-agent/tree/main/examples/persist-postgres) for the complete driver implementation you can copy into your project.
+
 ### Custom driver
 
 Implement `SessionPersistDriver` for custom backends.
@@ -161,11 +99,11 @@ Implement `SessionPersistDriver` for custom backends.
 import type { SessionPersistDriver } from "sandbox-agent";
 
 class MyDriver implements SessionPersistDriver {
-  async getSession(id) { return null; }
+  async getSession(id) { return undefined; }
   async listSessions(request) { return { items: [] }; }
   async updateSession(session) {}
   async listEvents(request) { return { items: [] }; }
-  async insertEvent(event) {}
+  async insertEvent(sessionId, event) {}
 }
 ```
 

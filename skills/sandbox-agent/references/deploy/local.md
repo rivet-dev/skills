@@ -33,12 +33,15 @@ bunx @sandbox-agent/cli@0.3.x server --no-token --host 127.0.0.1 --port 2468
 
 ## With the TypeScript SDK
 
-The SDK can spawn and manage the server as a subprocess:
+The SDK can spawn and manage the server as a subprocess using the `local` provider:
 
 ```typescript
 import { SandboxAgent } from "sandbox-agent";
+import { local } from "sandbox-agent/local";
 
-const sdk = await SandboxAgent.start();
+const sdk = await SandboxAgent.start({
+  sandbox: local(),
+});
 
 const session = await sdk.createSession({
   agent: "claude",
@@ -48,7 +51,21 @@ await session.prompt([
   { type: "text", text: "Summarize this repository." },
 ]);
 
-await sdk.dispose();
+await sdk.destroySandbox();
 ```
 
 This starts the server on an available local port and connects automatically.
+
+Pass options to customize the local provider:
+
+```typescript
+const sdk = await SandboxAgent.start({
+  sandbox: local({
+    port: 3000,
+    log: "inherit",
+    env: {
+      ANTHROPIC_API_KEY: process.env.MY_ANTHROPIC_KEY,
+    },
+  }),
+});
+```

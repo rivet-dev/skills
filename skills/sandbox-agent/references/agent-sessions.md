@@ -21,10 +21,7 @@ const sdk = await SandboxAgent.connect({
 
 const session = await sdk.createSession({
   agent: "codex",
-  sessionInit: {
-    cwd: "/",
-    mcpServers: [],
-  },
+  cwd: "/",
 });
 
 console.log(session.id, session.agentSessionId);

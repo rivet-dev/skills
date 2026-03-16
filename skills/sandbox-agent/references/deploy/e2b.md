@@ -12,41 +12,36 @@
 
 ## TypeScript example
 
+```bash
+npm install sandbox-agent@0.3.x @e2b/code-interpreter
+```
+
 ```typescript
-import { Sandbox } from "@e2b/code-interpreter";
 import { SandboxAgent } from "sandbox-agent";
+import { e2b } from "sandbox-agent/e2b";
 
 const envs: Record<string, string> = {};
 if (process.env.ANTHROPIC_API_KEY) envs.ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 if (process.env.OPENAI_API_KEY) envs.OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
-const sandbox = await Sandbox.create({ allowInternetAccess: true, envs });
-
-await sandbox.commands.run(
-  "curl -fsSL https://releases.rivet.dev/sandbox-agent/0.3.x/install.sh | sh"
-);
-
-await sandbox.commands.run("sandbox-agent install-agent claude");
-await sandbox.commands.run("sandbox-agent install-agent codex");
-
-await sandbox.commands.run(
-  "sandbox-agent server --no-token --host 0.0.0.0 --port 3000",
-  { background: true, timeoutMs: 0 }
-);
-
-const baseUrl = `https://${sandbox.getHost(3000)}`;
-const sdk = await SandboxAgent.connect({ baseUrl });
-
-const session = await sdk.createSession({ agent: "claude" });
-const off = session.onEvent((event) => {
-  console.log(event.sender, event.payload);
+const sdk = await SandboxAgent.start({
+  sandbox: e2b({
+    create: { envs },
+  }),
 });
 
-await session.prompt([{ type: "text", text: "Summarize this repository" }]);
-off();
-
-await sandbox.kill();
+try {
+  const session = await sdk.createSession({ agent: "claude" });
+  const response = await session.prompt([
+    { type: "text", text: "Summarize this repository" },
+  ]);
+  console.log(response.stopReason);
+} finally {
+  await sdk.destroySandbox();
+}
 ```
+
+The `e2b` provider handles sandbox creation, Sandbox Agent installation, agent setup, and server startup automatically.
 
 ## Faster cold starts
 

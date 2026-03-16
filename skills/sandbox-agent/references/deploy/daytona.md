@@ -15,39 +15,36 @@ See [Daytona network limits](https://www.daytona.io/docs/en/network-limits/).
 
 ## TypeScript example
 
-```typescript
-import { Daytona } from "@daytonaio/sdk";
-import { SandboxAgent } from "sandbox-agent";
+```bash
+npm install sandbox-agent@0.3.x @daytonaio/sdk
+```
 
-const daytona = new Daytona();
+```typescript
+import { SandboxAgent } from "sandbox-agent";
+import { daytona } from "sandbox-agent/daytona";
 
 const envVars: Record<string, string> = {};
 if (process.env.ANTHROPIC_API_KEY) envVars.ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 if (process.env.OPENAI_API_KEY) envVars.OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
-const sandbox = await daytona.create({ envVars });
+const sdk = await SandboxAgent.start({
+  sandbox: daytona({
+    create: { envVars },
+  }),
+});
 
-await sandbox.process.executeCommand(
-  "curl -fsSL https://releases.rivet.dev/sandbox-agent/0.3.x/install.sh | sh"
-);
-
-await sandbox.process.executeCommand("sandbox-agent install-agent claude");
-await sandbox.process.executeCommand("sandbox-agent install-agent codex");
-
-await sandbox.process.executeCommand(
-  "nohup sandbox-agent server --no-token --host 0.0.0.0 --port 3000 >/tmp/sandbox-agent.log 2>&1 &"
-);
-
-await new Promise((r) => setTimeout(r, 2000));
-
-const baseUrl = (await sandbox.getSignedPreviewUrl(3000, 4 * 60 * 60)).url;
-const sdk = await SandboxAgent.connect({ baseUrl });
-
-const session = await sdk.createSession({ agent: "claude" });
-await session.prompt([{ type: "text", text: "Summarize this repository" }]);
-
-await sandbox.delete();
+try {
+  const session = await sdk.createSession({ agent: "claude" });
+  const response = await session.prompt([
+    { type: "text", text: "Summarize this repository" },
+  ]);
+  console.log(response.stopReason);
+} finally {
+  await sdk.destroySandbox();
+}
 ```
+
+The `daytona` provider uses the `rivetdev/sandbox-agent:0.3.2-full` image by default and starts the server automatically.
 
 ## Using snapshots for faster startup
 

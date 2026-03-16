@@ -2,64 +2,64 @@
 
 > Source: `docs/architecture.mdx`
 > Canonical URL: https://sandboxagent.dev/docs/architecture
-> Description: How the client, sandbox, server, and agent fit together.
+> Description: How the Sandbox Agent server, SDK, and agent processes fit together.
 
 ---
-Sandbox Agent runs as an HTTP server inside your sandbox. Your app talks to it remotely.
+Sandbox Agent is a lightweight HTTP server that runs **inside** a sandbox. It:
+
+- **Agent management**: Installs, spawns, and stops coding agent processes
+- **Sessions**: Routes prompts to agents and streams events back in real time
+- **Sandbox APIs**: Filesystem, process, and terminal access for the sandbox environment
 
 ## Components
 
-- `Your client`: your app code using the `sandbox-agent` SDK.
-- `Sandbox`: isolated runtime (E2B, Daytona, Docker, etc.).
-- `Sandbox Agent server`: process inside the sandbox exposing HTTP transport.
-- `Agent`: Claude/Codex/OpenCode/Amp process managed by Sandbox Agent.
-
-```mermaid placement="top-right"
+```mermaid
 flowchart LR
-  CLIENT["Sandbox Agent SDK"]
-  SERVER["Sandbox Agent server"]
-  AGENT["Agent process"]
+    CLIENT["Your App"]
 
-  subgraph SANDBOX["Sandbox"]
-    direction TB
-    SERVER --> AGENT
-  end
+    subgraph SANDBOX["Sandbox"]
+        direction TB
+        SERVER["Sandbox Agent Server"]
+        AGENT["Agent Process<br/>(Claude, Codex, etc.)"]
+        SERVER --> AGENT
+    end
 
-  CLIENT -->|HTTP| SERVER
+    CLIENT -->|"SDK (HTTP)"| SERVER
 ```
 
-## Suggested Topology
+- **Your app**: Uses the `sandbox-agent` TypeScript SDK to talk to the server over HTTP.
+- **Sandbox**: An isolated runtime (local process, Docker, E2B, Daytona, Vercel, Cloudflare).
+- **Sandbox Agent server**: A single binary inside the sandbox that manages agent lifecycles, routes prompts, streams events, and exposes filesystem/process/terminal APIs.
+- **Agent process**: A coding agent (Claude Code, Codex, etc.) spawned by the server. Each session maps to one agent process.
 
-Run the SDK on your backend, then call it from your frontend.
+## What `SandboxAgent.start()` does
 
-This extra hop is recommended because it keeps auth/token logic on the backend and makes persistence simpler.
+1. **Provision**: The provider creates a sandbox (starts a container, creates a VM, etc.)
+2. **Install**: The Sandbox Agent binary is installed inside the sandbox
+3. **Boot**: The server starts listening on an HTTP port
+4. **Health check**: The SDK waits for `/v1/health` to respond
+5. **Ready**: The SDK returns a connected client
 
-```mermaid placement="top-right"
-flowchart LR
-  BROWSER["Browser"]
-  subgraph BACKEND["Your backend"]
-    direction TB
-    SDK["Sandbox Agent SDK"]
-  end
-  subgraph SANDBOX_SIMPLE["Sandbox"]
-    SERVER_SIMPLE["Sandbox Agent server"]
-  end
+For the `local` provider, provisioning is a no-op and the server runs as a local subprocess.
 
-  BROWSER --> BACKEND
-  BACKEND --> SDK --> SERVER_SIMPLE
+### Server recovery
+
+If the server process stops, the SDK automatically calls the provider's `ensureServer()` after 3 consecutive health-check failures. Most built-in providers implement this. Custom providers can add `ensureServer(sandboxId)` to their `SandboxProvider` object.
+
+## Server HTTP API
+
+See the [HTTP API reference](/api-reference) for the full list of server endpoints.
+
+## Agent installation
+
+Agents are installed lazily on first use. To avoid the cold-start delay, pre-install them:
+
+```bash
+sandbox-agent install-agent --all
 ```
 
-### Backend requirements
+The `rivetdev/sandbox-agent:0.3.2-full` Docker image ships with all agents pre-installed.
 
-Your backend layer needs to handle:
+## Production-ready agent orchestration
 
-- **Long-running connections**: prompts can take minutes.
-- **Session affinity**: follow-up messages must reach the same session.
-- **State between requests**: session metadata and event history must persist across requests.
-- **Graceful recovery**: sessions should resume after backend restarts.
-
-We recommend [Rivet](https://rivet.dev) over serverless because actors natively support the long-lived connections, session routing, and state persistence that agent workloads require.
-
-## Session persistence
-
-For storage driver options and replay behavior, see [Persisting Sessions](/session-persistence).
+For production deployments, see [Orchestration Architecture](/orchestration-architecture) for recommended topology, backend requirements, and session persistence patterns.

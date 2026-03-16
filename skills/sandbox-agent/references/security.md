@@ -5,7 +5,7 @@
 > Description: Backend-first auth and access control patterns.
 
 ---
-As covered in [Architecture](/architecture), run the Sandbox Agent client on your backend, not in the browser.
+As covered in [Orchestration Architecture](/orchestration-architecture), run the Sandbox Agent client on your backend, not in the browser.
 
 This keeps sandbox credentials private and gives you one place for authz, rate limiting, and audit logging.
 
@@ -91,7 +91,7 @@ export const workspace = actor({
 
       const session = await sdk.createSession({
         agent: "claude",
-        sessionInit: { cwd: "/workspace" },
+        cwd: "/workspace",
       });
 
       session.onEvent((event) => {

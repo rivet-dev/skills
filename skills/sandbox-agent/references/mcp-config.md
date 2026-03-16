@@ -27,9 +27,7 @@ await sdk.setMcpConfig(
 // Create a session using the configured MCP servers
 const session = await sdk.createSession({
   agent: "claude",
-  sessionInit: {
-    cwd: "/workspace",
-  },
+  cwd: "/workspace",
 });
 
 await session.prompt([

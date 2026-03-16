@@ -23,12 +23,6 @@ bun add sandbox-agent@0.3.x
 bun pm trust @sandbox-agent/cli-linux-x64 @sandbox-agent/cli-linux-arm64 @sandbox-agent/cli-darwin-arm64 @sandbox-agent/cli-darwin-x64 @sandbox-agent/cli-win32-x64
 ```
 
-## Optional persistence drivers
-
-```bash
-npm install @sandbox-agent/persist-indexeddb@0.3.x @sandbox-agent/persist-sqlite@0.3.x @sandbox-agent/persist-postgres@0.3.x
-```
-
 ## Optional React components
 
 ```bash
@@ -68,15 +62,12 @@ const sdk = await SandboxAgent.connect({
 controller.abort();
 ```
 
-With persistence:
+With persistence (see [Persisting Sessions](/session-persistence) for driver options):
 
 ```ts
-import { SandboxAgent } from "sandbox-agent";
-import { SQLiteSessionPersistDriver } from "@sandbox-agent/persist-sqlite";
+import { SandboxAgent, InMemorySessionPersistDriver } from "sandbox-agent";
 
-const persist = new SQLiteSessionPersistDriver({
-  filename: "./sessions.db",
-});
+const persist = new InMemorySessionPersistDriver();
 
 const sdk = await SandboxAgent.connect({
   baseUrl: "http://127.0.0.1:2468",
@@ -84,25 +75,40 @@ const sdk = await SandboxAgent.connect({
 });
 ```
 
-Local autospawn (Node.js only):
+Local spawn with a sandbox provider:
 
 ```ts
 import { SandboxAgent } from "sandbox-agent";
+import { local } from "sandbox-agent/local";
 
-const localSdk = await SandboxAgent.start();
+const sdk = await SandboxAgent.start({
+  sandbox: local(),
+});
 
-await localSdk.dispose();
+// sdk.sandboxId — prefixed provider ID (e.g. "local/127.0.0.1:2468")
+
+await sdk.destroySandbox(); // tears down sandbox + disposes client
 ```
+
+`SandboxAgent.start(...)` requires a `sandbox` provider. Built-in providers:
+
+| Import | Provider |
+|--------|----------|
+| `sandbox-agent/local` | Local subprocess |
+| `sandbox-agent/docker` | Docker container |
+| `sandbox-agent/e2b` | E2B sandbox |
+| `sandbox-agent/daytona` | Daytona workspace |
+| `sandbox-agent/vercel` | Vercel Sandbox |
+| `sandbox-agent/cloudflare` | Cloudflare Sandbox |
+
+Use `sdk.dispose()` to disconnect without destroying the sandbox, or `sdk.destroySandbox()` to tear down both.
 
 ## Session flow
 
 ```ts
 const session = await sdk.createSession({
   agent: "mock",
-  sessionInit: {
-    cwd: "/",
-    mcpServers: [],
-  },
+  cwd: "/",
 });
 
 const prompt = await session.prompt([
@@ -223,6 +229,7 @@ Parameters:
 - `token` (optional): Bearer token for authenticated servers
 - `headers` (optional): Additional request headers
 - `fetch` (optional): Custom fetch implementation used by SDK HTTP and session calls
+- `skipHealthCheck` (optional): set `true` to skip the startup `/v1/health` wait
 - `waitForHealth` (optional, defaults to enabled): waits for `/v1/health` before HTTP helpers and session setup proceed; pass `false` to disable or `{ timeoutMs }` to bound the wait
 - `signal` (optional): aborts the startup `/v1/health` wait used by `connect()`
 

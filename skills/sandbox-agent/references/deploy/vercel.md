@@ -12,51 +12,39 @@
 
 ## TypeScript example
 
-```typescript
-import { Sandbox } from "@vercel/sandbox";
-import { SandboxAgent } from "sandbox-agent";
-
-const envs: Record<string, string> = {};
-if (process.env.ANTHROPIC_API_KEY) envs.ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
-if (process.env.OPENAI_API_KEY) envs.OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-
-const sandbox = await Sandbox.create({
-  runtime: "node24",
-  ports: [3000],
-});
-
-const run = async (cmd: string, args: string[] = []) => {
-  const result = await sandbox.runCommand({ cmd, args, env: envs });
-  if (result.exitCode !== 0) {
-    throw new Error(`Command failed: ${cmd} ${args.join(" ")}`);
-  }
-};
-
-await run("sh", ["-c", "curl -fsSL https://releases.rivet.dev/sandbox-agent/0.3.x/install.sh | sh"]);
-await run("sandbox-agent", ["install-agent", "claude"]);
-await run("sandbox-agent", ["install-agent", "codex"]);
-
-await sandbox.runCommand({
-  cmd: "sandbox-agent",
-  args: ["server", "--no-token", "--host", "0.0.0.0", "--port", "3000"],
-  env: envs,
-  detached: true,
-});
-
-const baseUrl = sandbox.domain(3000);
-const sdk = await SandboxAgent.connect({ baseUrl });
-
-const session = await sdk.createSession({ agent: "claude" });
-
-const off = session.onEvent((event) => {
-  console.log(event.sender, event.payload);
-});
-
-await session.prompt([{ type: "text", text: "Summarize this repository" }]);
-off();
-
-await sandbox.stop();
+```bash
+npm install sandbox-agent@0.3.x @vercel/sandbox
 ```
+
+```typescript
+import { SandboxAgent } from "sandbox-agent";
+import { vercel } from "sandbox-agent/vercel";
+
+const env: Record<string, string> = {};
+if (process.env.ANTHROPIC_API_KEY) env.ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+if (process.env.OPENAI_API_KEY) env.OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
+const sdk = await SandboxAgent.start({
+  sandbox: vercel({
+    create: {
+      runtime: "node24",
+      env,
+    },
+  }),
+});
+
+try {
+  const session = await sdk.createSession({ agent: "claude" });
+  const response = await session.prompt([
+    { type: "text", text: "Summarize this repository" },
+  ]);
+  console.log(response.stopReason);
+} finally {
+  await sdk.destroySandbox();
+}
+```
+
+The `vercel` provider handles sandbox creation, Sandbox Agent installation, agent setup, and server startup automatically.
 
 ## Authentication
 

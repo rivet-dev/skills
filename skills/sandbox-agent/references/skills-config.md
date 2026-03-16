@@ -35,9 +35,7 @@ await sdk.setSkillsConfig(
 // Create a session using the configured skills
 const session = await sdk.createSession({
   agent: "claude",
-  sessionInit: {
-    cwd: "/workspace",
-  },
+  cwd: "/workspace",
 });
 
 await session.prompt([

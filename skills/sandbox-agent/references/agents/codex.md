@@ -1,0 +1,22 @@
+# Codex
+
+> Source: `docs/agents/codex.mdx`
+> Canonical URL: https://sandboxagent.dev/docs/agents/codex
+> Description: Use OpenAI Codex as a sandbox agent.
+
+---
+## Usage
+
+```typescript
+const session = await client.createSession({
+  agent: "codex",
+});
+```
+
+## Capabilities
+
+| Category | Values |
+|----------|--------|
+| **Models** | `gpt-5.3-codex` (default), `gpt-5.3-codex-spark`, `gpt-5.2-codex`, `gpt-5.1-codex-max`, `gpt-5.2`, `gpt-5.1-codex-mini` |
+| **Modes** | `read-only` (default), `auto`, `full-access` |
+| **Thought levels** | `low`, `medium`, `high` (default), `xhigh` |

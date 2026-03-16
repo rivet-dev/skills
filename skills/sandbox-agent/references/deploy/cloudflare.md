@@ -31,7 +31,38 @@ RUN sandbox-agent install-agent claude && sandbox-agent install-agent codex
 EXPOSE 8000
 ```
 
-## TypeScript example
+## TypeScript example (with provider)
+
+For standalone scripts, use the `cloudflare` provider:
+
+```bash
+npm install sandbox-agent@0.3.x @cloudflare/sandbox
+```
+
+```typescript
+import { SandboxAgent } from "sandbox-agent";
+import { cloudflare } from "sandbox-agent/cloudflare";
+
+const sdk = await SandboxAgent.start({
+  sandbox: cloudflare(),
+});
+
+try {
+  const session = await sdk.createSession({ agent: "codex" });
+  const response = await session.prompt([
+    { type: "text", text: "Summarize this repository" },
+  ]);
+  console.log(response.stopReason);
+} finally {
+  await sdk.destroySandbox();
+}
+```
+
+The `cloudflare` provider uses `containerFetch` under the hood, automatically stripping `AbortSignal` to avoid dropped streaming updates.
+
+## TypeScript example (Durable Objects)
+
+For Workers with Durable Objects, use `SandboxAgent.connect(...)` with a custom `fetch` backed by `sandbox.containerFetch(...)`:
 
 ```typescript
 import { getSandbox, type Sandbox } from "@cloudflare/sandbox";
@@ -109,7 +140,6 @@ app.all("*", (c) => c.env.ASSETS.fetch(c.req.raw));
 export default app;
 ```
 
-Create the SDK client inside the Worker using custom `fetch` backed by `sandbox.containerFetch(...)`.
 This keeps all Sandbox Agent calls inside the Cloudflare sandbox routing path and does not require a `baseUrl`.
 
 ## Troubleshooting streaming updates

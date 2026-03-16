@@ -77,9 +77,7 @@ await sdk.setMcpConfig(
 
 const session = await sdk.createSession({
   agent: "claude",
-  sessionInit: {
-    cwd: "/workspace",
-  },
+  cwd: "/workspace",
 });
 
 await session.prompt([
@@ -137,9 +135,7 @@ await sdk.writeFsFile({ path: "/opt/skills/random-number/SKILL.md" }, skill);
 ```ts
 const session = await sdk.createSession({
   agent: "claude",
-  sessionInit: {
-    cwd: "/workspace",
-  },
+  cwd: "/workspace",
 });
 
 await session.prompt([

@@ -1,0 +1,31 @@
+# OpenCode
+
+> Source: `docs/agents/opencode.mdx`
+> Canonical URL: https://sandboxagent.dev/docs/agents/opencode
+> Description: Use OpenCode as a sandbox agent.
+
+---
+## Usage
+
+```typescript
+const session = await client.createSession({
+  agent: "opencode",
+});
+```
+
+## Capabilities
+
+| Category | Values |
+|----------|--------|
+| **Models** | See below |
+| **Modes** | `build` (default), `plan` |
+| **Thought levels** | Unsupported |
+
+#### All models
+
+| Provider | Models |
+|----------|--------|
+| **Anthropic** | `anthropic/claude-3-5-haiku-20241022`, `anthropic/claude-3-5-haiku-latest`, `anthropic/claude-3-5-sonnet-20240620`, `anthropic/claude-3-5-sonnet-20241022`, `anthropic/claude-3-7-sonnet-20250219`, `anthropic/claude-3-7-sonnet-latest`, `anthropic/claude-3-haiku-20240307`, `anthropic/claude-3-opus-20240229`, `anthropic/claude-3-sonnet-20240229`, `anthropic/claude-haiku-4-5`, `anthropic/claude-haiku-4-5-20251001`, `anthropic/claude-opus-4-0`, `anthropic/claude-opus-4-1`, `anthropic/claude-opus-4-1-20250805`, `anthropic/claude-opus-4-20250514`, `anthropic/claude-opus-4-5`, `anthropic/claude-opus-4-5-20251101`, `anthropic/claude-opus-4-6`, `anthropic/claude-sonnet-4-0`, `anthropic/claude-sonnet-4-20250514`, `anthropic/claude-sonnet-4-5`, `anthropic/claude-sonnet-4-5-20250929` |
+| **OpenAI** | `openai/gpt-5.1-codex`, `openai/gpt-5.1-codex-max`, `openai/gpt-5.1-codex-mini`, `openai/gpt-5.2`, `openai/gpt-5.2-codex`, `openai/gpt-5.3-codex` |
+| **Cerebras** | `cerebras/gpt-oss-120b`, `cerebras/qwen-3-235b-a22b-instruct-2507`, `cerebras/zai-glm-4.7` |
+| **OpenCode Zen** | `opencode/big-pickle`, `opencode/claude-3-5-haiku`, `opencode/claude-haiku-4-5`, `opencode/claude-opus-4-1`, `opencode/claude-opus-4-5`, `opencode/claude-opus-4-6`, `opencode/claude-sonnet-4`, `opencode/claude-sonnet-4-5`, `opencode/gemini-3-flash`, `opencode/gemini-3-pro` (default), `opencode/glm-4.6`, `opencode/glm-4.7`, `opencode/gpt-5`, `opencode/gpt-5-codex`, `opencode/gpt-5-nano`, `opencode/gpt-5.1`, `opencode/gpt-5.1-codex`, `opencode/gpt-5.1-codex-max`, `opencode/gpt-5.1-codex-mini`, `opencode/gpt-5.2`, `opencode/gpt-5.2-codex`, `opencode/kimi-k2`, `opencode/kimi-k2-thinking`, `opencode/kimi-k2.5`, `opencode/kimi-k2.5-free`, `opencode/minimax-m2.1`, `opencode/minimax-m2.1-free`, `opencode/trinity-large-preview-free` |

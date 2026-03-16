@@ -12,88 +12,43 @@
 
 ## TypeScript example
 
-```typescript
-import { ModalClient } from "modal";
-import { SandboxAgent } from "sandbox-agent";
-
-const modal = new ModalClient();
-const app = await modal.apps.fromName("sandbox-agent", { createIfMissing: true });
-
-const image = modal.images
-  .fromRegistry("ubuntu:22.04")
-  .dockerfileCommands([
-    "RUN apt-get update && apt-get install -y curl ca-certificates",
-    "RUN curl -fsSL https://releases.rivet.dev/sandbox-agent/0.2.x/install.sh | sh",
-  ]);
-
-const envs: Record<string, string> = {};
-if (process.env.ANTHROPIC_API_KEY) envs.ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
-if (process.env.OPENAI_API_KEY) envs.OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-
-const secrets = Object.keys(envs).length > 0
-  ? [await modal.secrets.fromObject(envs)]
-  : [];
-
-const sb = await modal.sandboxes.create(app, image, {
-  encryptedPorts: [3000],
-  secrets,
-});
-
-const exec = async (cmd: string) => {
-  const p = await sb.exec(["bash", "-c", cmd], { stdout: "pipe", stderr: "pipe" });
-  const exitCode = await p.wait();
-  if (exitCode !== 0) {
-    const stderr = await p.stderr.readText();
-    throw new Error(`Command failed (exit ${exitCode}): ${cmd}\n${stderr}`);
-  }
-};
-
-await exec("sandbox-agent install-agent claude");
-await exec("sandbox-agent install-agent codex");
-
-await sb.exec(
-  ["bash", "-c", "sandbox-agent server --no-token --host 0.0.0.0 --port 3000 &"],
-);
-
-const tunnels = await sb.tunnels();
-const baseUrl = tunnels[3000].url;
-
-const sdk = await SandboxAgent.connect({ baseUrl });
-
-const session = await sdk.createSession({ agent: "claude" });
-const off = session.onEvent((event) => {
-  console.log(event.sender, event.payload);
-});
-
-await session.prompt([{ type: "text", text: "Summarize this repository" }]);
-off();
-
-await sb.terminate();
+```bash
+npm install sandbox-agent@0.3.x modal
 ```
+
+```typescript
+import { SandboxAgent } from "sandbox-agent";
+import { modal } from "sandbox-agent/modal";
+
+const secrets: Record<string, string> = {};
+if (process.env.ANTHROPIC_API_KEY) secrets.ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+if (process.env.OPENAI_API_KEY) secrets.OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
+const sdk = await SandboxAgent.start({
+  sandbox: modal({
+    create: { secrets },
+  }),
+});
+
+try {
+  const session = await sdk.createSession({ agent: "claude" });
+  const response = await session.prompt([
+    { type: "text", text: "Summarize this repository" },
+  ]);
+  console.log(response.stopReason);
+} finally {
+  await sdk.destroySandbox();
+}
+```
+
+The `modal` provider handles app creation, image building, sandbox provisioning, agent installation, server startup, and tunnel networking automatically.
 
 ## Faster cold starts
 
-Modal caches image layers, so the `dockerfileCommands` that install `curl` and `sandbox-agent` only run on the first build. Subsequent sandbox creates reuse the cached image.
-
-## Running the test
-
-The example includes a health-check test. First, build the SDK:
-
-```bash
-pnpm --filter sandbox-agent build
-```
-
-Then run the test with your Modal credentials:
-
-```bash
-MODAL_TOKEN_ID=<your-token-id> MODAL_TOKEN_SECRET=<your-token-secret> npx vitest run
-```
-
-Run from `examples/modal/`. The test will skip if credentials are not set.
+Modal caches image layers, so the Dockerfile commands that install `curl` and `sandbox-agent` only run on the first build. Subsequent sandbox creates reuse the cached image.
 
 ## Notes
 
 - Modal sandboxes use [gVisor](https://gvisor.dev/) for strong isolation.
-- Ports are exposed via encrypted tunnels (`encryptedPorts`). Use `sb.tunnels()` to get the public HTTPS URL.
-- Environment variables (API keys) are passed as Modal [Secrets](https://modal.com/docs/guide/secrets) rather than plain env vars for security.
-- Always call `sb.terminate()` when done to avoid leaking sandbox resources.
+- Ports are exposed via encrypted tunnels (`encryptedPorts`). The provider uses `sb.tunnels()` to get the public HTTPS URL.
+- Environment variables (API keys) are passed as Modal [Secrets](https://modal.com/docs/guide/secrets) for security.

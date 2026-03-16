@@ -2,161 +2,62 @@
 
 > Source: `docs/deploy/computesdk.mdx`
 > Canonical URL: https://sandboxagent.dev/docs/deploy/computesdk
-> Description: Deploy the daemon using ComputeSDK's provider-agnostic sandbox API.
+> Description: Deploy Sandbox Agent using ComputeSDK's provider-agnostic sandbox API.
 
 ---
-[ComputeSDK](https://computesdk.com) provides a unified interface for managing sandboxes across multiple providers. Write once, deploy anywhere—switch providers by changing environment variables.
+[ComputeSDK](https://computesdk.com) provides a unified interface for managing sandboxes across multiple providers. Write once, deploy anywhere by changing environment variables.
 
 ## Prerequisites
 
 - `COMPUTESDK_API_KEY` from [console.computesdk.com](https://console.computesdk.com)
 - Provider API key (one of: `E2B_API_KEY`, `DAYTONA_API_KEY`, `VERCEL_TOKEN`, `MODAL_TOKEN_ID` + `MODAL_TOKEN_SECRET`, `BLAXEL_API_KEY`, `CSB_API_KEY`)
-- `ANTHROPIC_API_KEY` or `OPENAI_API_KEY` for the coding agents
+- `ANTHROPIC_API_KEY` or `OPENAI_API_KEY`
 
-## TypeScript Example
+## TypeScript example
+
+```bash
+npm install sandbox-agent@0.3.x computesdk
+```
 
 ```typescript
-import {
-  compute,
-  detectProvider,
-  getMissingEnvVars,
-  getProviderConfigFromEnv,
-  isProviderAuthComplete,
-  isValidProvider,
-  PROVIDER_NAMES,
-  type ExplicitComputeConfig,
-  type ProviderName,
-} from "computesdk";
 import { SandboxAgent } from "sandbox-agent";
+import { computesdk } from "sandbox-agent/computesdk";
 
-const PORT = 3000;
-const REQUEST_TIMEOUT_MS =
-  Number.parseInt(process.env.COMPUTESDK_TIMEOUT_MS || "", 10) || 120_000;
-
-/**
- * Detects and validates the provider to use.
- * Priority: COMPUTESDK_PROVIDER env var > auto-detection from API keys
- */
-function resolveProvider(): ProviderName {
-  const providerOverride = process.env.COMPUTESDK_PROVIDER;
-
-  if (providerOverride) {
-    if (!isValidProvider(providerOverride)) {
-      throw new Error(
-        `Unsupported provider "${providerOverride}". Supported: ${PROVIDER_NAMES.join(", ")}`
-      );
-    }
-    if (!isProviderAuthComplete(providerOverride)) {
-      const missing = getMissingEnvVars(providerOverride);
-      throw new Error(
-        `Missing credentials for "${providerOverride}". Set: ${missing.join(", ")}`
-      );
-    }
-    return providerOverride as ProviderName;
-  }
-
-  const detected = detectProvider();
-  if (!detected) {
-    throw new Error(
-      `No provider credentials found. Set one of: ${PROVIDER_NAMES.map((p) => getMissingEnvVars(p).join(", ")).join(" | ")}`
-    );
-  }
-  return detected as ProviderName;
-}
-
-function configureComputeSDK(): void {
-  const provider = resolveProvider();
-
-  const config: ExplicitComputeConfig = {
-    provider,
-    computesdkApiKey: process.env.COMPUTESDK_API_KEY,
-    requestTimeoutMs: REQUEST_TIMEOUT_MS,
-  };
-
-  // Add provider-specific config from environment
-  const providerConfig = getProviderConfigFromEnv(provider);
-  if (Object.keys(providerConfig).length > 0) {
-    (config as any)[provider] = providerConfig;
-  }
-
-  compute.setConfig(config);
-}
-
-configureComputeSDK();
-
-// Build environment variables to pass to sandbox
 const envs: Record<string, string> = {};
 if (process.env.ANTHROPIC_API_KEY) envs.ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 if (process.env.OPENAI_API_KEY) envs.OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
-// Create sandbox
-const sandbox = await compute.sandbox.create({
-  envs: Object.keys(envs).length > 0 ? envs : undefined,
+const sdk = await SandboxAgent.start({
+  sandbox: computesdk({
+    create: { envs },
+  }),
 });
 
-// Helper to run commands with error handling
-const run = async (cmd: string, options?: { background?: boolean }) => {
-  const result = await sandbox.runCommand(cmd, options);
-  if (typeof result?.exitCode === "number" && result.exitCode !== 0) {
-    throw new Error(`Command failed: ${cmd} (exit ${result.exitCode})\n${result.stderr || ""}`);
-  }
-  return result;
-};
-
-// Install sandbox-agent
-await run("curl -fsSL https://releases.rivet.dev/sandbox-agent/latest/install.sh | sh");
-
-// Install agents conditionally based on available API keys
-if (envs.ANTHROPIC_API_KEY) {
-  await run("sandbox-agent install-agent claude");
+try {
+  const session = await sdk.createSession({ agent: "claude" });
+  const response = await session.prompt([
+    { type: "text", text: "Summarize this repository" },
+  ]);
+  console.log(response.stopReason);
+} finally {
+  await sdk.destroySandbox();
 }
-if (envs.OPENAI_API_KEY) {
-  await run("sandbox-agent install-agent codex");
-}
-
-// Start the server in the background
-await run(`sandbox-agent server --no-token --host 0.0.0.0 --port ${PORT}`, { background: true });
-
-// Get the public URL for the sandbox
-const baseUrl = await sandbox.getUrl({ port: PORT });
-
-// Wait for server to be ready
-const deadline = Date.now() + REQUEST_TIMEOUT_MS;
-while (Date.now() < deadline) {
-  try {
-    const response = await fetch(`${baseUrl}/v1/health`);
-    if (response.ok) {
-      const data = await response.json();
-      if (data?.status === "ok") break;
-    }
-  } catch {
-    // Server not ready yet
-  }
-  await new Promise((r) => setTimeout(r, 500));
-}
-
-// Connect to the server
-const client = await SandboxAgent.connect({ baseUrl });
-
-// Detect which agent to use based on available API keys
-const agent = envs.ANTHROPIC_API_KEY ? "claude" : "codex";
-
-// Create a session and start coding
-await client.createSession("my-session", { agent });
-
-await client.postMessage("my-session", {
-  message: "Summarize this repository",
-});
-
-for await (const event of client.streamEvents("my-session")) {
-  console.log(event.type, event.data);
-}
-
-// Cleanup
-await sandbox.destroy();
 ```
 
-## Supported Providers
+The `computesdk` provider handles sandbox creation, Sandbox Agent installation, agent setup, and server startup automatically. ComputeSDK routes to your configured provider behind the scenes.
+
+Before calling `SandboxAgent.start()`, configure ComputeSDK with your provider:
+
+```typescript
+import { compute } from "computesdk";
+
+compute.setConfig({
+  provider: "e2b", // or auto-detect via detectProvider()
+  computesdkApiKey: process.env.COMPUTESDK_API_KEY,
+});
+```
+
+## Supported providers
 
 ComputeSDK auto-detects your provider from environment variables:
 
@@ -171,46 +72,7 @@ ComputeSDK auto-detects your provider from environment variables:
 
 ## Notes
 
-- **Provider resolution order**: `COMPUTESDK_PROVIDER` env var takes priority, otherwise auto-detection from API keys.
-- **Conditional agent installation**: Only agents with available API keys are installed, reducing setup time.
-- **Command error handling**: The example validates exit codes and throws on failures for easier debugging.
+- **Provider resolution**: Set `COMPUTESDK_PROVIDER` to force a specific provider, or let ComputeSDK auto-detect from API keys.
 - `sandbox.runCommand(..., { background: true })` keeps the server running while your app continues.
 - `sandbox.getUrl({ port })` returns a public URL for the sandbox port.
-- Always destroy the sandbox when you are done to avoid leaking resources.
-- If sandbox creation times out, set `COMPUTESDK_TIMEOUT_MS` to a higher value (default: 120000ms).
-
-## Explicit Provider Selection
-
-To force a specific provider instead of auto-detection, set the `COMPUTESDK_PROVIDER` environment variable:
-
-```bash
-export COMPUTESDK_PROVIDER=e2b
-```
-
-Or configure programmatically using `getProviderConfigFromEnv()`:
-
-```typescript
-import { compute, getProviderConfigFromEnv, type ExplicitComputeConfig } from "computesdk";
-
-const config: ExplicitComputeConfig = {
-  provider: "e2b",
-  computesdkApiKey: process.env.COMPUTESDK_API_KEY,
-  requestTimeoutMs: 120_000,
-};
-
-// Automatically populate provider-specific config from environment
-const providerConfig = getProviderConfigFromEnv("e2b");
-if (Object.keys(providerConfig).length > 0) {
-  (config as any).e2b = providerConfig;
-}
-
-compute.setConfig(config);
-```
-
-## Direct Mode (No ComputeSDK API Key)
-
-To bypass the ComputeSDK gateway and use provider SDKs directly, see the provider-specific examples:
-
-- [E2B](/deploy/e2b)
-- [Daytona](/deploy/daytona)
-- [Vercel](/deploy/vercel)
+- Always destroy the sandbox when done to avoid leaking resources.

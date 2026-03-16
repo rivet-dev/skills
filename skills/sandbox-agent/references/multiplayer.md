@@ -19,8 +19,40 @@ Use [actor keys](https://rivet.dev/docs/actors/keys) to map each workspace to on
 
 ```ts Actor (server)
 import { actor, setup } from "rivetkit";
-import { SandboxAgent } from "sandbox-agent";
-import { RivetSessionPersistDriver, type RivetPersistState } from "@sandbox-agent/persist-rivet";
+import { SandboxAgent, type SessionPersistDriver, type SessionRecord, type SessionEvent, type ListPageRequest, type ListPage, type ListEventsRequest } from "sandbox-agent";
+
+interface RivetPersistData { sessions: Record<string, SessionRecord>; events: Record<string, SessionEvent[]>; }
+type RivetPersistState = { _sandboxAgentPersist: RivetPersistData };
+
+class RivetSessionPersistDriver implements SessionPersistDriver {
+  private readonly stateKey: string;
+  private readonly ctx: { state: Record<string, unknown> };
+  constructor(ctx: { state: Record<string, unknown> }, options: { stateKey?: string } = {}) {
+    this.ctx = ctx;
+    this.stateKey = options.stateKey ?? "_sandboxAgentPersist";
+    if (!this.ctx.state[this.stateKey]) {
+      this.ctx.state[this.stateKey] = { sessions: {}, events: {} };
+    }
+  }
+  private get data(): RivetPersistData { return this.ctx.state[this.stateKey] as RivetPersistData; }
+  async getSession(id: string) { const s = this.data.sessions[id]; return s ? { ...s } : undefined; }
+  async listSessions(request: ListPageRequest = {}): Promise<ListPage<SessionRecord>> {
+    const sorted = Object.values(this.data.sessions).sort((a, b) => a.createdAt - b.createdAt || a.id.localeCompare(b.id));
+    const offset = Number(request.cursor ?? 0);
+    const limit = request.limit ?? 100;
+    const slice = sorted.slice(offset, offset + limit);
+    return { items: slice, nextCursor: offset + slice.length < sorted.length ? String(offset + slice.length) : undefined };
+  }
+  async updateSession(session: SessionRecord) { this.data.sessions[session.id] = { ...session }; if (!this.data.events[session.id]) this.data.events[session.id] = []; }
+  async listEvents(request: ListEventsRequest): Promise<ListPage<SessionEvent>> {
+    const all = [...(this.data.events[request.sessionId] ?? [])].sort((a, b) => a.eventIndex - b.eventIndex || a.id.localeCompare(b.id));
+    const offset = Number(request.cursor ?? 0);
+    const limit = request.limit ?? 100;
+    const slice = all.slice(offset, offset + limit);
+    return { items: slice, nextCursor: offset + slice.length < all.length ? String(offset + slice.length) : undefined };
+  }
+  async insertEvent(sessionId: string, event: SessionEvent) { const events = this.data.events[sessionId] ?? []; events.push({ ...event, payload: JSON.parse(JSON.stringify(event.payload)) }); this.data.events[sessionId] = events; }
+}
 
 type WorkspaceState = RivetPersistState & {
   sandboxId: string;
@@ -108,5 +140,5 @@ await conn.prompt({
 ## Notes
 
 - Keep sandbox calls actor-only. Browser clients should not call Sandbox Agent directly.
-- Use `@sandbox-agent/persist-rivet` so session history persists in actor state.
+- Copy the Rivet persist driver from the example above into your project so session history persists in actor state.
 - For client connection patterns, see [Rivet JavaScript client](https://rivet.dev/docs/clients/javascript).
