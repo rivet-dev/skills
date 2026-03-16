@@ -87,7 +87,7 @@ const sdk = await SandboxAgent.start({
 
 // sdk.sandboxId — prefixed provider ID (e.g. "local/127.0.0.1:2468")
 
-await sdk.destroySandbox(); // tears down sandbox + disposes client
+await sdk.destroySandbox(); // provider-defined cleanup + disposes client
 ```
 
 `SandboxAgent.start(...)` requires a `sandbox` provider. Built-in providers:
@@ -101,7 +101,7 @@ await sdk.destroySandbox(); // tears down sandbox + disposes client
 | `sandbox-agent/vercel` | Vercel Sandbox |
 | `sandbox-agent/cloudflare` | Cloudflare Sandbox |
 
-Use `sdk.dispose()` to disconnect without destroying the sandbox, or `sdk.destroySandbox()` to tear down both.
+Use `sdk.dispose()` to disconnect without changing sandbox state, `sdk.pauseSandbox()` for graceful suspension when supported, or `sdk.killSandbox()` for permanent deletion.
 
 ## Session flow
 

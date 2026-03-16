@@ -349,10 +349,10 @@ See [Agent Sessions](/agent-sessions) for the full sessions API.
 ### Clean up
 
 ```typescript
-await client.destroySandbox(); // tears down the sandbox and disconnects
+await client.destroySandbox(); // provider-defined cleanup and disconnect
 ```
 
-Use `client.dispose()` instead to disconnect without destroying the sandbox (for reconnecting later).
+Use `client.dispose()` instead to disconnect without changing sandbox state. On E2B, `client.pauseSandbox()` pauses the sandbox and `client.killSandbox()` deletes it permanently.
 
 ### Inspect with the UI
 

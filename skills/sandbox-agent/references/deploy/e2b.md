@@ -41,7 +41,7 @@ try {
 }
 ```
 
-The `e2b` provider handles sandbox creation, Sandbox Agent installation, agent setup, and server startup automatically.
+The `e2b` provider handles sandbox creation, Sandbox Agent installation, agent setup, and server startup automatically. Sandboxes pause by default instead of being deleted, and reconnecting with the same `sandboxId` resumes them automatically.
 
 ## Faster cold starts
 
