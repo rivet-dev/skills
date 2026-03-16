@@ -15,11 +15,11 @@ Run the published full image with all supported agents pre-installed:
 docker run --rm -p 3000:3000 \
   -e ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY" \
   -e OPENAI_API_KEY="$OPENAI_API_KEY" \
-  rivetdev/sandbox-agent:0.3.2-full \
+  rivetdev/sandbox-agent:0.4.0-rc.2-full \
   server --no-token --host 0.0.0.0 --port 3000
 ```
 
-The `0.3.2-full` tag pins the exact version. The moving `full` tag is also published for contributors who want the latest full image.
+The `0.4.0-rc.2-full` tag pins the exact version. The moving `full` tag is also published for contributors who want the latest full image.
 
 ## TypeScript with the Docker provider
 
@@ -48,7 +48,7 @@ try {
 }
 ```
 
-The `docker` provider uses the `rivetdev/sandbox-agent:0.3.2-full` image by default. Override with `image`:
+The `docker` provider uses the `rivetdev/sandbox-agent:0.4.0-rc.2-full` image by default. Override with `image`:
 
 ```typescript
 docker({ image: "my-custom-image:latest" })
