@@ -35,6 +35,7 @@ console.log(url);
 - Prompt testing
 - Request/response debugging
 - Interactive permission prompts (approve, always-allow, or reject tool-use requests)
+- Desktop panel for status, remediation, start/stop, and screenshot refresh
 - Process management (create, stop, kill, delete, view logs)
 - Interactive PTY terminal for tty processes
 - One-shot command execution
@@ -50,3 +51,16 @@ console.log(url);
 The Inspector includes an embedded Ghostty-based terminal for interactive tty
 processes. The UI uses the SDK's high-level `connectProcessTerminal(...)`
 wrapper via the shared `@sandbox-agent/react` `ProcessTerminal` component.
+
+## Desktop panel
+
+The `Desktop` panel shows the current desktop runtime state, missing dependencies,
+the suggested install command, last error details, process/log paths, and the
+latest captured screenshot.
+
+Use it to:
+
+- Check whether desktop dependencies are installed
+- Start or stop the managed desktop runtime
+- Refresh desktop status
+- Capture a fresh screenshot on demand

@@ -15,43 +15,64 @@ Run the published full image with all supported agents pre-installed:
 docker run --rm -p 3000:3000 \
   -e ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY" \
   -e OPENAI_API_KEY="$OPENAI_API_KEY" \
-  rivetdev/sandbox-agent:0.4.1-rc.1-full \
+  rivetdev/sandbox-agent:0.3.1-full \
   server --no-token --host 0.0.0.0 --port 3000
 ```
 
-The `0.4.1-rc.1-full` tag pins the exact version. The moving `full` tag is also published for contributors who want the latest full image.
+The `0.3.1-full` tag pins the exact version. The moving `full` tag is also published for contributors who want the latest full image.
 
-## TypeScript with the Docker provider
+If you also want the desktop API inside the container, install desktop dependencies before starting the server:
 
 ```bash
-npm install sandbox-agent@0.3.x dockerode get-port
+docker run --rm -p 3000:3000 \
+  -e ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY" \
+  -e OPENAI_API_KEY="$OPENAI_API_KEY" \
+  node:22-bookworm-slim sh -c "\
+    apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y curl ca-certificates bash libstdc++6 && \
+    rm -rf /var/lib/apt/lists/* && \
+    curl -fsSL https://releases.rivet.dev/sandbox-agent/0.3.x/install.sh | sh && \
+    sandbox-agent install desktop --yes && \
+    sandbox-agent server --no-token --host 0.0.0.0 --port 3000"
 ```
 
-```typescript
-import { SandboxAgent } from "sandbox-agent";
-import { docker } from "sandbox-agent/docker";
+In a Dockerfile:
 
-const sdk = await SandboxAgent.start({
-  sandbox: docker({
-    env: [
-      `ANTHROPIC_API_KEY=${process.env.ANTHROPIC_API_KEY}`,
-      `OPENAI_API_KEY=${process.env.OPENAI_API_KEY}`,
-    ].filter(Boolean),
-  }),
+```dockerfile
+RUN sandbox-agent install desktop --yes
+```
+
+## TypeScript with dockerode
+
+```typescript
+import Docker from "dockerode";
+import { SandboxAgent } from "sandbox-agent";
+
+const docker = new Docker();
+const PORT = 3000;
+
+const container = await docker.createContainer({
+  Image: "rivetdev/sandbox-agent:0.3.1-full",
+  Cmd: ["server", "--no-token", "--host", "0.0.0.0", "--port", `${PORT}`],
+  Env: [
+    `ANTHROPIC_API_KEY=${process.env.ANTHROPIC_API_KEY}`,
+    `OPENAI_API_KEY=${process.env.OPENAI_API_KEY}`,
+    `CODEX_API_KEY=${process.env.CODEX_API_KEY}`,
+  ].filter(Boolean),
+  ExposedPorts: { [`${PORT}/tcp`]: {} },
+  HostConfig: {
+    AutoRemove: true,
+    PortBindings: { [`${PORT}/tcp`]: [{ HostPort: `${PORT}` }] },
+  },
 });
 
-try {
-  const session = await sdk.createSession({ agent: "codex" });
-  await session.prompt([{ type: "text", text: "Summarize this repository." }]);
-} finally {
-  await sdk.destroySandbox();
-}
-```
+await container.start();
 
-The `docker` provider uses the `rivetdev/sandbox-agent:0.4.1-rc.1-full` image by default. Override with `image`:
+const baseUrl = `http://127.0.0.1:${PORT}`;
+const sdk = await SandboxAgent.connect({ baseUrl });
 
-```typescript
-docker({ image: "my-custom-image:latest" })
+const session = await sdk.createSession({ agent: "codex" });
+await session.prompt([{ type: "text", text: "Summarize this repository." }]);
 ```
 
 ## Building a custom image with everything preinstalled
