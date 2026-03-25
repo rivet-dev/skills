@@ -18,7 +18,7 @@ Current exports:
 ## Install
 
 ```bash
-npm install @sandbox-agent/react@0.3.x
+npm install @sandbox-agent/react@0.5.x
 ```
 
 ## Full example

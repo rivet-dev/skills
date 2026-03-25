@@ -13,7 +13,7 @@
 ## TypeScript example
 
 ```bash
-npm install sandbox-agent@0.3.x modal
+npm install sandbox-agent@0.5.x modal
 ```
 
 ```typescript
