@@ -12,13 +12,13 @@ The TypeScript SDK is centered on `sandbox-agent` and its `SandboxAgent` class.
 #### npm
 
 ```bash
-npm install sandbox-agent@0.5.x
+npm install sandbox-agent@0.4.x
 ```
 
 #### bun
 
 ```bash
-bun add sandbox-agent@0.5.x
+bun add sandbox-agent@0.4.x
 # Allow Bun to run postinstall scripts for native binaries (required for SandboxAgent.start()).
 bun pm trust @sandbox-agent/cli-linux-x64 @sandbox-agent/cli-linux-arm64 @sandbox-agent/cli-darwin-arm64 @sandbox-agent/cli-darwin-x64 @sandbox-agent/cli-win32-x64
 ```
@@ -26,7 +26,7 @@ bun pm trust @sandbox-agent/cli-linux-x64 @sandbox-agent/cli-linux-arm64 @sandbo
 ## Optional React components
 
 ```bash
-npm install @sandbox-agent/react@0.5.x
+npm install @sandbox-agent/react@0.4.x
 ```
 
 ## Create a client

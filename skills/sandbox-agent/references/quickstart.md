@@ -64,7 +64,7 @@ const sandbox = await daytona.create({
 docker run -p 2468:2468 \
   -e ANTHROPIC_API_KEY="sk-ant-..." \
   -e OPENAI_API_KEY="sk-..." \
-  rivetdev/sandbox-agent:0.5.0-rc.2-full \
+  rivetdev/sandbox-agent:0.4.1-full \
   server --no-token --host 0.0.0.0 --port 2468
 ```
 
@@ -87,7 +87,7 @@ For per-tenant token tracking, budget enforcement, or usage-based billing, see [
 Install and run the binary directly.
 
 ```bash
-curl -fsSL https://releases.rivet.dev/sandbox-agent/0.5.x/install.sh | sh
+curl -fsSL https://releases.rivet.dev/sandbox-agent/0.4.x/install.sh | sh
 sandbox-agent server --no-token --host 0.0.0.0 --port 2468
 ```
 
@@ -96,7 +96,7 @@ sandbox-agent server --no-token --host 0.0.0.0 --port 2468
 Run without installing globally.
 
 ```bash
-npx @sandbox-agent/cli@0.5.x server --no-token --host 0.0.0.0 --port 2468
+npx @sandbox-agent/cli@0.4.x server --no-token --host 0.0.0.0 --port 2468
 ```
 
 #### bunx
@@ -104,7 +104,7 @@ npx @sandbox-agent/cli@0.5.x server --no-token --host 0.0.0.0 --port 2468
 Run without installing globally.
 
 ```bash
-bunx @sandbox-agent/cli@0.5.x server --no-token --host 0.0.0.0 --port 2468
+bunx @sandbox-agent/cli@0.4.x server --no-token --host 0.0.0.0 --port 2468
 ```
 
 #### npm i -g
@@ -112,7 +112,7 @@ bunx @sandbox-agent/cli@0.5.x server --no-token --host 0.0.0.0 --port 2468
 Install globally, then run.
 
 ```bash
-npm install -g @sandbox-agent/cli@0.5.x
+npm install -g @sandbox-agent/cli@0.4.x
 sandbox-agent server --no-token --host 0.0.0.0 --port 2468
 ```
 
@@ -121,7 +121,7 @@ sandbox-agent server --no-token --host 0.0.0.0 --port 2468
 Install globally, then run.
 
 ```bash
-bun add -g @sandbox-agent/cli@0.5.x
+bun add -g @sandbox-agent/cli@0.4.x
 # Allow Bun to run postinstall scripts for native binaries (required for SandboxAgent.start()).
 bun pm -g trust @sandbox-agent/cli-linux-x64 @sandbox-agent/cli-linux-arm64 @sandbox-agent/cli-darwin-arm64 @sandbox-agent/cli-darwin-x64 @sandbox-agent/cli-win32-x64
 sandbox-agent server --no-token --host 0.0.0.0 --port 2468
@@ -132,7 +132,7 @@ sandbox-agent server --no-token --host 0.0.0.0 --port 2468
 For local development, use `SandboxAgent.start()` to spawn and manage the server as a subprocess.
 
 ```bash
-npm install sandbox-agent@0.5.x
+npm install sandbox-agent@0.4.x
 ```
 
 ```typescript
@@ -146,7 +146,7 @@ const sdk = await SandboxAgent.start();
 For local development, use `SandboxAgent.start()` to spawn and manage the server as a subprocess.
 
 ```bash
-bun add sandbox-agent@0.5.x
+bun add sandbox-agent@0.4.x
 # Allow Bun to run postinstall scripts for native binaries (required for SandboxAgent.start()).
 bun pm trust @sandbox-agent/cli-linux-x64 @sandbox-agent/cli-linux-arm64 @sandbox-agent/cli-darwin-arm64 @sandbox-agent/cli-darwin-x64 @sandbox-agent/cli-win32-x64
 ```
