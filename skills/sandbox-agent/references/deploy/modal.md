@@ -23,9 +23,11 @@ import { modal } from "sandbox-agent/modal";
 const secrets: Record<string, string> = {};
 if (process.env.ANTHROPIC_API_KEY) secrets.ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 if (process.env.OPENAI_API_KEY) secrets.OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const baseImage = process.env.MODAL_BASE_IMAGE ?? "node:22-slim";
 
 const sdk = await SandboxAgent.start({
   sandbox: modal({
+    image: baseImage,
     create: { secrets },
   }),
 });
@@ -42,6 +44,7 @@ try {
 ```
 
 The `modal` provider handles app creation, image building, sandbox provisioning, agent installation, server startup, and tunnel networking automatically.
+Set `image` to change the base Docker image before Sandbox Agent and its agent binaries are layered on top. You can also pass a prebuilt Modal `Image` object.
 
 ## Faster cold starts
 

@@ -23,9 +23,11 @@ import { e2b } from "sandbox-agent/e2b";
 const envs: Record<string, string> = {};
 if (process.env.ANTHROPIC_API_KEY) envs.ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 if (process.env.OPENAI_API_KEY) envs.OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const template = process.env.E2B_TEMPLATE;
 
 const sdk = await SandboxAgent.start({
   sandbox: e2b({
+    template,
     create: { envs },
   }),
 });
@@ -43,7 +45,10 @@ try {
 
 The `e2b` provider handles sandbox creation, Sandbox Agent installation, agent setup, and server startup automatically. Sandboxes pause by default instead of being deleted, and reconnecting with the same `sandboxId` resumes them automatically.
 
+Pass `template` when you want to start from a custom E2B template alias or template ID. E2B base-image selection happens when you build the template, then `sandbox-agent/e2b` uses that template at sandbox creation time.
+
 ## Faster cold starts
 
 For faster startup, create a custom E2B template with Sandbox Agent and target agents pre-installed.
-See [E2B Custom Templates](https://e2b.dev/docs/sandbox-template).
+Build System 2.0 also lets you choose the template's base image in code.
+See [E2B Custom Templates](https://e2b.dev/docs/sandbox-template) and [E2B Base Images](https://e2b.dev/docs/template/base-image).

@@ -29,7 +29,11 @@ if (process.env.OPENAI_API_KEY) envs.OPENAI_API_KEY = process.env.OPENAI_API_KEY
 
 const sdk = await SandboxAgent.start({
   sandbox: computesdk({
-    create: { envs },
+    create: {
+      envs,
+      image: process.env.COMPUTESDK_IMAGE,
+      templateId: process.env.COMPUTESDK_TEMPLATE_ID,
+    },
   }),
 });
 
@@ -45,6 +49,7 @@ try {
 ```
 
 The `computesdk` provider handles sandbox creation, Sandbox Agent installation, agent setup, and server startup automatically. ComputeSDK routes to your configured provider behind the scenes.
+The `create` option now forwards the full ComputeSDK sandbox-create payload, including provider-specific fields such as `image` and `templateId` when the selected provider supports them.
 
 Before calling `SandboxAgent.start()`, configure ComputeSDK with your provider:
 
