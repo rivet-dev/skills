@@ -31,26 +31,6 @@ Verify the agent is installed:
 ls -la ~/.local/share/sandbox-agent/bin/
 ```
 
-### 4. Binary libc mismatch (musl vs glibc)
-
-Claude Code binaries are available in both musl and glibc variants. If you see errors like:
-
-```
-cannot execute: required file not found
-Error loading shared library libstdc++.so.6: No such file or directory
-```
-
-This means the wrong binary variant was downloaded.
-
-**For sandbox-agent 0.2.0+**: Platform detection is automatic. The correct binary (musl or glibc) is downloaded based on the runtime environment.
-
-**For sandbox-agent 0.1.x**: Use Alpine Linux which has native musl support:
-
-```dockerfile
-FROM alpine:latest
-RUN apk add --no-cache curl ca-certificates libstdc++ libgcc bash
-```
-
 ## Daytona Network Restrictions
 
 Daytona sandboxes have tier-based network access:

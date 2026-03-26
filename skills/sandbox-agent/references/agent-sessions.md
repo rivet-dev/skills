@@ -51,6 +51,106 @@ await session.prompt([
 unsubscribe();
 ```
 
+### Event types
+
+Each event's `payload` contains a session update. The `sessionUpdate` field identifies the type.
+
+#### agent_message_chunk
+
+Streamed text or content from the agent's response.
+
+```json
+{
+  "sessionUpdate": "agent_message_chunk",
+  "content": { "type": "text", "text": "Here's how the repository is structured..." }
+}
+```
+
+#### agent_thought_chunk
+
+Internal reasoning from the agent (chain-of-thought / extended thinking).
+
+```json
+{
+  "sessionUpdate": "agent_thought_chunk",
+  "content": { "type": "text", "text": "I should start by looking at the project structure..." }
+}
+```
+
+#### user_message_chunk
+
+Echo of the user's prompt being processed.
+
+```json
+{
+  "sessionUpdate": "user_message_chunk",
+  "content": { "type": "text", "text": "Summarize the repository structure." }
+}
+```
+
+#### tool_call
+
+The agent invoked a tool (file edit, terminal command, etc.).
+
+```json
+{
+  "sessionUpdate": "tool_call",
+  "toolCallId": "tc_abc123",
+  "title": "Read file",
+  "status": "in_progress",
+  "rawInput": { "path": "/src/index.ts" }
+}
+```
+
+#### tool_call_update
+
+Progress or result update for an in-progress tool call.
+
+```json
+{
+  "sessionUpdate": "tool_call_update",
+  "toolCallId": "tc_abc123",
+  "status": "completed",
+  "content": [{ "type": "text", "text": "import express from 'express';\n..." }]
+}
+```
+
+#### plan
+
+The agent's execution plan for the current task.
+
+```json
+{
+  "sessionUpdate": "plan",
+  "entries": [
+    { "content": "Read the project structure", "status": "completed" },
+    { "content": "Identify main entrypoints", "status": "in_progress" },
+    { "content": "Write summary", "status": "pending" }
+  ]
+}
+```
+
+#### usage_update
+
+Token usage metrics for the current turn.
+
+```json
+{
+  "sessionUpdate": "usage_update"
+}
+```
+
+#### session_info_update
+
+Session metadata changed (e.g. agent-generated title).
+
+```json
+{
+  "sessionUpdate": "session_info_update",
+  "title": "Repository structure analysis"
+}
+```
+
 ## Fetch persisted event history
 
 ```ts
