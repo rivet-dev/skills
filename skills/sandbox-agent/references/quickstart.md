@@ -64,7 +64,7 @@ const sandbox = await daytona.create({
 docker run -p 2468:2468 \
   -e ANTHROPIC_API_KEY="sk-ant-..." \
   -e OPENAI_API_KEY="sk-..." \
-  rivetdev/sandbox-agent:0.4.1-full \
+  rivetdev/sandbox-agent:0.4.2-full \
   server --no-token --host 0.0.0.0 --port 2468
 ```
 
