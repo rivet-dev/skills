@@ -327,6 +327,7 @@ Open the Inspector UI at `/ui/` on your server (for example, `http://localhost:2
 
 ### Deploy
 
+- [Agent Computer](references/deploy/agentcomputer.md)
 - [BoxLite](references/deploy/boxlite.md)
 - [Cloudflare](references/deploy/cloudflare.md)
 - [ComputeSDK](references/deploy/computesdk.md)

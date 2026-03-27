@@ -98,6 +98,7 @@ await sdk.destroySandbox(); // provider-defined cleanup + disposes client
 | `sandbox-agent/docker` | Docker container |
 | `sandbox-agent/e2b` | E2B sandbox |
 | `sandbox-agent/daytona` | Daytona workspace |
+| `sandbox-agent/agentcomputer` | Agent Computer managed worker |
 | `sandbox-agent/vercel` | Vercel Sandbox |
 | `sandbox-agent/cloudflare` | Cloudflare Sandbox |
 
@@ -249,6 +250,8 @@ try {
 ```
 
 ## Inspector URL
+
+When you call `SandboxAgent.start(...)`, prefer `sdk.inspectorUrl`. Some hosted providers return a browser-ready Inspector URL there.
 
 ```ts
 import { buildInspectorUrl } from "sandbox-agent";
