@@ -56,7 +56,7 @@ const counter = actor({
 const registry = setup({ use: { counter } });
 
 // Create client
-const client = createClient<typeof registry>("http://localhost:8080");
+const client = createClient<typeof registry>("http://localhost:6420");
 const counterActor = await client.counter.getOrCreate();
 const result = await counterActor.increment(42);
 console.log(result); // The value returned by the action
@@ -86,7 +86,7 @@ const counter = actor({
 const registry = setup({ use: { counter } });
 
 // Create client
-const client = createClient<typeof registry>();
+const client = createClient<typeof registry>("http://localhost:6420");
 
 const app = new Hono();
 
@@ -145,7 +145,7 @@ Calling actions from the client are async and require an `await`, even if the ac
 
 The actor client includes type safety out of the box. When you use `createClient<typeof registry>()`, TypeScript automatically infers action parameter and return types:
 
-```typescript actors.ts
+```typescript index.ts
 import { actor, setup } from "rivetkit";
 
 // Create simple counter
@@ -181,7 +181,7 @@ const counter = actor({
 });
 
 const registry = setup({ use: { counter } });
-const client = createClient<typeof registry>("http://localhost:8080");
+const client = createClient<typeof registry>("http://localhost:6420");
 
 // Type-safe client usage
 const counterActor = await client.counter.get();
@@ -250,7 +250,7 @@ const user = actor({
 });
 
 const registry = setup({ use: { user } });
-const client = createClient<typeof registry>();
+const client = createClient<typeof registry>("http://localhost:6420");
 const userActor = await client.user.getOrCreate();
 
 try {

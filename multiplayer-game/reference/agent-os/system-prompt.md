@@ -1,0 +1,24 @@
+# System Prompt
+
+> Source: `src/content/docs/agent-os/system-prompt.mdx`
+> Canonical URL: https://rivet.dev/docs/agent-os/system-prompt
+> Description: How agentOS injects context into agent sessions.
+
+---
+agentOS automatically injects a system prompt into every agent session that describes the VM environment and available tools. The prompt is additive and never replaces the agent's own instructions (CLAUDE.md, AGENTS.md, etc.).
+
+The base prompt lives at `/etc/agentos/instructions.md` inside the VM.
+
+## Customization
+
+```ts @nocheck
+const session = await vm.createSession("pi", {
+  env: { ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY! },
+  // Append custom instructions
+  additionalInstructions: "Always write tests before implementation.",
+  // Suppress the base OS prompt (tool docs are still injected)
+  skipOsInstructions: true,
+});
+```
+
+_Source doc path: /docs/agent-os/system-prompt_

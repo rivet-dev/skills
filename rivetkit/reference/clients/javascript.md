@@ -13,7 +13,7 @@ See the [backend quickstart guide](/docs/actors/quickstart/backend) for getting 
 
 ```ts client.ts
 import { createClient } from "rivetkit/client";
-import type { registry } from "./actors";
+import type { registry } from "./index";
 
 const client = createClient<typeof registry>({
   endpoint: "https://my-namespace:pk_...@api.rivet.dev",
@@ -22,7 +22,7 @@ const counter = client.counter.getOrCreate(["my-counter"]);
 const count = await counter.increment(1);
 ```
 
-```ts actors.ts @hide
+```ts index.ts @hide
 import { actor, setup } from "rivetkit";
 
 export const counter = actor({
@@ -38,6 +38,8 @@ export const counter = actor({
 export const registry = setup({
   use: { counter },
 });
+
+registry.start();
 ```
 
 ## Stateless vs Stateful
@@ -76,7 +78,7 @@ const resolvedId = await room.resolve();
 
 ## Connection Parameters
 
-```typescript
+```typescript params
 import { createClient } from "rivetkit/client";
 
 const client = createClient();
@@ -86,6 +88,25 @@ const chat = client.chatRoom.getOrCreate(["general"], {
 
 const conn = chat.connect();
 ```
+
+```typescript getParams
+import { createClient } from "rivetkit/client";
+
+async function getAuthToken(): Promise<string> {
+  return "jwt-token-here";
+}
+
+const client = createClient();
+const chat = client.chatRoom.getOrCreate(["general"], {
+  getParams: async () => ({
+    authToken: await getAuthToken(),
+  }),
+});
+
+const conn = chat.connect();
+```
+
+Use `params` for static connection parameters. Use `getParams` when the value can change between connection attempts, such as refreshing a JWT before each `.connect()` or reconnect.
 
 ## Subscribing to Events
 
@@ -175,15 +196,15 @@ Keys uniquely identify actor instances. Use compound keys (arrays) for hierarchi
 
 ```ts client.ts
 import { createClient } from "rivetkit/client";
-import type { registry } from "./actors";
+import type { registry } from "./index";
 
-const client = createClient<typeof registry>();
+const client = createClient<typeof registry>("http://localhost:6420");
 
 // Compound key: [org, room]
 client.chatRoom.getOrCreate(["org-acme", "general"]);
 ```
 
-```ts actors.ts @hide
+```ts index.ts @hide
 import { actor, setup } from "rivetkit";
 
 export const chatRoom = actor({
@@ -196,6 +217,8 @@ export const chatRoom = actor({
 export const registry = setup({
   use: { chatRoom },
 });
+
+registry.start();
 ```
 
 Don't build keys with string interpolation like `"org:${userId}"` when `userId` contains user data. Use arrays instead to prevent key injection attacks.
@@ -209,7 +232,7 @@ Don't build keys with string interpolation like `"org:${userId}"` when `userId` 
 - `RIVET_TOKEN`
 - `RIVET_RUNNER`
 
-Defaults to `window.location.origin + "/api/rivet"` in the browser or `http://127.0.0.1:6420` on the server when unset.
+Defaults to `http://localhost:6420` when unset. RivetKit runs on port 6420 by default.
 
 ### Endpoint Format
 

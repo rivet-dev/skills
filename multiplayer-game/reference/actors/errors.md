@@ -54,7 +54,7 @@ const user = actor({
 });
 
 const registry = setup({ use: { user } });
-const client = createClient<typeof registry>("http://localhost:8080");
+const client = createClient<typeof registry>("http://localhost:6420");
 const conn = client.user.getOrCreate([]).connect();
 
 try {
@@ -83,7 +83,7 @@ const user = actor({
 });
 
 const registry = setup({ use: { user } });
-const client = createClient<typeof registry>("http://localhost:8080");
+const client = createClient<typeof registry>("http://localhost:6420");
 const userActor = client.user.getOrCreate([]);
 
 try {
@@ -141,7 +141,7 @@ const user = actor({
 });
 
 const registry = setup({ use: { user } });
-const client = createClient<typeof registry>("http://localhost:8080");
+const client = createClient<typeof registry>("http://localhost:6420");
 const conn = client.user.getOrCreate([]).connect();
 
 try {
@@ -171,7 +171,7 @@ const user = actor({
 });
 
 const registry = setup({ use: { user } });
-const client = createClient<typeof registry>("http://localhost:8080");
+const client = createClient<typeof registry>("http://localhost:6420");
 const userActor = client.user.getOrCreate([]);
 
 try {
@@ -234,7 +234,7 @@ const api = actor({
 });
 
 const registry = setup({ use: { api } });
-const client = createClient<typeof registry>("http://localhost:8080");
+const client = createClient<typeof registry>("http://localhost:6420");
 const conn = client.api.getOrCreate([]).connect();
 
 try {
@@ -265,7 +265,7 @@ const api = actor({
 });
 
 const registry = setup({ use: { api } });
-const client = createClient<typeof registry>("http://localhost:8080");
+const client = createClient<typeof registry>("http://localhost:6420");
 const apiActor = client.api.getOrCreate([]);
 
 try {
@@ -331,7 +331,7 @@ const payment = actor({
 });
 
 const registry = setup({ use: { payment } });
-const client = createClient<typeof registry>("http://localhost:8080");
+const client = createClient<typeof registry>("http://localhost:6420");
 const conn = client.payment.getOrCreate([]).connect();
 
 try {
@@ -364,7 +364,7 @@ const payment = actor({
 });
 
 const registry = setup({ use: { payment } });
-const client = createClient<typeof registry>("http://localhost:8080");
+const client = createClient<typeof registry>("http://localhost:6420");
 const paymentActor = client.payment.getOrCreate([]);
 
 try {
@@ -414,7 +414,7 @@ const payment = actor({
 });
 
 const registry = setup({ use: { payment } });
-const client = createClient<typeof registry>("http://localhost:8080");
+const client = createClient<typeof registry>("http://localhost:6420");
 const paymentActor = client.payment.getOrCreate([]);
 
 // With NODE_ENV=development or RIVET_EXPOSE_ERRORS=1

@@ -25,7 +25,7 @@ Queues are commonly referred to as "mailboxes" in other actor frameworks.
 
 This is the default pattern. Define queue names in `queues`, process them in `run`, and publish from the client with `handle.send(...)`.
 
-```ts actors.ts
+```ts index.ts
 import { actor, queue, setup } from "rivetkit";
 
 export const counter = actor({
@@ -45,9 +45,9 @@ export const registry = setup({ use: { counter } });
 
 ```ts client.ts
 import { createClient } from "rivetkit/client";
-import type { registry } from "./actors";
+import type { registry } from "./index";
 
-const client = createClient<typeof registry>();
+const client = createClient<typeof registry>("http://localhost:6420");
 const handle = client.counter.getOrCreate(["main"]);
 
 await handle.send("increment", { amount: 1 });
@@ -62,7 +62,7 @@ Use this when you want explicit completion/ack semantics but do not need to retu
 - Unacknowledged messages are retried, so mutation handlers should be idempotent.
 - `status: "timedOut"` means sender timeout elapsed before `message.complete(...)`.
 
-```ts actors.ts
+```ts index.ts
 import { actor, queue, setup } from "rivetkit";
 
 export const counter = actor({
@@ -83,9 +83,9 @@ export const registry = setup({ use: { counter } });
 
 ```ts client.ts
 import { createClient } from "rivetkit/client";
-import type { registry } from "./actors";
+import type { registry } from "./index";
 
-const client = createClient<typeof registry>();
+const client = createClient<typeof registry>("http://localhost:6420");
 const handle = client.counter.getOrCreate(["main"]);
 
 const result = await handle.send(
@@ -105,7 +105,7 @@ if (result.status === "completed") {
 
 Use this when the sender needs data back from queued work.
 
-```ts actors.ts
+```ts index.ts
 import { actor, queue, setup } from "rivetkit";
 
 export const counter = actor({
@@ -126,9 +126,9 @@ export const registry = setup({ use: { counter } });
 
 ```ts client.ts
 import { createClient } from "rivetkit/client";
-import type { registry } from "./actors";
+import type { registry } from "./index";
 
-const client = createClient<typeof registry>();
+const client = createClient<typeof registry>("http://localhost:6420");
 const handle = client.counter.getOrCreate(["main"]);
 
 const result = await handle.send(
@@ -152,7 +152,7 @@ Queueing is useful from inside actor logic too, not just from clients.
 - You can also call `c.queue.send(...)` from other parts of `run` when needed.
 - `c.queue.send(...)` confirms durable enqueue. It does not wait for processing to finish.
 
-```ts actors.ts
+```ts index.ts
 import { actor, queue, setup } from "rivetkit";
 
 export const counter = actor({
@@ -177,9 +177,9 @@ export const registry = setup({ use: { counter } });
 
 ```ts client.ts
 import { createClient } from "rivetkit/client";
-import type { registry } from "./actors";
+import type { registry } from "./index";
 
-const client = createClient<typeof registry>();
+const client = createClient<typeof registry>("http://localhost:6420");
 const handle = client.counter.getOrCreate(["main"]);
 
 await handle.increment(5);
@@ -190,7 +190,7 @@ await handle.increment(2);
 
 You can define queue types with `queue()` or with schema objects. Schema objects support [Standard Schema](https://standardschema.dev/) validators, including [Zod](https://zod.dev/).
 
-```ts actors.ts
+```ts index.ts
 import { actor, queue, setup } from "rivetkit";
 import { z } from "zod";
 
@@ -218,7 +218,7 @@ Use `nextBatch` when you want to wait for multiple queue messages.
 - Waits until messages are available unless timeout is hit.
 - Omit `timeout` to wait indefinitely.
 
-```ts actors.ts
+```ts index.ts
 import { actor, queue, setup } from "rivetkit";
 
 export const queueWorker = actor({
@@ -253,7 +253,7 @@ Use `tryNextBatch` for non-blocking batch reads.
 
 - Returns immediately and never waits.
 
-```ts actors.ts
+```ts index.ts
 import { actor, queue, setup } from "rivetkit";
 
 export const queueWorker = actor({
@@ -284,7 +284,7 @@ export const registry = setup({ use: { queueWorker } });
 
 Use `signal` when your receive loop needs external cancellation semantics in addition to actor shutdown behavior.
 
-```ts actors.ts
+```ts index.ts
 import { actor, queue, setup } from "rivetkit";
 import { joinSignals } from "rivetkit/utils";
 
@@ -325,9 +325,9 @@ export const registry = setup({ use: { signalWorker } });
 
 ```ts client.ts
 import { createClient } from "rivetkit/client";
-import type { registry } from "./actors";
+import type { registry } from "./index";
 
-const client = createClient<typeof registry>();
+const client = createClient<typeof registry>("http://localhost:6420");
 const handle = client.signalWorker.getOrCreate(["main"]);
 
 await handle.send("jobs", { id: "job-1" });
@@ -340,7 +340,7 @@ Multiple queues let you separate message flows by purpose. By default, receive c
 
 Use `iter({ names: ["prompt"] })` as the main stream and `next({ names: ["stop"] })` as a stop signal.
 
-```ts actors.ts
+```ts index.ts
 import { openai } from "@ai-sdk/openai";
 import { generateText } from "ai";
 import { actor, queue, setup } from "rivetkit";
@@ -389,9 +389,9 @@ export const registry = setup({ use: { agent } });
 
 ```ts client.ts
 import { createClient } from "rivetkit/client";
-import type { registry } from "./actors";
+import type { registry } from "./index";
 
-const client = createClient<typeof registry>();
+const client = createClient<typeof registry>("http://localhost:6420");
 const handle = client.agent.getOrCreate(["main"]);
 
 await handle.send("prompt", { prompt: "summarize latest logs" });
@@ -421,13 +421,21 @@ This means you can run normal code in `run` without worrying about sleep interru
 - Add `timeout` when callers need bounded wait behavior.
 - Use `wait: true` only when the caller actually needs a response.
 
+## Pitfalls
+
+### Avoid `wait: true` between actors
+
+`wait: true` blocks the sender's run loop until the receiver finishes. Between actors, this adds unnecessary overhead and risks deadlocks, especially if the target actor needs to communicate back. If an actor sends a `wait: true` message to *itself*, it is a guaranteed deadlock because the run loop is already busy processing the current message.
+
+Reserve `wait: true` for external callers (HTTP handlers, CLI tools, client apps). For actor-to-actor communication, send a queue message to the other actor without `wait: true`, then have that actor send a queue message back when the work is done.
+
 ## Tips
 
 ### Message TTL
 
 Every queue message includes a `createdAt` timestamp. Use this to skip or discard stale messages in your run loop:
 
-```ts actors.ts
+```ts index.ts
 import { actor, queue, setup } from "rivetkit";
 
 export const worker = actor({
@@ -454,7 +462,7 @@ export const registry = setup({ use: { worker } });
 
 Use [`c.schedule`](/docs/actors/schedule) to enqueue messages at a future time instead of processing them immediately:
 
-```ts actors.ts
+```ts index.ts
 import { actor, queue, setup } from "rivetkit";
 
 export const reminder = actor({

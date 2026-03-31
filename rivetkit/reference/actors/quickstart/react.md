@@ -21,11 +21,11 @@ npx skills add rivet-dev/skills
 npm install rivetkit @rivetkit/react
 ```
 
-### Create Backend Actor
+### Create Backend Actor and Start Server
 
-Create your actor registry on the backend:
+Create your actor registry on the backend and start the server:
 
-```ts backend/registry.ts
+```ts backend/index.ts
 import { actor, setup } from "rivetkit";
 
 export const counter = actor({
@@ -42,9 +42,9 @@ export const counter = actor({
 export const registry = setup({
 	use: { counter },
 });
-```
 
-### Setup Backend Server
+registry.start();
+```
 
 ### Create React Frontend
 
@@ -53,9 +53,9 @@ Set up your React application:
 ```tsx Counter.tsx
 import { createRivetKit } from "@rivetkit/react";
 import { useState } from "react";
-import type { registry } from "./actors";
+import type { registry } from "./index";
 
-const { useActor } = createRivetKit<typeof registry>();
+const { useActor } = createRivetKit<typeof registry>("http://localhost:6420");
 
 function Counter() {
 	const [count, setCount] = useState(0);
@@ -83,7 +83,7 @@ function Counter() {
 }
 ```
 
-```ts actors.ts @hide
+```ts index.ts @hide
 import { actor, setup } from "rivetkit";
 
 export const counter = actor({
@@ -100,6 +100,8 @@ export const counter = actor({
 export const registry = setup({
 	use: { counter },
 });
+
+registry.start();
 ```
 
 For detailed information about the React client API, see the [React Client API Reference](/docs/clients/react).
@@ -126,7 +128,17 @@ Start both the backend and frontend:
 
 **Terminal 1**: Start the backend
 
-### Step
+```sh Node.js
+npx tsx --watch backend/index.ts
+```
+
+```sh Bun
+bun --watch backend/index.ts
+```
+
+```sh Deno
+deno run --allow-net --allow-read --allow-env --watch backend/index.ts
+```
 
 **Terminal 2**: Start the frontend
 

@@ -1,0 +1,18 @@
+# Deployment
+
+> Source: `src/content/docs/agent-os/deployment.mdx`
+> Canonical URL: https://rivet.dev/docs/agent-os/deployment
+> Description: Choose the right deployment option for agentOS.
+
+---
+agentOS supports multiple deployment models depending on your needs.
+
+| Option | Description | Best for |
+|--------|-------------|----------|
+| **Local Dev** | Run locally with `npx rivetkit dev`. No infrastructure needed. | Development and testing |
+| **[Rivet Cloud](/cloud)** | Fully managed hosting on Rivet Compute or bring your own cloud (BYOC). | Teams that want zero-ops deployment |
+| **[Rivet Self-Hosted](/docs/self-hosting)** | Run the full Rivet platform on your own infrastructure. | Organizations that need full control |
+| **[Rivet Enterprise](/sales)** | Self-hosted with dedicated support, custom SLAs, and compliance reviews. | Regulated industries and large-scale deployments |
+| **agentOS Core** | Use `@rivet-dev/agent-os-core` directly without the Rivet platform. Embed the runtime in any Node.js backend. | Custom integrations and existing infrastructure |
+
+_Source doc path: /docs/agent-os/deployment_

@@ -1,0 +1,91 @@
+# Quickstart
+
+> Source: `src/content/docs/agent-os/quickstart.mdx`
+> Canonical URL: https://rivet.dev/docs/agent-os/quickstart
+> Description: Set up an agentOS actor, create a session, and run your first coding agent.
+
+---
+agentOS is in preview and the API is subject to change. If you run into issues, please [report them on GitHub](https://github.com/rivet-dev/rivet/issues) or [join our Discord](https://rivet.dev/discord).
+
+### Install
+
+- **rivetkit** — Actor framework with built-in persistence and orchestration
+- **@rivet-dev/agent-os-common** — Standard VM software (curl, grep, git, and more)
+- **@rivet-dev/agent-os-pi** — [Pi](https://github.com/mariozechner/pi-coding-agent) coding agent (Claude Code, Amp, and OpenCode coming soon)
+
+```bash
+npm install rivetkit @rivet-dev/agent-os-common @rivet-dev/agent-os-pi
+```
+
+### Create the Server & Client
+
+```ts @nocheck server.ts
+import { agentOs } from "rivetkit/agent-os";
+import { setup } from "rivetkit";
+import common from "@rivet-dev/agent-os-common";
+import pi from "@rivet-dev/agent-os-pi";
+
+const vm = agentOs({
+  options: { software: [common, pi] },
+});
+
+export const registry = setup({ use: { vm } });
+registry.start();
+```
+
+```ts @nocheck client.ts
+import { createClient } from "rivetkit/client";
+import type { registry } from "./server";
+
+const client = createClient<typeof registry>("http://localhost:6420");
+const agent = client.vm.getOrCreate(["my-agent"]);
+
+// Subscribe to streaming events
+agent.on("sessionEvent", (data) => {
+  console.log(data.event);
+});
+
+// Create a session and send a prompt
+const session = await agent.createSession("pi", {
+  env: { ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY! },
+});
+await agent.sendPrompt(
+  session.sessionId,
+  "Write a hello world script to /home/user/hello.js",
+);
+
+// Read the file the agent created
+const content = await agent.readFile("/home/user/hello.js");
+console.log(new TextDecoder().decode(content));
+```
+
+### Run
+
+Start the server:
+
+```bash
+npx tsx server.ts
+```
+
+Then in a separate terminal, run the client:
+
+```bash
+npx tsx client.ts
+```
+
+### Customize
+
+Now that you have a working agent, customize it to fit your needs:
+
+- **[Software](/docs/agent-os/software)** — Install software packages inside the VM
+- **[Tools](/docs/agent-os/tools)** — Expose your JavaScript functions to agents as CLI commands
+- **[Filesystem](/docs/agent-os/filesystem)** — Read, write, and manage files inside the VM
+- **[Registry](/docs/registry)** — Browse more agents, tools, and filesystems
+
+## agentOS Core
+
+The quickstart above uses `rivetkit/agent-os`, which includes statefulness, multiplayer, and orchestration out of the box. If you only need direct VM control without those features, you can use the core package (`@rivet-dev/agent-os-core`) standalone.
+
+See [agentOS core documentation](/docs/agent-os/core) for reference.
+
+_Source doc path: /docs/agent-os/quickstart_

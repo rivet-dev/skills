@@ -47,8 +47,6 @@ RIVET__database__postgres__url="postgresql://pscale_api_<username>.<unique-id>:<
 RIVET__database__postgres__unstable_disable_lock_customization=true
 ```
 
-For better performance, set `deadlock_timeout = 10ms` in the PlanetScale dashboard at **Clusters** → **Parameters** → **Query Tuning**.
-
 ### Supabase
 
 Use direct connection on port `5432` (not connection pooler).

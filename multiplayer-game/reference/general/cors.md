@@ -54,7 +54,7 @@ const myActor = actor({
 });
 const registry = setup({ use: { myActor } });
 
-const client = createClient<typeof registry>();
+const client = createClient<typeof registry>("http://localhost:6420");
 
 try {
   const actorHandle = client.myActor.getOrCreate(["my-actor"]);

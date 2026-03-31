@@ -5,20 +5,11 @@
 > Description: Deploy Rivet Engine with docker-compose for multi-container setups.
 
 ---
-Run with ephemeral storage:
-
 ## Quick Start
 
-```yaml
-services:
-  rivet-engine:
-    image: rivetdev/engine:latest
-    ports:
-      - "6420:6420"
-    restart: unless-stopped
-```
+### Create docker-compose.yaml
 
-Run with persistent storage:
+Create a `docker-compose.yaml` in your project root:
 
 ```yaml
 services:
@@ -36,17 +27,37 @@ volumes:
   rivet-data:
 ```
 
-Start the services:
+### Start the engine
 
 ```bash
 docker-compose up -d
 ```
 
-## Configuration
+## Connecting Your Project
 
-### Environment Variables
+Once the engine is running, add your app as a service in the same Compose file.
 
-Configure Rivet using environment variables in your compose file:
+### Create your server
+
+Follow the [quickstart](/docs/actors/quickstart/backend) to create a working server with actors.
+
+### Create a Dockerfile
+
+Create a `Dockerfile` in your project root:
+
+```dockerfile @nocheck
+FROM node:22-slim
+WORKDIR /app
+COPY package.json pnpm-lock.yaml ./
+RUN corepack enable && pnpm install --frozen-lockfile
+COPY . .
+RUN pnpm build
+CMD ["node", "dist/index.js"]
+```
+
+### Add your app to docker-compose.yaml
+
+Update your `docker-compose.yaml` to include your app alongside the engine:
 
 ```yaml
 services:
@@ -57,33 +68,62 @@ services:
     volumes:
       - rivet-data:/data
     environment:
-      RIVET__POSTGRES__URL: "postgresql://postgres:password@localhost:5432/db"
+      RIVET__FILE_SYSTEM__PATH: "/data"
+    restart: unless-stopped
+
+  my-app:
+    build: .
+    environment:
+      RIVET_ENDPOINT: "http://default:admin@rivet-engine:6420"
+    depends_on:
+      - rivet-engine
     restart: unless-stopped
 
 volumes:
   rivet-data:
 ```
 
-Or use a `.env` file:
+`RIVET_ENDPOINT` tells your app to connect to the engine as a runner instead of running standalone. The URL uses the format `http://namespace:token@host:port`. Inside the Docker network, your app reaches the engine at `rivet-engine:6420`. See [Endpoints](/docs/general/endpoints) for all options.
 
-```txt
-# .env
-POSTGRES_PASSWORD=secure_password
-RIVET__POSTGRES__URL=postgresql://rivet:secure_password@postgres:5432/rivet
+### Start the services
+
+```bash
+docker-compose up -d
 ```
 
-Reference in compose:
+### Register your runner with the engine
 
-```yaml
-services:
-  rivet-engine:
-    env_file:
-      - .env
+### Dashboard
+
+1. Open the Rivet Engine dashboard at `http://localhost:6420`.
+2. Enter your admin token when prompted.
+3. In the namespace sidebar, click **Settings**.
+4. Click **Add Provider**, then choose **Custom**.
+5. Click **Next** (these settings can be changed later).
+6. Click **Next** (you can safely skip the env ar step for Docker Compose).
+5. Go to **Confirm Connection**, enter your app endpoint (`http://my-app:6420/api/rivet`), then click **Add**.
+
+### CLI (curl)
+
+Register your runner programmatically via the engine API:
+
+```bash @nocheck
+curl -X PUT "http://localhost:6420/runner-configs/default?namespace=default" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "datacenters": {
+      "default": {
+        "normal": {}
+      }
+    }
+  }'
 ```
+
+## Configuration
 
 ### Config File
 
-Mount a JSON configuration file:
+Mount a JSON configuration file in your `docker-compose.yaml`:
 
 ```yaml
 services:
@@ -100,7 +140,7 @@ volumes:
   rivet-data:
 ```
 
-Create the config file (`rivet-config.json`):
+Create `rivet-config.json` in the same directory as your `docker-compose.yaml`. See the [Configuration](/docs/self-hosting/configuration) docs for all available options and the full [JSON Schema](/docs/engine-config-schema.json).
 
 ```json
 {
@@ -110,7 +150,7 @@ Create the config file (`rivet-config.json`):
 }
 ```
 
-## Postgres Setup
+### Postgres Setup
 
 PostgreSQL is the recommended backend for multi-node self-hosted deployments today, but it remains experimental. For a production-ready single-node Rivet deployment, use the file system backend (RocksDB-based). Enterprise teams can contact [enterprise support](https://rivet.dev/sales) about FoundationDB for the most scalable production-ready deployment.
 

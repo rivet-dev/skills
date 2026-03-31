@@ -13,13 +13,13 @@ Get the unique instance ID of the actor:
 import { actor } from "rivetkit";
 
 const example = actor({
-  state: {},
-  actions: {
-    getId: (c) => {
-      const actorId = c.actorId;
-      return actorId;
-    }
-  }
+	state: {},
+	actions: {
+		getId: (c) => {
+			const actorId = c.actorId;
+			return actorId;
+		},
+	},
 });
 ```
 
@@ -31,13 +31,13 @@ Get the actor type name:
 import { actor } from "rivetkit";
 
 const example = actor({
-  state: {},
-  actions: {
-    getName: (c) => {
-      const actorName = c.name;
-      return actorName;
-    }
-  }
+	state: {},
+	actions: {
+		getName: (c) => {
+			const actorName = c.name;
+			return actorName;
+		},
+	},
 });
 ```
 
@@ -51,13 +51,13 @@ Get the actor key used to identify this actor instance:
 import { actor } from "rivetkit";
 
 const example = actor({
-  state: {},
-  actions: {
-    getKey: (c) => {
-      const actorKey = c.key;
-      return actorKey;
-    }
-  }
+	state: {},
+	actions: {
+		getKey: (c) => {
+			const actorKey = c.key;
+			return actorKey;
+		},
+	},
 });
 ```
 
@@ -73,13 +73,13 @@ Region can be accessed from the context object via `c.region`.
 import { actor } from "rivetkit";
 
 const example = actor({
-  state: {},
-  actions: {
-    getRegion: (c) => {
-      const region = c.region;
-      return region;
-    }
-  }
+	state: {},
+	actions: {
+		getRegion: (c) => {
+			const region = c.region;
+			return region;
+		},
+	},
 });
 ```
 
@@ -87,50 +87,39 @@ const example = actor({
 
 ## Example Usage
 
-```typescript actors.ts
+```typescript index.ts
 import { actor, setup } from "rivetkit";
 
 const chatRoom = actor({
-  state: {
-    messages: []
-  },
-  
-  actions: {
-    // Get actor metadata
-    getMetadata: (c) => {
-      return {
-        actorId: c.actorId,
-        name: c.name,
-        key: c.key,
-        region: c.region
-      };
-    }
-  }
+	state: {
+		messages: [],
+	},
+
+	actions: {
+		// Get actor metadata
+		getMetadata: (c) => {
+			return {
+				actorId: c.actorId,
+				name: c.name,
+				key: c.key,
+				region: c.region,
+			};
+		},
+	},
 });
 
 export const registry = setup({
-  use: { chatRoom }
+	use: { chatRoom },
 });
+
+registry.start();
 ```
 
 ```typescript client.ts
-import { actor, setup } from "rivetkit";
 import { createClient } from "rivetkit/client";
+import type { registry } from "./index";
 
-const chatRoom = actor({
-  state: { messages: [] as string[] },
-  actions: {
-    getMetadata: (c) => ({
-      actorId: c.actorId,
-      name: c.name,
-      key: c.key,
-      region: c.region
-    })
-  }
-});
-
-const registry = setup({ use: { chatRoom } });
-const client = createClient<typeof registry>("http://localhost:8080");
+const client = createClient<typeof registry>("http://localhost:6420");
 
 // Connect to a chat room
 const chatRoomHandle = client.chatRoom.get(["general"]);

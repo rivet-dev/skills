@@ -78,103 +78,109 @@ PostgreSQL is the recommended backend for multi-node self-hosted deployments tod
     Visit `/ui` on your `public_url` to access the dashboard.
   
 
-## Deploy RivetKit App
+## Connecting Your Project
 
-  
-### Create Kubernetes Manifests
+### Create your server
 
-    Create these two manifest files:
+Follow the [quickstart](/docs/actors/quickstart/backend) to create a working server with actors.
 
-    
+### Create Kubernetes manifests
 
-    ```yaml deployment.yaml
-    apiVersion: apps/v1
-    kind: Deployment
+Create these manifest files for your app:
+
+```yaml deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rivetkit-app
+  namespace: your-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rivetkit-app
+  template:
     metadata:
-      name: rivetkit-app
-      namespace: your-namespace
-    spec:
-      replicas: 1
-      selector:
-        matchLabels:
-          app: rivetkit-app
-      template:
-        metadata:
-          labels:
-            app: rivetkit-app
-        spec:
-          # Allow enough time for actors to gracefully stop on SIGTERM.
-          # The runner waits up to 120s for actors to finish; 130s provides buffer.
-          # See: /docs/actors/versions#graceful-shutdown-sigterm
-          terminationGracePeriodSeconds: 130
-          containers:
-            - name: rivetkit-app
-              image: registry.example.com/your-team/rivetkit-app:latest
-              envFrom:
-                - secretRef:
-                    name: rivetkit-secrets
-    ```
-
-    ```yaml service.yaml
-    apiVersion: v1
-    kind: Service
-    metadata:
-      name: rivetkit-app
-      namespace: your-namespace
-    spec:
-      selector:
+      labels:
         app: rivetkit-app
-      ports:
-        - name: http
-          port: 8080
-          targetPort: 8080
-    ```
+    spec:
+      # Allow enough time for actors to gracefully stop on SIGTERM.
+      # The runner waits up to 120s for actors to finish; 130s provides buffer.
+      # See: /docs/actors/versions#graceful-shutdown-sigterm
+      terminationGracePeriodSeconds: 130
+      containers:
+        - name: rivetkit-app
+          image: registry.example.com/your-team/rivetkit-app:latest
+          envFrom:
+            - secretRef:
+                name: rivetkit-secrets
+```
 
-    
+```yaml service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: rivetkit-app
+  namespace: your-namespace
+spec:
+  selector:
+    app: rivetkit-app
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+```
 
-  
+### Configure the endpoint
 
-  
-### Setup Environment
+Create `rivetkit-secrets.yaml` with `RIVET_ENDPOINT` pointing to the engine. This tells your app to connect as a runner instead of running standalone. See [Endpoints](/docs/general/endpoints) for all options.
 
-    Put the following in `rivetkit-secrets.yaml`:
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: rivetkit-secrets
+  namespace: your-namespace
+type: Opaque
+stringData:
+  RIVET_ENDPOINT: http://my-app:your-admin-token@your-engine.example.com
+```
 
-    ```yaml
-    apiVersion: v1
-    kind: Secret
-    metadata:
-      name: rivetkit-secrets
-      namespace: your-namespace
-    type: Opaque
-    stringData:
-      RIVET_ENDPOINT: http://my-app:your-admin-token@your-engine.example.com
-      RIVET_PUBLIC_ENDPOINT: http://my-app@your-engine.example.com
-    ```
-  
+### Deploy your app
 
-  
-### Apply Manifests
+```bash
+kubectl apply -f rivetkit-secrets.yaml
+kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
+```
 
-    ```bash
-    kubectl apply -f rivetkit-secrets.yaml
-    kubectl apply -f deployment.yaml
-    kubectl apply -f service.yaml
-    ```
-  
+### Register your runner with the engine
 
-  
-### Configure RivetKit URL in Dashboard
+### Dashboard
 
-    After the service is deployed and reachable from the public internet:
+1. Open the Rivet Engine dashboard in your browser.
+2. Enter your admin token when prompted.
+3. In the namespace sidebar, click **Settings**.
+4. Click **Add Provider**, then choose **Custom**.
+5. Click **Next**.
+6. Go to **Confirm Connection**, enter your app endpoint (e.g. `http://rivetkit-app.your-namespace:8080/api/rivet`), then click **Add**.
 
-    1. Open the Rivet Engine dashboard in your browser.
-    2. Enter your admin token when prompted.
-    3. Create a namespace (or select an existing namespace) that matches your endpoint namespace (for example, `my-app`).
-    4. In the namespace sidebar, click **Overview**.
-    5. Click **Add Provider**, then choose **Custom**.
-    6. In the connect modal, select **Serverless** and click **Next**.
-    7. Go to **Confirm Connection**, enter your app endpoint (`.../api/rivet`), then click **Add**.
-  
+### CLI (curl)
+
+Register your runner programmatically via the engine API:
+
+```bash @nocheck
+curl -X PUT "https://your-engine.example.com/runner-configs/default?namespace=default" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer your-admin-token" \
+  -d '{
+    "datacenters": {
+      "default": {
+        "normal": {}
+      }
+    }
+  }'
+```
 
 ## Advanced
 

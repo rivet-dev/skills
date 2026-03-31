@@ -9,9 +9,9 @@ Use this skill when building React apps that connect to Rivet Actors with `@rive
 
 ## First Steps
 
-1. Install the React client (latest: 2.1.6)
+1. Install the React client (latest: 2.2.0)
    ```bash
-   npm install @rivetkit/react@2.1.6
+   npm install @rivetkit/react@2.2.0
    ```
 2. Create hooks with `createRivetKit()` and connect with `useActor()`.
 
@@ -31,7 +31,7 @@ See the [React quickstart guide](/docs/actors/quickstart/react) for getting star
 
 ```tsx Counter.tsx
 import { createRivetKit } from "@rivetkit/react";
-import type { registry } from "./actors";
+import type { registry } from "./index";
 
 const { useActor } = createRivetKit<typeof registry>({
   endpoint: "https://my-namespace:pk_...@api.rivet.dev",
@@ -45,7 +45,7 @@ function Counter() {
 }
 ```
 
-```ts actors.ts @hide
+```ts index.ts @hide
 import { actor, setup } from "rivetkit";
 
 export const counter = actor({
@@ -62,6 +62,8 @@ export const counter = actor({
 export const registry = setup({
   use: { counter },
 });
+
+registry.start();
 ```
 
 ## Stateless vs Stateful
@@ -227,9 +229,9 @@ Keys uniquely identify actor instances. Use compound keys (arrays) for hierarchi
 
 ```tsx ChatRoom.tsx
 import { createRivetKit } from "@rivetkit/react";
-import type { registry } from "./actors";
+import type { registry } from "./index";
 
-const { useActor } = createRivetKit<typeof registry>();
+const { useActor } = createRivetKit<typeof registry>("http://localhost:6420");
 
 function ChatRoom() {
   const room = useActor({ name: "chatRoom", key: ["org-acme", "general"] });
@@ -237,7 +239,7 @@ function ChatRoom() {
 }
 ```
 
-```ts actors.ts @hide
+```ts index.ts @hide
 import { actor, setup } from "rivetkit";
 
 export const chatRoom = actor({
@@ -250,6 +252,8 @@ export const chatRoom = actor({
 export const registry = setup({
   use: { chatRoom },
 });
+
+registry.start();
 ```
 
 Don't build keys with string interpolation like `"org:${userId}"` when `userId` contains user data. Use arrays instead to prevent key injection attacks.
@@ -263,7 +267,7 @@ Don't build keys with string interpolation like `"org:${userId}"` when `userId` 
 - `RIVET_TOKEN`
 - `RIVET_RUNNER`
 
-Defaults to `window.location.origin + "/api/rivet"` in the browser or `http://127.0.0.1:6420` on the server when unset.
+Defaults to `http://localhost:6420` when unset. RivetKit runs on port 6420 by default.
 
 ### Endpoint Format
 

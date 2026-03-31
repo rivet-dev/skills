@@ -21,11 +21,11 @@ npx skills add rivet-dev/skills
 npm install rivetkit
 ```
 
-### Create an Actor
+### Create Actors and Start Server
 
-Create a simple counter actor:
+Create a file with your actors, set up the registry, and start the server:
 
-```ts actors.ts
+```ts index.ts
 import { actor, setup } from "rivetkit";
 
 export const counter = actor({
@@ -42,13 +42,32 @@ export const counter = actor({
 export const registry = setup({
 	use: { counter },
 });
-```
 
-### Setup Server
+registry.start();
+```
 
 ### Run Server
 
-### Step
+```sh Node.js
+npx tsx --watch index.ts
+```
+
+```sh Bun
+bun --watch index.ts
+```
+
+```sh Deno
+deno run --allow-net --allow-read --allow-env --watch index.ts
+```
+
+Your server is now running on `http://localhost:6420`. To change the port, pass `managerPort` in the setup config:
+
+```ts @nocheck
+const registry = setup({
+	use: { counter },
+	managerPort: 3000,
+});
+```
 
 ### Connect To The Rivet Actor
 
@@ -56,7 +75,7 @@ This code can run either in your frontend or within your backend:
 
 ### TypeScript
 
-```ts actors.ts @hide
+```ts index.ts @hide
 import { actor, setup } from "rivetkit";
 
 export const counter = actor({
@@ -73,13 +92,15 @@ export const counter = actor({
 export const registry = setup({
 	use: { counter },
 });
+
+registry.start();
 ```
 
 ```ts client.ts
 import { createClient } from "rivetkit/client";
-import type { registry } from "./actors";
+import type { registry } from "./index";
 
-const client = createClient<typeof registry>();
+const client = createClient<typeof registry>("http://localhost:6420");
 
 // Get or create a counter actor for the key "my-counter"
 const counter = client.counter.getOrCreate(["my-counter"]);
@@ -102,7 +123,7 @@ See the [JavaScript client documentation](/docs/clients/javascript) for more inf
 
 ### React
 
-```ts actors.ts @hide
+```ts index.ts @hide
 import { actor, setup } from "rivetkit";
 
 export const counter = actor({
@@ -119,14 +140,16 @@ export const counter = actor({
 export const registry = setup({
 	use: { counter },
 });
+
+registry.start();
 ```
 
 ```tsx Counter.tsx
 import { createRivetKit } from "@rivetkit/react";
 import { useState } from "react";
-import type { registry } from "./actors";
+import type { registry } from "./index";
 
-const { useActor } = createRivetKit<typeof registry>();
+const { useActor } = createRivetKit<typeof registry>("http://localhost:6420");
 
 function Counter() {
 	const [count, setCount] = useState(0);

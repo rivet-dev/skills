@@ -37,7 +37,7 @@ There are several options for places to host your SQL database:
 
 Here's a basic example of a user actor that creates a database record on start and tracks request counts:
 
-```typescript actors.ts @nocheck
+```typescript index.ts @nocheck
 import { actor, setup } from "rivetkit";
 import { Pool } from "pg";
 
@@ -108,13 +108,14 @@ export const userActor = actor({
 export const registry = setup({
   use: { userActor },
 });
+registry.start();
 ```
 
 ```typescript client.ts @nocheck
 import { createClient } from "rivetkit/client";
-import type { registry } from "./actors";
+import type { registry } from "./index";
 
-const client = createClient<typeof registry>("http://localhost:8080");
+const client = createClient<typeof registry>("http://localhost:6420");
 
 // Create user
 const alice = await client.userActor.create("alice", {
@@ -142,7 +143,7 @@ const bobData = await bob.getUser();
 
 Here's the same user actor pattern using Drizzle ORM for more type-safe database operations:
 
-```typescript actors.ts @nocheck
+```typescript index.ts @nocheck
 import { actor, setup } from "rivetkit";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
@@ -226,13 +227,14 @@ export const userActor = actor({
 export const registry = setup({
   use: { userActor },
 });
+registry.start();
 ```
 
 ```typescript client.ts @nocheck
 import { createClient } from "rivetkit/client";
-import type { registry } from "./actors";
+import type { registry } from "./index";
 
-const client = createClient<typeof registry>("http://localhost:8080");
+const client = createClient<typeof registry>("http://localhost:6420");
 
 // Create user
 const alice = await client.userActor.create("alice", {

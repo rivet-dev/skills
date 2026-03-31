@@ -47,7 +47,16 @@ const registry = setup({
 
 ## Starting Your App
 
-After configuring your registry, start it using one of two runtime modes:
+After configuring your registry, start it:
+
+```typescript registry.start()
+import { actor, setup } from "rivetkit";
+
+const myActor = actor({ state: {}, actions: {} });
+const registry = setup({ use: { myActor } });
+
+registry.start();
+```
 
 ```typescript Serverless
 import { actor, setup } from "rivetkit";

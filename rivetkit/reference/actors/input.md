@@ -32,7 +32,7 @@ const game = actor({
 });
 
 const registry = setup({ use: { game } });
-const client = createClient<typeof registry>();
+const client = createClient<typeof registry>("http://localhost:6420");
 
 // Client side - create with input
 const gameHandle = await client.game.create(["game-123"], {
@@ -191,7 +191,7 @@ const chatRoom = actor({
 });
 
 const registry = setup({ use: { chatRoom } });
-const client = createClient<typeof registry>();
+const client = createClient<typeof registry>("http://localhost:6420");
 
 // Actor creation with input
 const room = await client.chatRoom.create(["room-123"], {
@@ -239,7 +239,7 @@ const game = actor({
 
 ### Store Input in State
 
-If you need to access input data in actions, store it in the actor's state:
+Input is only available in `createState` and `onCreate` lifecycle hooks. If you need to access input data later (in actions, timers, or other hooks), store it in the actor's state during creation. This is the recommended pattern because input shapes can evolve over time, and persisting input in state ensures you always have access to the values the actor was created with:
 
 ```typescript
 import { actor } from "rivetkit";

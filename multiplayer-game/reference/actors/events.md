@@ -189,7 +189,7 @@ const chatRoom = actor({
 });
 
 const registry = setup({ use: { chatRoom } });
-const client = createClient<typeof registry>("http://localhost:8080");
+const client = createClient<typeof registry>("http://localhost:6420");
 
 // Helper function for demonstration
 function displayMessage(message: Message) {
@@ -253,7 +253,7 @@ const gameRoom = actor({
 });
 
 const registry = setup({ use: { gameRoom } });
-const client = createClient<typeof registry>("http://localhost:8080");
+const client = createClient<typeof registry>("http://localhost:6420");
 
 function showGameInterface() {
   console.log("Showing game interface");
@@ -325,7 +325,7 @@ const chatRoom = actor({
 });
 
 const registry = setup({ use: { chatRoom } });
-const client = createClient<typeof registry>("http://localhost:8080");
+const client = createClient<typeof registry>("http://localhost:6420");
 const connection = client.chatRoom.getOrCreate(["general"]).connect();
 
 // Add listener

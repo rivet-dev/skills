@@ -15,6 +15,8 @@ Each runner has a **version number**. When you deploy new code with a new versio
 
 Versions are not configured by default. See [Registry Configuration](/docs/connect/registry-configuration) to learn how to configure the runner version.
 
+`RIVET_RUNNER_VERSION` is only needed when self-hosting or using a custom runner. Rivet Compute handles versioning automatically.
+
 ### Example Scenario
 
 ### Drain Enabled
@@ -184,6 +186,117 @@ The `drainOnVersionUpgrade` option controls whether old actors are stopped when 
 | `false` (default in [runner mode](/docs/general/runtime-modes)) | Old actors continue running. New actors go to new version. Versions coexist. |
 | `true` (default in [serverless mode](/docs/general/runtime-modes)) | Old actors receive stop signal and have 30s to finish gracefully. |
 
+## Upgrading Actor State
+
+When you deploy a new version, existing actors may need to handle schema changes in their persisted data.
+
+### SQLite (recommended for complex schemas)
+
+**Drizzle (recommended)**
+
+Use [Drizzle](/docs/actors/sqlite-drizzle) for typed schemas with generated migrations. Drizzle generates versioned `.sql` migration files from your TypeScript schema and applies them in order automatically. This is the recommended approach when your schema evolves frequently.
+
+**Raw SQL**
+
+For actors using [raw SQLite](/docs/actors/sqlite), migrations run automatically via the `onMigrate` hook on every actor start. Use SQLite's `user_version` pragma to track which migrations have run:
+
+```ts
+import { actor, setup } from "rivetkit";
+import { db } from "rivetkit/db";
+
+const todoList = actor({
+	db: db({
+		onMigrate: async (db) => {
+			const [{ user_version }] = (await db.execute(
+				"PRAGMA user_version",
+			)) as { user_version: number }[];
+
+			if (user_version < 1) {
+				await db.execute(`
+					CREATE TABLE todos (
+						id INTEGER PRIMARY KEY AUTOINCREMENT,
+						title TEXT NOT NULL
+					);
+				`);
+			}
+
+			if (user_version < 2) {
+				await db.execute(`
+					ALTER TABLE todos ADD COLUMN completed INTEGER NOT NULL DEFAULT 0;
+				`);
+			}
+
+			await db.execute("PRAGMA user_version = 2");
+		},
+	}),
+	actions: {
+		addTodo: async (c, title: string) => {
+			await c.db.execute("INSERT INTO todos (title) VALUES (?)", title);
+		},
+	},
+});
+
+const registry = setup({ use: { todoList } });
+registry.start();
+```
+
+### In-memory state (`c.state`)
+
+If you use `c.state` for persistence, you are responsible for handling schema changes yourself. If you add, remove, or rename fields between versions, your code must handle the old shape gracefully.
+
+**Manual defaults in `onWake`**
+
+Apply defaults for missing fields:
+
+```ts
+import { actor, setup } from "rivetkit";
+
+const myActor = actor({
+	state: { count: 0, label: "" },
+	onWake: (c) => {
+		// Added in v2. Old actors won't have this field.
+		c.state.label ??= "default";
+	},
+	actions: {
+		getLabel: (c) => c.state.label,
+	},
+});
+
+const registry = setup({ use: { myActor } });
+registry.start();
+```
+
+**Zod schema coercion**
+
+Use [Zod](https://zod.dev/) to parse persisted state on wake. Zod's `.default()` fills in missing fields automatically, so old actor state is coerced to the current schema:
+
+```ts
+import { actor, setup } from "rivetkit";
+import { z } from "zod";
+
+const stateSchema = z.object({
+	count: z.number().default(0),
+	label: z.string().default("default"), // Added in v2
+});
+
+type State = z.infer<typeof stateSchema>;
+
+const myActor = actor({
+	state: { count: 0, label: "default" } as State,
+	onWake: (c) => {
+		Object.assign(c.state, stateSchema.parse(c.state));
+	},
+	actions: {
+		getLabel: (c) => c.state.label,
+	},
+});
+
+const registry2 = setup({ use: { myActor } });
+registry2.start();
+```
+
+For anything beyond simple defaults, consider moving to [SQLite](/docs/actors/sqlite) where you get proper migration tooling.
+
 ## Advanced
 
 ### How Version Upgrade Detection Works
@@ -211,11 +324,11 @@ Several timeouts control how long each part of the shutdown process can take:
 | Timeout | Default | Description | Configuration |
 |---------|---------|-------------|---------------|
 | `actor_stop_threshold` | 30s | Engine-side limit on how long each actor has to stop before being marked lost | [Engine config](/docs/self-hosting/configuration) (`pegboard.actor_stop_threshold`) |
-| `onSleepTimeout` | 5s | How long the `onSleep` hook can run | [Actor options](/docs/actors/lifecycle#options) |
+| `sleepGracePeriod` | 15s | Total graceful sleep budget for `onSleep`, `waitUntil`, async raw WebSocket handlers, and waiting for `preventSleep` to clear after shutdown starts | [Actor options](/docs/actors/lifecycle#options) |
 | `runStopTimeout` | 15s | How long to wait for the `run` handler to exit | [Actor options](/docs/actors/lifecycle#options) |
 | `runner_lost_threshold` | 15s | Fallback detection if the runner dies without graceful shutdown | [Engine config](/docs/self-hosting/configuration) (`pegboard.runner_lost_threshold`) |
 
-The per-actor timeouts (`onSleepTimeout`, `runStopTimeout`) must fit within `actor_stop_threshold`. The runner's 120-second wait is a hard upper bound on the entire shutdown process.
+Rivet has a max shutdown grace period of 30 minutes that cannot be configured.
 
 ## Related
 

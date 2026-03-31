@@ -1,0 +1,56 @@
+# Software
+
+> Source: `src/content/docs/agent-os/software.mdx`
+> Canonical URL: https://rivet.dev/docs/agent-os/software
+> Description: Install software packages and configure the commands available inside agentOS.
+
+---
+agentOS starts with no commands installed. The `software` option lets you declare which packages to include. Each package provides one or more CLI commands.
+
+## Install
+
+```bash
+npm install @rivet-dev/agent-os-core @rivet-dev/agent-os-common
+```
+
+`@rivet-dev/agent-os-common` is a meta-package that includes coreutils, sed, grep, gawk, findutils, diffutils, tar, and gzip. For a smaller footprint, install individual packages instead.
+
+## Usage
+
+```ts @nocheck
+import { AgentOs } from "@rivet-dev/agent-os-core";
+import common from "@rivet-dev/agent-os-common";
+
+const vm = await AgentOs.create({
+  software: [common],
+});
+
+const result = await vm.exec("echo hello | grep hello");
+console.log(result.stdout); // "hello\n"
+
+await vm.dispose();
+```
+
+You can mix individual packages and meta-packages:
+
+```ts @nocheck
+import { AgentOs } from "@rivet-dev/agent-os-core";
+import coreutils from "@rivet-dev/agent-os-coreutils";
+import grep from "@rivet-dev/agent-os-grep";
+import jq from "@rivet-dev/agent-os-jq";
+import ripgrep from "@rivet-dev/agent-os-ripgrep";
+
+const vm = await AgentOs.create({
+  software: [coreutils, grep, jq, ripgrep],
+});
+```
+
+## Available Packages
+
+Browse all available software packages on the [Registry](/agent-os/registry).
+
+## Publishing Custom Packages
+
+See the [agent-os-registry contributing guide](https://github.com/rivet-dev/agent-os/blob/main/registry/CONTRIBUTING.md) for how to add new software packages to the registry.
+
+_Source doc path: /docs/agent-os/software_

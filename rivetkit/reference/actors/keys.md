@@ -24,7 +24,7 @@ const chatRoom = actor({
 });
 
 const registry = setup({ use: { counter, chatRoom } });
-const client = createClient<typeof registry>();
+const client = createClient<typeof registry>("http://localhost:6420");
 
 // String key
 const counterHandle = client.counter.getOrCreate(["my-counter"]);
@@ -46,7 +46,7 @@ const gameRoom = actor({ state: { players: [] as string[] }, actions: {} });
 const workspace = actor({ state: { data: {} }, actions: {} });
 
 const registry = setup({ use: { chatRoom, gameRoom, workspace } });
-const client = createClient<typeof registry>();
+const client = createClient<typeof registry>("http://localhost:6420");
 
 // Example user data
 const userId = "user-123";
@@ -82,7 +82,7 @@ const globalActor = actor({
 });
 
 const registry = setup({ use: { globalActor } });
-const client = createClient<typeof registry>();
+const client = createClient<typeof registry>("http://localhost:6420");
 
 // Get the singleton session
 const globalActorHandle = client.globalActor.getOrCreate();
@@ -102,7 +102,7 @@ const chatRoom = actor({ state: { messages: [] as string[] }, actions: {} });
 const userProfile = actor({ state: { name: "" }, actions: {} });
 
 const registry = setup({ use: { chatRoom, userProfile } });
-const client = createClient<typeof registry>();
+const client = createClient<typeof registry>("http://localhost:6420");
 
 // These are different actors, same key is fine
 const userChat = client.chatRoom.getOrCreate(["user-123"]);
@@ -113,7 +113,7 @@ const userProfileHandle = client.userProfile.getOrCreate(["user-123"]);
 
 Access the actor's key within the actor using the [metadata](/docs/actors/metadata) API:
 
-```typescript actors.ts
+```typescript index.ts
 import { actor, setup } from "rivetkit";
 
 const chatRoom = actor({
@@ -142,7 +142,7 @@ const chatRoom = actor({
 });
 
 const registry = setup({ use: { chatRoom } });
-const client = createClient<typeof registry>("http://localhost:8080");
+const client = createClient<typeof registry>("http://localhost:6420");
 
 async function connectToRoom(roomName: string) {
   // Connect to a chat room
@@ -165,7 +165,7 @@ const generalRoom = await connectToRoom("general");
 
 Use keys to provide basic actor configuration:
 
-```typescript actors.ts
+```typescript index.ts
 import { actor, setup } from "rivetkit";
 
 interface UserSessionState {
@@ -202,7 +202,7 @@ const userSession = actor({
 });
 
 const registry = setup({ use: { userSession } });
-const client = createClient<typeof registry>("http://localhost:8080");
+const client = createClient<typeof registry>("http://localhost:6420");
 
 // Pass user ID in the key for user-specific actors
 const userId = "user-123";
@@ -236,7 +236,7 @@ const chatRoom = actor({
 });
 
 const registry = setup({ use: { chatRoom } });
-const client = createClient<typeof registry>("http://localhost:8080");
+const client = createClient<typeof registry>("http://localhost:6420");
 const roomName = "general";
 
 // Create with both key and input

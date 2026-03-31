@@ -9,7 +9,7 @@ Use this skill when building Swift clients that connect to Rivet Actors with `Ri
 
 ## Version
 
-RivetKit version: 2.1.6
+RivetKit version: 2.2.0
 
 ## Error Handling Policy
 
@@ -74,7 +74,7 @@ let count: Int = try await handle.action("increment", 1, as: Int.self)
 ```swift
 import RivetKitClient
 
-let config = try ClientConfig(endpoint: "http://localhost:3000/api/rivet")
+let config = try ClientConfig(endpoint: "http://localhost:6420")
 let client = RivetKitClient(config: config)
 
 let handle = client.getOrCreate("counter", ["my-counter"])
@@ -109,7 +109,7 @@ struct GameInput: Encodable {
     let mode: String
 }
 
-let config = try ClientConfig(endpoint: "http://localhost:3000/api/rivet")
+let config = try ClientConfig(endpoint: "http://localhost:6420")
 let client = RivetKitClient(config: config)
 
 // Get or create an actor
@@ -140,7 +140,7 @@ Actions support positional overloads for 0–5 args:
 ```swift
 import RivetKitClient
 
-let config = try ClientConfig(endpoint: "http://localhost:3000/api/rivet")
+let config = try ClientConfig(endpoint: "http://localhost:6420")
 let client = RivetKitClient(config: config)
 let handle = client.getOrCreate("counter", ["my-counter"])
 
@@ -157,7 +157,7 @@ If you need more than 5 arguments, use the raw JSON fallback:
 ```swift
 import RivetKitClient
 
-let config = try ClientConfig(endpoint: "http://localhost:3000/api/rivet")
+let config = try ClientConfig(endpoint: "http://localhost:6420")
 let client = RivetKitClient(config: config)
 let handle = client.getOrCreate("counter", ["my-counter"])
 
@@ -184,7 +184,7 @@ struct ConnParams: Encodable {
     let authToken: String
 }
 
-let config = try ClientConfig(endpoint: "http://localhost:3000/api/rivet")
+let config = try ClientConfig(endpoint: "http://localhost:6420")
 let client = RivetKitClient(config: config)
 
 let chat = client.getOrCreate(
@@ -212,7 +212,7 @@ await client.dispose()
 ```swift
 import RivetKitClient
 
-let config = try ClientConfig(endpoint: "http://localhost:3000/api/rivet")
+let config = try ClientConfig(endpoint: "http://localhost:6420")
 let client = RivetKitClient(config: config)
 let conn = client.getOrCreate("chatRoom", ["general"]).connect()
 
@@ -246,7 +246,7 @@ Event streams support 0–5 typed arguments. If you need raw values or more than
 ```swift
 import RivetKitClient
 
-let config = try ClientConfig(endpoint: "http://localhost:3000/api/rivet")
+let config = try ClientConfig(endpoint: "http://localhost:6420")
 let client = RivetKitClient(config: config)
 let conn = client.getOrCreate("chatRoom", ["general"]).connect()
 
@@ -267,7 +267,7 @@ await client.dispose()
 ```swift
 import RivetKitClient
 
-let config = try ClientConfig(endpoint: "http://localhost:3000/api/rivet")
+let config = try ClientConfig(endpoint: "http://localhost:6420")
 let client = RivetKitClient(config: config)
 let conn = client.getOrCreate("chatRoom", ["general"]).connect()
 
@@ -321,7 +321,7 @@ For actors that implement `onRequest` or `onWebSocket`, you can call them direct
 ```swift
 import RivetKitClient
 
-let config = try ClientConfig(endpoint: "http://localhost:3000/api/rivet")
+let config = try ClientConfig(endpoint: "http://localhost:6420")
 let client = RivetKitClient(config: config)
 let handle = client.getOrCreate("chatRoom", ["general"])
 
@@ -346,7 +346,7 @@ Use the same client in server-side Swift (Vapor, Hummingbird, etc.):
 ```swift
 import RivetKitClient
 
-let config = try ClientConfig(endpoint: "http://localhost:3000/api/rivet")
+let config = try ClientConfig(endpoint: "http://localhost:6420")
 let client = RivetKitClient(config: config)
 
 let handle = client.getOrCreate("counter", ["server-counter"])
@@ -361,7 +361,7 @@ await client.dispose()
 ```swift
 import RivetKitClient
 
-let config = try ClientConfig(endpoint: "http://localhost:3000/api/rivet")
+let config = try ClientConfig(endpoint: "http://localhost:6420")
 let client = RivetKitClient(config: config)
 
 do {
@@ -380,7 +380,7 @@ If you need an untyped response, you can decode to `JSONValue`:
 ```swift
 import RivetKitClient
 
-let config = try ClientConfig(endpoint: "http://localhost:3000/api/rivet")
+let config = try ClientConfig(endpoint: "http://localhost:6420")
 let client = RivetKitClient(config: config)
 let handle = client.getOrCreate("data", ["raw"])
 
@@ -399,7 +399,7 @@ Keys uniquely identify actor instances. Use compound keys (arrays) for hierarchi
 ```swift
 import RivetKitClient
 
-let config = try ClientConfig(endpoint: "http://localhost:3000/api/rivet")
+let config = try ClientConfig(endpoint: "http://localhost:6420")
 let client = RivetKitClient(config: config)
 
 // Use compound keys for hierarchical addressing

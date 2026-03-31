@@ -46,7 +46,7 @@ For Drizzle setup, see [SQLite + Drizzle](/docs/actors/sqlite-drizzle).
 
 Define `db: db({ onMigrate })` on your actor, create your schema in `onMigrate`, and execute SQL with `c.db.execute(...)`.
 
-```ts actors.ts
+```ts index.ts
 import { actor, setup } from "rivetkit";
 import { db } from "rivetkit/db";
 
@@ -93,13 +93,14 @@ export const todoList = actor({
 });
 
 export const registry = setup({ use: { todoList } });
+registry.start();
 ```
 
 ```ts client.ts
 import { createClient } from "rivetkit/client";
-import type { registry } from "./actors";
+import type { registry } from "./index";
 
-const client = createClient<typeof registry>();
+const client = createClient<typeof registry>("http://localhost:6420");
 const handle = client.todoList.getOrCreate(["main"]);
 
 await handle.addTodo("Write SQLite docs");
@@ -126,6 +127,15 @@ Use `?` placeholders for dynamic values and pass parameters in order after the S
 
 ```ts @nocheck
 await c.db.execute("INSERT INTO todos (title) VALUES (?)", title);
+```
+
+You can also use named SQLite bindings by passing a single properties object.
+
+```ts @nocheck
+const rows = await c.db.execute(
+  "SELECT id, title FROM todos WHERE title = :title",
+  { title: "Write SQLite docs" },
+);
 ```
 
 ### Transactions
@@ -157,7 +167,7 @@ try {
 
 It's recommended to use queues for mutations and actions for read-only queries. This is the same code structure as the basic setup, but mutation writes are routed through queues.
 
-```ts actors.ts
+```ts index.ts
 import { actor, queue, setup } from "rivetkit";
 import { db } from "rivetkit/db";
 
@@ -211,13 +221,14 @@ export const todoList = actor({
 });
 
 export const registry = setup({ use: { todoList } });
+registry.start();
 ```
 
 ```ts client.ts
 import { createClient } from "rivetkit/client";
-import type { registry } from "./actors";
+import type { registry } from "./index";
 
-const client = createClient<typeof registry>();
+const client = createClient<typeof registry>("http://localhost:6420");
 const handle = client.todoList.getOrCreate(["main"]);
 
 await handle.send("addTodo", { title: "Write SQLite docs" });
@@ -230,6 +241,9 @@ console.log(todos);
 ## Debugging
 
 - `GET /inspector/summary` includes `isDatabaseEnabled` so you can confirm SQLite is configured.
+- `GET /inspector/database/schema` returns the tables and views discovered in the actor's SQLite database.
+- `GET /inspector/database/rows?table=...&limit=100&offset=0` returns paged rows for a specific table or view.
+- `POST /inspector/database/execute` lets you run ad-hoc SQL for debugging and data fixes with positional `args` or named `properties`.
 - `GET /inspector/traces` helps inspect slow query paths and SQL-heavy actions.
 - Keep a small read-only action for quick query verification while debugging.
 - In non-dev mode, inspector endpoints require authorization.
