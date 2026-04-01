@@ -7,6 +7,10 @@
 ---
 agentOS is in beta and still undergoing security review. The security model described here is subject to change.
 
+## Deny by default
+
+No syscalls are bound to the system by default. Everything is denied until explicitly opted in. Network access, filesystem mounts, process spawning, and all other capabilities must be configured by the host before the VM can use them.
+
 ## Trust boundaries
 
 agentOS has two trust boundaries:

@@ -1076,7 +1076,6 @@ Actors are long-lived and maintain state across requests. Creating a new actor f
 
 - [Agent-to-Agent Communication](reference/agent-os/agent-to-agent.md)
 - [agentOS vs Sandbox](reference/agent-os/versus-sandbox.md)
-- [Architecture](reference/agent-os/architecture.md)
 - [Authentication](reference/agent-os/authentication.md)
 - [Benchmarks](reference/agent-os/benchmarks.md)
 - [Configuration](reference/agent-os/configuration.md)
@@ -1096,7 +1095,7 @@ Actors are long-lived and maintain state across requests. Creating a new actor f
 - [Processes & Shell](reference/agent-os/processes.md)
 - [Queues](reference/agent-os/queues.md)
 - [Quickstart](reference/agent-os/quickstart.md)
-- [Sandbox Extension](reference/agent-os/sandbox.md)
+- [Sandbox Mounting](reference/agent-os/sandbox.md)
 - [Security & Auth](reference/agent-os/security.md)
 - [Security Model](reference/agent-os/security-model.md)
 - [Sessions](reference/agent-os/sessions.md)

@@ -2,7 +2,7 @@
   "name": "rivetkit",
   "description": "RivetKit backend and Rivet Actor runtime guidance. Use for building, modifying, debugging, or testing Rivet Actors, registries, serverless/runner modes, deployment, or actor-based workflows.",
   "skill_url": "/metadata/skills/rivetkit/SKILL.md",
-  "generated_at": "2026-03-31T23:16:22.035Z",
+  "generated_at": "2026-04-01T01:45:12.081Z",
   "references": [
     {
       "name": "actors/access-control",
@@ -66,13 +66,6 @@
       "description": "This guide shows you how to programmatically create sandboxed Rivet environments and deploy custom actor code to them.",
       "canonical_url": "https://rivet.dev/docs/actors/ai-and-user-generated-actors",
       "reference_url": "/metadata/skills/rivetkit/reference/actors/ai-and-user-generated-actors.md"
-    },
-    {
-      "name": "agent-os/architecture",
-      "title": "Architecture",
-      "description": "How agentOS uses WebAssembly and V8 isolates to run agent workloads.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/architecture",
-      "reference_url": "/metadata/skills/rivetkit/reference/agent-os/architecture.md"
     },
     {
       "name": "general/architecture",
@@ -657,7 +650,7 @@
     },
     {
       "name": "agent-os/sandbox",
-      "title": "Sandbox Extension",
+      "title": "Sandbox Mounting",
       "description": "Extend agentOS with full sandboxes for heavy workloads like browsers, desktop automation, and compilation.",
       "canonical_url": "https://rivet.dev/docs/agent-os/sandbox",
       "reference_url": "/metadata/skills/rivetkit/reference/agent-os/sandbox.md"
