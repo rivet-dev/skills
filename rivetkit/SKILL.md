@@ -37,12 +37,11 @@ Use the inspector HTTP API to examine running actors. These endpoints are access
 - `GET /inspector/queue?limit=50` - queue status
 - `GET /inspector/traces?startMs=0&endMs=...&limit=1000` - trace spans (OTLP JSON)
 - `GET /inspector/workflow-history` - workflow history and status as JSON (`nameRegistry`, `entries`, `entryMetadata`)
-- `POST /inspector/workflow/replay` - replay a workflow from a specific step or from the beginning
+- `POST /inspector/workflow/replay` - replay a workflow from a specific step or from the beginning; returns `409 actor/workflow_in_flight` if the workflow is still running
 - `GET /inspector/database/schema` - SQLite tables and views exposed by `c.db`
 - `GET /inspector/database/rows?table=...&limit=100&offset=0` - paged SQLite rows for a table or view
-- `POST /inspector/workflow/replay` - replay a workflow from a specific step or from the beginning
 
-In local dev, no auth token is needed. In production, pass `Authorization: Bearer <RIVET_INSPECTOR_TOKEN>`. The actor-specific inspector token used by the standalone Inspector UI is also accepted for inspector endpoints. See the [debugging docs](https://rivet.dev/docs/actors/debugging) for details.
+In local dev, no auth token is needed. In production, pass `Authorization: Bearer <inspector-token>`, where the inspector token is the actor-specific token auto-generated on first start and persisted in the actor's internal KV at key `0x03`. The Rivet dashboard retrieves this token automatically; for direct API access, fetch it through the management KV endpoint. See the [debugging docs](https://rivet.dev/docs/actors/debugging) for details.
 
 ## Citing Sources
 
@@ -71,19 +70,19 @@ Use that canonical URL when citing, not the reference file path.
 
 ## Version Check
 
-Before starting any work, check if the user's project is on the latest version of RivetKit (latest: 2.2.0). Look at the `rivetkit` version in the user's `package.json` (check both `dependencies` and `devDependencies`). If the installed version is older than 2.2.0, inform the user and suggest upgrading:
+Before starting any work, check if the user's project is on the latest version of RivetKit (latest: 2.3.0-rc.4). Look at the `rivetkit` version in the user's `package.json` (check both `dependencies` and `devDependencies`). If the installed version is older than 2.3.0-rc.4, inform the user and suggest upgrading:
 
 ```bash
-npm install rivetkit@2.2.0
+npm install rivetkit@2.3.0-rc.4
 ```
 
 If the user also uses `@rivetkit/react`, `@rivetkit/next-js`, or other `@rivetkit/*` client packages, suggest upgrading those too. Outdated versions may have known bugs or missing features that cause issues.
 
 ## First Steps
 
-1. Install RivetKit (latest: 2.2.0)
+1. Install RivetKit (latest: 2.3.0-rc.4)
    ```bash
-   npm install rivetkit@2.2.0
+   npm install rivetkit@2.3.0-rc.4
    ```
 2. Define a registry with `setup({ use: { /* actors */ } })`.
 3. Call `registry.start()` to start the server. For custom HTTP server integration, use `registry.handler()` with a router like Hono. For serverless deployments, use `registry.serve()`. For runner-only mode, use `registry.startRunner()`.
@@ -700,7 +699,7 @@ const chatRoom = actor({
 
 ### Context Types
 
-When writing helper functions outside the actor definition, use `*ContextOf<typeof myActor>` to extract the correct context type. Do not manually define your own context interface — always derive it from the actor definition.
+When writing helper functions outside the actor definition, use `*ContextOf<typeof myActor>` to extract the correct context type. Helpers like `ActionContextOf`, `CreateContextOf`, `ConnContextOf`, and `ConnInitContextOf` are exported from `"rivetkit"`. Do not manually define your own context interface. Always derive it from the actor definition.
 
 ```ts
 import { actor, ActionContextOf } from "rivetkit";
@@ -1035,7 +1034,6 @@ Actors are long-lived and maintain state across requests. Creating a new actor f
 - [Actor Statuses](reference/actors/statuses.md)
 - [AI and User-Generated Rivet Actors](reference/actors/ai-and-user-generated-actors.md)
 - [Authentication](reference/actors/authentication.md)
-- [Cloudflare Workers Quickstart](reference/actors/quickstart/cloudflare-workers.md)
 - [Communicating Between Actors](reference/actors/communicating-between-actors.md)
 - [Connections](reference/actors/connections.md)
 - [Debugging](reference/actors/debugging.md)
@@ -1092,6 +1090,7 @@ Actors are long-lived and maintain state across requests. Creating a new actor f
 - [Overview](reference/agent-os.md)
 - [Permissions](reference/agent-os/permissions.md)
 - [Persistence & Sleep](reference/agent-os/persistence.md)
+- [Pi](reference/agent-os/agents/pi.md)
 - [Processes & Shell](reference/agent-os/processes.md)
 - [Queues](reference/agent-os/queues.md)
 - [Quickstart](reference/agent-os/quickstart.md)
@@ -1117,16 +1116,16 @@ Actors are long-lived and maintain state across requests. Creating a new actor f
 
 - [Deploy To Amazon Web Services Lambda](reference/connect/aws-lambda.md)
 - [Deploying to AWS ECS](reference/connect/aws-ecs.md)
-- [Deploying to Cloudflare Workers](reference/connect/cloudflare-workers.md)
+- [Deploying to Cloudflare Workers](reference/connect/cloudflare.md)
 - [Deploying to Freestyle](reference/connect/freestyle.md)
 - [Deploying to Google Cloud Run](reference/connect/gcp-cloud-run.md)
 - [Deploying to Hetzner](reference/connect/hetzner.md)
 - [Deploying to Kubernetes](reference/connect/kubernetes.md)
 - [Deploying to Railway](reference/connect/railway.md)
 - [Deploying to Rivet Compute](reference/connect/_rivet-compute.md)
+- [Deploying to Supabase Functions](reference/connect/supabase.md)
 - [Deploying to Vercel](reference/connect/vercel.md)
 - [Deploying to VMs & Bare Metal](reference/connect/vm-and-bare-metal.md)
-- [Supabase](reference/connect/supabase.md)
 
 ### Cookbook
 
@@ -1161,4 +1160,5 @@ Actors are long-lived and maintain state across requests. Creating a new actor f
 - [Production Checklist](reference/self-hosting/production-checklist.md)
 - [Railway Deployment](reference/self-hosting/railway.md)
 - [Render Deployment](reference/self-hosting/render.md)
+- [TLS & Certificates](reference/self-hosting/tls.md)
 

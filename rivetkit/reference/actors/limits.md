@@ -92,6 +92,16 @@ These limits apply to the [SQLite database](/docs/actors/state#sqlite-database) 
 |------|------------|------------|-------------|
 | Max storage size per actor | — | 10 GiB | Maximum total storage size for a single actor. This limit is shared with KV storage. |
 
+### KV Preloading
+
+When an actor starts, the engine can pre-fetch KV data declared in the actor name metadata and deliver it alongside the start command. This removes round-trips to storage during actor startup. RivetKit emits the preload manifest from its own key layout and exposes per-actor overrides via `options`. Operators can still enforce a global cap in the [engine config](/docs/self-hosting/configuration) with `pegboard.preload_max_total_bytes`. In serverless mode, this data is serialized into the `/api/rivet/start` request body along with actor config and protocol metadata, so the accepted body size must be larger than the preload budget. RivetKit defaults `serverless.maxStartPayloadBytes` to 16 MiB to leave margin for the default 1 MiB preload budget and larger SQLite startup page preloads.
+
+| Name | Soft Limit | Hard Limit | Description |
+|------|------------|------------|-------------|
+| Max total preload size | 1 MiB | — | Maximum total size of all preloaded KV data sent with the start command. Configurable via `pegboard.preload_max_total_bytes`. Setting to 0 disables all preloading. |
+| Max workflow preload size | 128 KiB | — | Default maximum size of preloaded workflow data for RivetKit actors. Configurable per actor via `options.preloadMaxWorkflowBytes`. Setting to 0 disables workflow preloading for that actor. |
+| Max connections preload size | 64 KiB | — | Default maximum size of preloaded connection data for RivetKit actors. Configurable per actor via `options.preloadMaxConnectionsBytes`. Setting to 0 disables connections preloading for that actor. |
+
 ### Actor Input
 
 See [Actor Input](/docs/actors/input) for details.
@@ -119,9 +129,7 @@ See [Actor Input](/docs/actors/input) for details.
 | Create vars timeout | 5 seconds | — | Timeout for `createVars` hook. Configurable via `createVarsTimeout`. |
 | Create conn state timeout | 5 seconds | — | Timeout for `createConnState` hook. Configurable via `createConnStateTimeout`. |
 | On connect timeout | 5 seconds | — | Timeout for `onConnect` hook. Configurable via `onConnectTimeout`. |
-| Sleep grace period | 15 seconds | — | Total graceful sleep budget for `onSleep`, `waitUntil`, async raw WebSocket handlers, and waiting for `preventSleep` to clear after shutdown starts. |
-| On destroy timeout | 5 seconds | — | Timeout for `onDestroy` hook. Configurable via `onDestroyTimeout`. |
-| Run stop timeout | 15 seconds | — | Max time for `run` handler to stop during shutdown. Configurable via `runStopTimeout`. |
+| Sleep grace period | 15 seconds | — | Total graceful shutdown budget for both sleep and destroy. Covers `onSleep`/`onDestroy`, run handler shutdown, `waitUntil`, `keepAwake`, async raw WebSocket handlers, and connection cleanup. Configurable via `sleepGracePeriod`. |
 | Sleep timeout | 30 seconds | — | Time of inactivity before actor hibernates. Configurable via `sleepTimeout`. |
 | State save interval | 10 seconds | — | Interval between automatic state saves. Configurable via `stateSaveInterval`. |
 
@@ -131,7 +139,7 @@ These timeouts control how actors are shut down when a serverless request reache
 
 | Name | Soft Limit | Hard Limit | Description |
 |------|------------|------------|-------------|
-| Request lifespan | 900 seconds (15 min) | — | Total lifespan of a serverless request before drain begins. Configurable via `requestLifespan` in [`configureRunnerPool`](/docs/connect/registry-configuration). |
+| Request lifespan | 900 seconds (15 min) | — | Total lifespan of a serverless request before drain begins. Configurable via `requestLifespan` in [`configurePool`](/docs/connect/registry-configuration). |
 | Serverless drain grace period | — | 10 seconds | Time reserved at the end of a request for actors to stop gracefully. Configurable via [engine config](/docs/self-hosting/configuration) (`pegboard.serverless_drain_grace_period`). |
 
 ### Actor Lifecycle

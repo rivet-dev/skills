@@ -2,7 +2,7 @@
   "name": "rivetkit",
   "description": "RivetKit backend and Rivet Actor runtime guidance. Use for building, modifying, debugging, or testing Rivet Actors, registries, serverless/runner modes, deployment, or actor-based workflows.",
   "skill_url": "/metadata/skills/rivetkit/SKILL.md",
-  "generated_at": "2026-04-01T01:45:12.081Z",
+  "generated_at": "2026-05-04T09:23:13.562Z",
   "references": [
     {
       "name": "actors/access-control",
@@ -96,13 +96,6 @@
       "reference_url": "/metadata/skills/rivetkit/reference/agent-os/benchmarks.md"
     },
     {
-      "name": "actors/quickstart/cloudflare-workers",
-      "title": "Cloudflare Workers Quickstart",
-      "description": "Get started with Rivet Actors on Cloudflare Workers with Durable Objects",
-      "canonical_url": "https://rivet.dev/docs/actors/quickstart/cloudflare-workers",
-      "reference_url": "/metadata/skills/rivetkit/reference/actors/quickstart/cloudflare-workers.md"
-    },
-    {
       "name": "actors/communicating-between-actors",
       "title": "Communicating Between Actors",
       "description": "Learn how actors can call other actors and share data",
@@ -173,11 +166,11 @@
       "reference_url": "/metadata/skills/rivetkit/reference/connect/aws-ecs.md"
     },
     {
-      "name": "connect/cloudflare-workers",
+      "name": "connect/cloudflare",
       "title": "Deploying to Cloudflare Workers",
-      "description": "Deploy your Cloudflare Workers + RivetKit app to Cloudflare Workers.",
-      "canonical_url": "https://rivet.dev/docs/connect/cloudflare-workers",
-      "reference_url": "/metadata/skills/rivetkit/reference/connect/cloudflare-workers.md"
+      "description": "Run RivetKit on Cloudflare Workers with the WebAssembly runtime.",
+      "canonical_url": "https://rivet.dev/docs/connect/cloudflare",
+      "reference_url": "/metadata/skills/rivetkit/reference/connect/cloudflare.md"
     },
     {
       "name": "connect/freestyle",
@@ -220,6 +213,13 @@
       "description": "Run your backend on Rivet Compute.",
       "canonical_url": "https://rivet.dev/docs/connect/_rivet-compute",
       "reference_url": "/metadata/skills/rivetkit/reference/connect/_rivet-compute.md"
+    },
+    {
+      "name": "connect/supabase",
+      "title": "Deploying to Supabase Functions",
+      "description": "Run RivetKit on Supabase Edge Functions with the WebAssembly runtime.",
+      "canonical_url": "https://rivet.dev/docs/connect/supabase",
+      "reference_url": "/metadata/skills/rivetkit/reference/connect/supabase.md"
     },
     {
       "name": "connect/vercel",
@@ -544,6 +544,13 @@
       "reference_url": "/metadata/skills/rivetkit/reference/agent-os/persistence.md"
     },
     {
+      "name": "agent-os/agents/pi",
+      "title": "Pi",
+      "description": "Run the Pi coding agent inside a VM with extensions and custom configuration.",
+      "canonical_url": "https://rivet.dev/docs/agent-os/agents/pi",
+      "reference_url": "/metadata/skills/rivetkit/reference/agent-os/agents/pi.md"
+    },
+    {
       "name": "self-hosting/postgres",
       "title": "PostgreSQL",
       "description": "Configure PostgreSQL for self-hosted Rivet deployments.",
@@ -644,7 +651,7 @@
     {
       "name": "actors/sandbox",
       "title": "Sandbox Actor",
-      "description": "Run sandbox-agent sessions behind a Rivet Actor with provider-backed sandbox creation.",
+      "description": "The legacy TypeScript sandbox actor has been removed while the replacement runtime is rebuilt.",
       "canonical_url": "https://rivet.dev/docs/actors/sandbox",
       "reference_url": "/metadata/skills/rivetkit/reference/actors/sandbox.md"
     },
@@ -719,13 +726,6 @@
       "reference_url": "/metadata/skills/rivetkit/reference/actors/sqlite-drizzle.md"
     },
     {
-      "name": "connect/supabase",
-      "title": "Supabase",
-      "description": "_Supabase is coming soon_",
-      "canonical_url": "https://rivet.dev/docs/connect/supabase",
-      "reference_url": "/metadata/skills/rivetkit/reference/connect/supabase.md"
-    },
-    {
       "name": "clients/swift",
       "title": "Swift",
       "description": "Connect Swift apps to Rivet Actors.",
@@ -752,6 +752,13 @@
       "description": "Rivet provides a straightforward testing framework to build reliable and maintainable applications. This guide covers how to write effective tests for your actor-based services.",
       "canonical_url": "https://rivet.dev/docs/actors/testing",
       "reference_url": "/metadata/skills/rivetkit/reference/actors/testing.md"
+    },
+    {
+      "name": "self-hosting/tls",
+      "title": "TLS & Certificates",
+      "description": "How Rivet validates TLS root certificates.",
+      "canonical_url": "https://rivet.dev/docs/self-hosting/tls",
+      "reference_url": "/metadata/skills/rivetkit/reference/self-hosting/tls.md"
     },
     {
       "name": "agent-os/tools",

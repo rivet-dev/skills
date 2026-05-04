@@ -1,10 +1,137 @@
-# Supabase
+# Deploying to Supabase Functions
 
 > Source: `src/content/docs/connect/supabase.mdx`
 > Canonical URL: https://rivet.dev/docs/connect/supabase
-> Description: _Supabase is coming soon_
+> Description: Run RivetKit on Supabase Edge Functions with the WebAssembly runtime.
 
 ---
+Supabase Edge Functions run RivetKit through the WebAssembly runtime. Use the public `@rivetkit/rivetkit-wasm` package, load the wasm file with Deno, and use remote SQLite.
 
+## Steps
+
+### Prerequisites
+
+- [Supabase project](https://supabase.com/)
+- [Supabase CLI](https://supabase.com/docs/guides/cli) configured for your project
+- A Rivet namespace from the [Rivet Dashboard](https://hub.rivet.dev/) or a self-hosted Rivet Engine
+
+### Create the Function
+
+```sh
+npx supabase functions new rivet
+```
+
+Add the packages used by the function:
+
+```sh
+npm install rivetkit @rivetkit/rivetkit-wasm
+```
+
+### Configure the Function
+
+Supabase Functions run under Deno, so load the wasm bytes from the package export and pass them to `setup({ wasm })`.
+
+```ts supabase/functions/rivet/index.ts @nocheck
+import { actor, setup } from "rivetkit";
+import * as wasmBindings from "@rivetkit/rivetkit-wasm";
+
+interface SqliteDatabase {
+  run(sql: string, params?: unknown[]): Promise<void>;
+  query(sql: string, params?: unknown[]): Promise<{ rows: unknown[][] }>;
+  writeMode<T>(callback: () => Promise<T>): Promise<T>;
+}
+
+const wasmModule = await Deno.readFile(
+  new URL(import.meta.resolve("@rivetkit/rivetkit-wasm/rivetkit_wasm_bg.wasm")),
+);
+
+const rawSqlDatabaseProvider = {
+  createClient: async () => ({
+    execute: async () => [],
+    close: async () => {},
+  }),
+  onMigrate: async () => {},
+};
+
+const counter = actor({
+  db: rawSqlDatabaseProvider,
+  actions: {
+    increment: async (ctx, amount = 1) => {
+      const db = ctx.sql as SqliteDatabase;
+      await db.writeMode(async () => {
+        await db.run(
+          "CREATE TABLE IF NOT EXISTS counters (id INTEGER PRIMARY KEY, count INTEGER NOT NULL)",
+        );
+        await db.run(
+          "INSERT INTO counters (id, count) VALUES (1, ?) ON CONFLICT(id) DO UPDATE SET count = count + excluded.count",
+          [amount],
+        );
+      });
+
+      const result = await db.query("SELECT count FROM counters WHERE id = 1");
+      return Number(result.rows[0]?.[0] ?? 0);
+    },
+  },
+});
+
+const registry = setup({
+  runtime: "wasm",
+  sqlite: "remote",
+  wasm: {
+    bindings: wasmBindings,
+    initInput: wasmModule,
+  },
+  use: { counter },
+  endpoint: Deno.env.get("RIVET_ENDPOINT"),
+  namespace: Deno.env.get("RIVET_NAMESPACE"),
+  token: Deno.env.get("RIVET_TOKEN"),
+  envoy: {
+    poolName: Deno.env.get("RIVET_POOL") ?? "supabase-functions",
+  },
+  serverless: {
+    basePath: "/rivet/api/rivet",
+    publicEndpoint: Deno.env.get("RIVET_PUBLIC_ENDPOINT"),
+  },
+});
+
+Deno.serve(async (request) => {
+  return await registry.handler(request);
+});
+```
+
+### Set Secrets
+
+Set the Rivet connection values as Supabase secrets. The pool name must match the serverless runner configured in Rivet.
+
+```sh
+npx supabase secrets set \
+  RIVET_ENDPOINT=https://api.rivet.dev \
+  RIVET_PUBLIC_ENDPOINT=https://your-namespace:pk_...@api.rivet.dev \
+  RIVET_NAMESPACE=your-namespace \
+  RIVET_POOL=supabase-functions \
+  RIVET_TOKEN=sk_...
+```
+
+### Deploy
+
+```sh
+npx supabase functions deploy rivet
+```
+
+After deploy, set the function URL with the `/api/rivet` path as the serverless runner URL in Rivet. For a function named `rivet`, this is usually `https://your-project.functions.supabase.co/functions/v1/rivet/api/rivet`.
+
+## Runtime Notes
+
+- Use `runtime: "wasm"` in `setup(...)` for Supabase Functions. You can also set `RIVETKIT_RUNTIME=wasm` in environments where the registry config does not set `runtime`.
+- Pass `wasm: { bindings, initInput }` explicitly from `@rivetkit/rivetkit-wasm`.
+- Use remote SQLite on Supabase Functions. Leaving SQLite unset with `runtime: "wasm"` selects remote SQLite automatically.
+- Keep `RIVET_PUBLIC_ENDPOINT` pointed at the client-facing Rivet endpoint. Register the function URL separately as the serverless runner URL.
+- Supabase Functions run in Deno, so load the wasm module with Deno-friendly bytes, URL, response, or module input.
+
+## Related
+
+- [Quickstart](/docs/actors/quickstart)
+- [Cloudflare Workers](/docs/connect/cloudflare)
+- [SQLite](/docs/actors/sqlite)
 
 _Source doc path: /docs/connect/supabase_

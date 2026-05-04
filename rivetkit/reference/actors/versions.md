@@ -15,7 +15,7 @@ Each runner has a **version number**. When you deploy new code with a new versio
 
 Versions are not configured by default. See [Registry Configuration](/docs/connect/registry-configuration) to learn how to configure the runner version.
 
-`RIVET_RUNNER_VERSION` is only needed when self-hosting or using a custom runner. Rivet Compute handles versioning automatically.
+`RIVET_ENVOY_VERSION` is only needed when self-hosting or using a custom runner. Rivet Compute handles versioning automatically.
 
 ### Example Scenario
 
@@ -57,7 +57,7 @@ sequenceDiagram
 Configure the runner version using an environment variable or programmatically:
 
 ```bash {{"title": "Environment Variable"}}
-RIVET_RUNNER_VERSION=2
+RIVET_ENVOY_VERSION=2
 ```
 
 ```typescript {{"title": "Programmatic"}}
@@ -67,7 +67,7 @@ const myActor = actor({ state: {}, actions: {} });
 
 const registry = setup({
   use: { myActor },
-  runner: {
+  envoy: {
     version: 2,
   },
 });
@@ -84,13 +84,13 @@ We recommend injecting a build-time value that increments with every deployment.
 Generate the version at build time and bake it into the image as an environment variable:
 
 ```bash @nocheck
-docker build --build-arg RIVET_RUNNER_VERSION=$(date +%s) .
+docker build --build-arg RIVET_ENVOY_VERSION=$(date +%s) .
 ```
 
 ```dockerfile @nocheck
 FROM node:20-slim
-ARG RIVET_RUNNER_VERSION
-ENV RIVET_RUNNER_VERSION=$RIVET_RUNNER_VERSION
+ARG RIVET_ENVOY_VERSION
+ENV RIVET_ENVOY_VERSION=$RIVET_ENVOY_VERSION
 WORKDIR /app
 COPY . .
 RUN npm install && npm run build
@@ -108,7 +108,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   env: {
-    RIVET_RUNNER_VERSION: String(Math.floor(Date.now() / 1000)),
+    RIVET_ENVOY_VERSION: String(Math.floor(Date.now() / 1000)),
   },
 };
 
@@ -124,7 +124,7 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   define: {
-    "process.env.RIVET_RUNNER_VERSION": JSON.stringify(
+    "process.env.RIVET_ENVOY_VERSION": JSON.stringify(
       String(Math.floor(Date.now() / 1000))
     ),
   },
@@ -138,17 +138,17 @@ Set the version from your CI pipeline:
 ```yaml @nocheck
 # GitHub Actions
 env:
-  RIVET_RUNNER_VERSION: ${{ github.run_number }}
+  RIVET_ENVOY_VERSION: ${{ github.run_number }}
 ```
 
 ```bash @nocheck
 # Railway / Render / generic CI
-export RIVET_RUNNER_VERSION=$(date +%s)
+export RIVET_ENVOY_VERSION=$(date +%s)
 ```
 
 ```bash @nocheck
 # Git commit count
-export RIVET_RUNNER_VERSION=$(git rev-list --count HEAD)
+export RIVET_ENVOY_VERSION=$(git rev-list --count HEAD)
 ```
 
 ### Build Script
@@ -171,7 +171,7 @@ const myActor = actor({ state: {}, actions: {} });
 
 const registry = setup({
   use: { myActor },
-  runner: {
+  envoy: {
     version: BUILD_VERSION,
   },
 });
@@ -324,8 +324,7 @@ Several timeouts control how long each part of the shutdown process can take:
 | Timeout | Default | Description | Configuration |
 |---------|---------|-------------|---------------|
 | `actor_stop_threshold` | 30s | Engine-side limit on how long each actor has to stop before being marked lost | [Engine config](/docs/self-hosting/configuration) (`pegboard.actor_stop_threshold`) |
-| `sleepGracePeriod` | 15s | Total graceful sleep budget for `onSleep`, `waitUntil`, async raw WebSocket handlers, and waiting for `preventSleep` to clear after shutdown starts | [Actor options](/docs/actors/lifecycle#options) |
-| `runStopTimeout` | 15s | How long to wait for the `run` handler to exit | [Actor options](/docs/actors/lifecycle#options) |
+| `sleepGracePeriod` | 15s | Total graceful sleep budget for `onSleep`, `waitUntil`, `keepAwake`, and async raw WebSocket handlers | [Actor options](/docs/actors/lifecycle#options) |
 | `runner_lost_threshold` | 15s | Fallback detection if the runner dies without graceful shutdown | [Engine config](/docs/self-hosting/configuration) (`pegboard.runner_lost_threshold`) |
 
 Rivet has a max shutdown grace period of 30 minutes that cannot be configured.

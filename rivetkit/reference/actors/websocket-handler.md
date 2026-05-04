@@ -189,7 +189,7 @@ You can proxy WebSocket connections from your own server to actor handlers using
 ```typescript
 import { Hono } from "hono";
 import type { WSContext, WSMessageReceive } from "hono/ws";
-import { upgradeWebSocket } from "hono/cloudflare-workers";
+import { upgradeWebSocket } from "hono/bun";
 import { createClient } from "rivetkit/client";
 import { actor, setup } from "rivetkit";
 
@@ -283,6 +283,10 @@ const myActor = actor({
     actions: {}
 });
 ```
+
+### Skip Ready Wait
+
+Connections are normally held at the gateway until the actor is ready. Pass `gateway.skipReadyWait: true` on `handle.webSocket()` to connect immediately, including while the actor is still starting or in the [sleep grace period](/docs/actors/lifecycle#shutdown-sequence). See [Skip Ready Wait](/docs/clients/javascript#skip-ready-wait) for details.
 
 ### Async Handlers
 

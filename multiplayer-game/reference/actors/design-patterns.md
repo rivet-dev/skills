@@ -548,6 +548,8 @@ const userData = await user.getUser();
 
 `onStateChange` is called after every state modification, ensuring external resources stay in sync.
 
+Do not mutate `c.state` inside `onStateChange`; re-entrant state mutation is rejected.
+
 ## Anti-Patterns
 
 ### "God" Actor

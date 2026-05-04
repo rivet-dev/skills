@@ -9,7 +9,7 @@
 
 ### registry.start()
 
-The simplest way to run your server. Starts a local manager server, serves static files from a `public` directory, and starts the actor runner:
+The simplest way to run your server. Starts a local RivetKit server, serves static files from a `public` directory, and starts the actor runner:
 
 ```ts index.ts
 import { actor, setup } from "rivetkit";
@@ -20,7 +20,7 @@ const registry = setup({ use: { myActor } });
 registry.start();
 ```
 
-Run with `npx tsx --watch index.ts` (Node.js), `bun --watch index.ts` (Bun), or `deno run --allow-net --allow-read --allow-env --watch index.ts` (Deno). The server starts on `http://localhost:6420` by default.
+Run with `npx tsx --watch index.ts` (Node.js), `bun --watch index.ts` (Bun), or `deno run --allow-net --allow-read --allow-env --watch index.ts` (Deno). Clients connect to the Rivet Engine on `http://localhost:6420`.
 
 ### With Fetch Handlers
 

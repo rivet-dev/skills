@@ -42,8 +42,13 @@ These variables configure how clients connect to your actors.
 
 | Environment Variable | Description |
 |---------------------|-------------|
-| `RIVET_INSPECTOR_TOKEN` | Token for accessing the Rivet Inspector |
 | `RIVET_INSPECTOR_DISABLE` | Set to `1` to disable the inspector |
+
+## Metrics
+
+| Environment Variable | Description |
+|---------------------|-------------|
+| `_RIVET_METRICS_TOKEN` | Bearer token that gates the per-actor Prometheus `/metrics` endpoint. When unset, `/metrics` is disabled. |
 
 ## Experimental
 
@@ -55,6 +60,7 @@ These variables configure how clients connect to your actors.
 
 | Environment Variable | Description |
 |---------------------|-------------|
+| `RIVETKIT_RUNTIME` | Runtime binding to use for RivetKit core: `auto`, `native`, or `wasm`. Defaults to `auto`. |
 | `RIVETKIT_STORAGE_PATH` | Overrides the default file-system storage path used by RivetKit when using the default driver. |
 
 ## Logging

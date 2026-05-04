@@ -230,7 +230,5 @@ Rivet's testing framework automatically handles server setup and teardown, so yo
 ## API Reference
 
 - [`test`](/typedoc/functions/rivetkit.mod.test.html) - Test helper function
-- [`createMemoryDriver`](/typedoc/functions/rivetkit.mod.createMemoryDriver.html) - In-memory driver for tests
-- [`createFileSystemDriver`](/typedoc/functions/rivetkit.mod.createFileSystemDriver.html) - Filesystem driver for tests
 
 _Source doc path: /docs/actors/testing_

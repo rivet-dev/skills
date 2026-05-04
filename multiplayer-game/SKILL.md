@@ -723,7 +723,6 @@ sequenceDiagram
 - [Actor Statuses](reference/actors/statuses.md)
 - [AI and User-Generated Rivet Actors](reference/actors/ai-and-user-generated-actors.md)
 - [Authentication](reference/actors/authentication.md)
-- [Cloudflare Workers Quickstart](reference/actors/quickstart/cloudflare-workers.md)
 - [Communicating Between Actors](reference/actors/communicating-between-actors.md)
 - [Connections](reference/actors/connections.md)
 - [Debugging](reference/actors/debugging.md)
@@ -780,6 +779,7 @@ sequenceDiagram
 - [Overview](reference/agent-os.md)
 - [Permissions](reference/agent-os/permissions.md)
 - [Persistence & Sleep](reference/agent-os/persistence.md)
+- [Pi](reference/agent-os/agents/pi.md)
 - [Processes & Shell](reference/agent-os/processes.md)
 - [Queues](reference/agent-os/queues.md)
 - [Quickstart](reference/agent-os/quickstart.md)
@@ -805,16 +805,16 @@ sequenceDiagram
 
 - [Deploy To Amazon Web Services Lambda](reference/connect/aws-lambda.md)
 - [Deploying to AWS ECS](reference/connect/aws-ecs.md)
-- [Deploying to Cloudflare Workers](reference/connect/cloudflare-workers.md)
+- [Deploying to Cloudflare Workers](reference/connect/cloudflare.md)
 - [Deploying to Freestyle](reference/connect/freestyle.md)
 - [Deploying to Google Cloud Run](reference/connect/gcp-cloud-run.md)
 - [Deploying to Hetzner](reference/connect/hetzner.md)
 - [Deploying to Kubernetes](reference/connect/kubernetes.md)
 - [Deploying to Railway](reference/connect/railway.md)
 - [Deploying to Rivet Compute](reference/connect/_rivet-compute.md)
+- [Deploying to Supabase Functions](reference/connect/supabase.md)
 - [Deploying to Vercel](reference/connect/vercel.md)
 - [Deploying to VMs & Bare Metal](reference/connect/vm-and-bare-metal.md)
-- [Supabase](reference/connect/supabase.md)
 
 ### Cookbook
 
@@ -849,4 +849,5 @@ sequenceDiagram
 - [Production Checklist](reference/self-hosting/production-checklist.md)
 - [Railway Deployment](reference/self-hosting/railway.md)
 - [Render Deployment](reference/self-hosting/render.md)
+- [TLS & Certificates](reference/self-hosting/tls.md)
 

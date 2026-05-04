@@ -60,14 +60,7 @@ bun --watch index.ts
 deno run --allow-net --allow-read --allow-env --watch index.ts
 ```
 
-Your server is now running on `http://localhost:6420`. To change the port, pass `managerPort` in the setup config:
-
-```ts @nocheck
-const registry = setup({
-	use: { counter },
-	managerPort: 3000,
-});
-```
+Your server is now running on `http://localhost:6420`. Clients connect directly to the Rivet Engine on this port.
 
 ### Connect To The Rivet Actor
 

@@ -95,14 +95,14 @@ import { actor, setup } from "rivetkit";
 const myActor = actor({ state: {}, actions: {} });
 const registry = setup({ use: { myActor } });
 
-registry.startRunner();
+registry.startEnvoy();
 ```
 
 The runner runs in the background, ready to run actors.
 
 ### Architecture
 
-On startup, your backend calls `registry.startRunner()` which opens a persistent connection to the Rivet Engine. When a client creates an actor, the engine sends a command through this connection to start the actor on your backend.
+On startup, your backend calls `registry.startEnvoy()` which opens a persistent connection to the Rivet Engine. When a client creates an actor, the engine sends a command through this connection to start the actor on your backend.
 
 <img src={imgRunners.src} alt="Runners architecture diagram" />
 
@@ -123,8 +123,8 @@ const myActor = actor({ state: {}, actions: {} });
 
 const registry = setup({
   use: { myActor },
-  runner: {
-    runnerName: "gpu-workers",
+  envoy: {
+    poolName: "gpu-workers",
   },
 });
 ```
@@ -136,6 +136,6 @@ const registry = setup({
 | Auto | `registry.start()` | Simplest setup. Starts server, serves static files, and runs actors. |
 | Serverless | `registry.serve()` | Fetch handler for serverless platforms |
 | Serverless | `registry.handler()` | Integrating with existing routers (Hono, Elysia, etc.) |
-| Runner | `registry.startRunner()` | Long-running processes without HTTP endpoints |
+| Runner | `registry.startEnvoy()` | Long-running processes without HTTP endpoints |
 
 _Source doc path: /docs/general/runtime-modes_

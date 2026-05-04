@@ -270,11 +270,13 @@ Standard actor endpoints (health, actions, requests) and inspector endpoints hav
 
 #### Inspector Endpoints
 
+Each actor generates a unique inspector token on first start and persists it in its internal KV store at key `0x03` (base64 `Aw==`). Pass it as a bearer token in the `Authorization` header.
+
 | Environment | Authentication |
 |---|---|
-| **Local development** | No authentication required if `RIVET_INSPECTOR_TOKEN` is not set. A warning is logged. |
-| **Self-hosted engine** | Set the `RIVET_INSPECTOR_TOKEN` environment variable. Pass it as a bearer token in the `Authorization` header. The actor-specific inspector token used by the standalone Inspector UI is also accepted. |
-| **Rivet Cloud** | Token is required. Pass it as a bearer token in the `Authorization` header. The actor-specific inspector token used by the standalone Inspector UI is also accepted. |
+| **Local development** | No authentication required. |
+| **Self-hosted engine** | Bearer the actor's inspector token in the `Authorization` header. The Rivet dashboard fetches it automatically; for direct API access, fetch it through the management KV endpoint (see below). |
+| **Rivet Cloud** | Bearer the actor's inspector token in the `Authorization` header. The Rivet dashboard fetches it automatically; for direct API access, fetch it through the management KV endpoint (see below). |
 
 ```bash
 curl "$RIVET_API/gateway/{actor_id}/inspector/summary" \
@@ -598,6 +600,8 @@ For workflow-enabled actors, `history` is a JSON object with `nameRegistry`, `en
 
 Reset a workflow to a specific step and restart execution immediately. Omitting `entryId` replays the workflow from the beginning.
 
+If the workflow is still running when you call replay, the endpoint rejects the request with `409 Conflict` and an `actor/workflow_in_flight` error instead of cancelling the live run for you.
+
 ```bash
 curl -X POST http://localhost:6420/gateway/{actor_id}/inspector/workflow/replay \
   -H 'Content-Type: application/json' \
@@ -614,6 +618,17 @@ Returns the same JSON shape as `/inspector/workflow-history`:
     "entryMetadata": {}
   },
   "isWorkflowEnabled": true
+}
+```
+
+While a workflow is in flight, the response shape is:
+
+```json
+{
+  "group": "actor",
+  "code": "workflow_in_flight",
+  "message": "Workflow replay is unavailable while the workflow is currently in flight.",
+  "metadata": null
 }
 ```
 

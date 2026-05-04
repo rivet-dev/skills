@@ -73,7 +73,7 @@ actors have create, destroy, wake, and sleep lifecycle hooks that you can implem
 - actors sleep when not in use
 - an actor is considered not in use when there are no active network connections to the actor (or the network connections are hibernatable websockets, see below) and there are no actions in flight
 - actors have a sleep timeout (configured in `options.sleepTimeout`) that decides how long to keep the actor in memory with no recent activity
-- sleep can be delayed while idle with `c.setPreventSleep(true)`
+- sleep can be held off for the lifetime of a promise with `c.keepAwake(promise)`
 - see the [sleeping docs](/docs/actors/lifecycle#sleeping) for full details
 
 ### wake events
@@ -97,7 +97,7 @@ actors have create, destroy, wake, and sleep lifecycle hooks that you can implem
 
 - acotrs can optionally have a globally unique "key"
 - when creating an actor with a key
-- this system is highly optimized to reduce wan round trips using a process call EPaxos with a custom database called Epoxy (link to https://github.com/rivet-dev/rivet/tree/main/engine/packages/epoxy)
+- this system is highly optimized to reduce wan round trips using per-key Paxos with a custom database called Epoxy (https://github.com/rivet-dev/rivet/tree/main/engine/packages/epoxy)
 - limitation: when creating an actor with a given key, that key will always be pinned to that region even if the actor is destroyed. creating a new actor with the same key will always live in the same region.
 - see the acotr keys document
 

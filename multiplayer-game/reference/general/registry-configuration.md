@@ -80,13 +80,13 @@ app.all("/api/rivet/*", (c) => registry.handler(c.req.raw));
 export default app;
 ```
 
-```typescript Runner
+```typescript Envoy
 import { actor, setup } from "rivetkit";
 
 const myActor = actor({ state: {}, actions: {} });
 const registry = setup({ use: { myActor } });
 
-registry.startRunner();
+registry.startEnvoy();
 ```
 
 See [Runtime Modes](/docs/general/runtime-modes) for details on when to use each mode.
