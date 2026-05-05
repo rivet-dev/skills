@@ -27,6 +27,7 @@ Also review the [general production checklist](/docs/general/production-checklis
 - **Configure autoscaling for the Rivet Engine.** Set target CPU utilization to 70% and memory to 80% to ensure headroom for traffic spikes. In Kubernetes, this is configured via a Horizontal Pod Autoscaler (HPA).
 - **Use 2+ engine nodes for redundancy.** Running a single engine node is a single point of failure. Deploy at least two engine instances behind a load balancer.
 - **RocksDB only supports a single node.** Do not run multiple RocksDB nodes. For a production-ready single-node Rivet deployment, use the file system backend (RocksDB-based). For multi-node deployments, PostgreSQL is the recommended backend today, though it remains experimental as we evaluate the best fit for scalability and performance.
+- **Validate the rate limit on your serverless actor host.** Actor start requests are sent from your engine instances, so they all originate from a small set of IPs. Per-IP rate limits on the actor host will throttle the engine before they would throttle end-user traffic. Size the limit to your peak actor create and wake rate, and configure platform max concurrency (e.g. on GCP Cloud Run) to match your expected concurrent actor count.
 
 ## PostgreSQL
 

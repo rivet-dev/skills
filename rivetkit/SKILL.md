@@ -70,19 +70,19 @@ Use that canonical URL when citing, not the reference file path.
 
 ## Version Check
 
-Before starting any work, check if the user's project is on the latest version of RivetKit (latest: 2.3.0-rc.4). Look at the `rivetkit` version in the user's `package.json` (check both `dependencies` and `devDependencies`). If the installed version is older than 2.3.0-rc.4, inform the user and suggest upgrading:
+Before starting any work, check if the user's project is on the latest version of RivetKit (latest: 2.3.0-rc.5). Look at the `rivetkit` version in the user's `package.json` (check both `dependencies` and `devDependencies`). If the installed version is older than 2.3.0-rc.5, inform the user and suggest upgrading:
 
 ```bash
-npm install rivetkit@2.3.0-rc.4
+npm install rivetkit@2.3.0-rc.5
 ```
 
 If the user also uses `@rivetkit/react`, `@rivetkit/next-js`, or other `@rivetkit/*` client packages, suggest upgrading those too. Outdated versions may have known bugs or missing features that cause issues.
 
 ## First Steps
 
-1. Install RivetKit (latest: 2.3.0-rc.4)
+1. Install RivetKit (latest: 2.3.0-rc.5)
    ```bash
-   npm install rivetkit@2.3.0-rc.4
+   npm install rivetkit@2.3.0-rc.5
    ```
 2. Define a registry with `setup({ use: { /* actors */ } })`.
 3. Call `registry.start()` to start the server. For custom HTTP server integration, use `registry.handler()` with a router like Hono. For serverless deployments, use `registry.serve()`. For runner-only mode, use `registry.startRunner()`.
