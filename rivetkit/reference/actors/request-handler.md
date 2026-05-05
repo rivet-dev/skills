@@ -241,7 +241,7 @@ The `onRequest` handler is WinterTC compliant and will work with existing librar
 
 ### Skip Ready Wait
 
-Requests are normally held at the gateway until the actor is ready. Pass `gateway.skipReadyWait: true` on `handle.fetch()` to deliver immediately, including while the actor is still starting or in the [sleep grace period](/docs/actors/lifecycle#shutdown-sequence). See [Skip Ready Wait](/docs/clients/javascript#skip-ready-wait) for details.
+Requests are normally held at the gateway until the actor is ready. Pass `skipReadyWait: true` on `handle.fetch()` to deliver immediately, including while the actor is still starting or in the [sleep grace period](/docs/actors/lifecycle#shutdown-sequence). See [Skip Ready Wait](/docs/clients/javascript#skip-ready-wait) for details.
 
 ## API Reference
 

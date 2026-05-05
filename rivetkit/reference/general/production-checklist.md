@@ -25,7 +25,7 @@ We recommend passing this page to your coding agent to verify your configuration
 
 ### Runner
 
-- **Set a graceful shutdown period of at least 130 seconds.** Runners need time to drain actors during upgrades. In Kubernetes, set `terminationGracePeriodSeconds: 130` on the pod spec.
+- **Set a graceful shutdown period of at least 35 minutes.** Runners need up to 30 minutes to drain actors during upgrades, plus buffer for shutdown overhead. In Kubernetes, set `terminationGracePeriodSeconds: 2100` on the pod spec.
 
 ## Actors
 

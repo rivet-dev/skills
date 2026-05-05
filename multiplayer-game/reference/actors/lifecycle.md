@@ -305,7 +305,7 @@ const tickActor = actor({
       c.state.tickCount++;
       c.log.info({ msg: "tick", count: c.state.tickCount });
 
-      // Wait 1 second, but exit early if aborted
+      // Wait 1 second. Final shutdown also resolves this wait.
       await new Promise<void>((resolve) => {
         const timeout = setTimeout(resolve, 1000);
         c.abortSignal.addEventListener("abort", () => {
@@ -764,7 +764,7 @@ curl -X POST \
 
 ### Skip Ready Wait
 
-The gateway normally holds requests until the actor is ready. The actor is not ready during startup (before `onWake` finishes) or during the sleep grace period (while `onSleep` and `waitUntil` are running). Probes and readiness checks can opt out with `gateway.skipReadyWait` to reach the actor's `onRequest` or `onWebSocket` handler in either window.
+The gateway normally holds requests until the actor is ready. The actor is not ready during startup (before `onWake` finishes) or during the sleep grace period (while `onSleep` and `waitUntil` are running). Probes and readiness checks can opt out with `skipReadyWait` to reach the actor's `onRequest` or `onWebSocket` handler in either window.
 
 See [Skip Ready Wait](/docs/clients/javascript#skip-ready-wait) on the JavaScript client page for usage.
 
@@ -875,7 +875,7 @@ When an actor sleeps or is destroyed, it enters the graceful shutdown window:
 
 1. `c.abortSignal` fires and `c.aborted` becomes `true`. New connections and dispatch are rejected. Alarm timeouts are cancelled. On sleep, scheduled events are persisted and will be re-armed when the actor wakes.
 2. `onSleep` or `onDestroy` and `onDisconnect` for each closing connection run during the same window. User `waitUntil` promises and async raw WebSocket handlers are drained. Hibernatable WebSocket connections are preserved on sleep and closed on destroy.
-3. Once graceful work has completed, state is saved and the database is cleaned up.
+3. Once graceful work has completed, state is saved and final cleanup runs.
 
 The entire window is bounded by `sleepGracePeriod` on both sleep and destroy. Defaults to 15 seconds. If the window is exceeded, the actor proceeds to state save anyway.
 

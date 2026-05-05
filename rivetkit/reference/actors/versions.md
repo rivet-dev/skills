@@ -184,7 +184,7 @@ The `drainOnVersionUpgrade` option controls whether old actors are stopped when 
 | Value | Behavior |
 |-------|----------|
 | `false` (default in [runner mode](/docs/general/runtime-modes)) | Old actors continue running. New actors go to new version. Versions coexist. |
-| `true` (default in [serverless mode](/docs/general/runtime-modes)) | Old actors receive stop signal and have 30s to finish gracefully. |
+| `true` (default in [serverless mode](/docs/general/runtime-modes)) | Old actors receive stop signal and have 30m to finish gracefully. |
 
 ## Upgrading Actor State
 
@@ -198,7 +198,7 @@ Use [Drizzle](/docs/actors/sqlite-drizzle) for typed schemas with generated migr
 
 **Raw SQL**
 
-For actors using [raw SQLite](/docs/actors/sqlite), migrations run automatically via the `onMigrate` hook on every actor start. Use SQLite's `user_version` pragma to track which migrations have run:
+For actors using [raw SQLite](/docs/actors/sqlite), migrations run automatically via the `onMigrate` hook on every actor start. RivetKit wraps the hook in a SQLite savepoint, so the migration is fully atomic. Use SQLite's `user_version` pragma to track which migrations have run:
 
 ```ts
 import { actor, setup } from "rivetkit";
@@ -312,10 +312,10 @@ When a runner process receives SIGTERM, it gracefully stops all actors before ex
 
 - Each actor's `onSleep` hook is called, giving it time to save state
 - Actors are rescheduled to other available runners
-- The runner waits up to **120 seconds** for all actors to finish stopping
+- The runner waits up to **30 minutes** for all actors to finish stopping
 - If the process is force-killed before actors finish (e.g. SIGKILL), actors are rescheduled with a crash backoff penalty instead of a clean handoff
 
-Ensure your platform's shutdown grace period is at least **130 seconds** to give actors time to stop cleanly.
+Ensure your platform's shutdown grace period is at least **35 minutes** so actors have 30 minutes to stop cleanly plus buffer for runner shutdown overhead.
 
 ### Shutdown Timeouts
 
@@ -323,7 +323,7 @@ Several timeouts control how long each part of the shutdown process can take:
 
 | Timeout | Default | Description | Configuration |
 |---------|---------|-------------|---------------|
-| `actor_stop_threshold` | 30s | Engine-side limit on how long each actor has to stop before being marked lost | [Engine config](/docs/self-hosting/configuration) (`pegboard.actor_stop_threshold`) |
+| `actor_stop_threshold` | 30m | Engine-side limit on how long each actor has to stop before being marked lost | [Engine config](/docs/self-hosting/configuration) (`pegboard.actor_stop_threshold`) |
 | `sleepGracePeriod` | 15s | Total graceful sleep budget for `onSleep`, `waitUntil`, `keepAwake`, and async raw WebSocket handlers | [Actor options](/docs/actors/lifecycle#options) |
 | `runner_lost_threshold` | 15s | Fallback detection if the runner dies without graceful shutdown | [Engine config](/docs/self-hosting/configuration) (`pegboard.runner_lost_threshold`) |
 

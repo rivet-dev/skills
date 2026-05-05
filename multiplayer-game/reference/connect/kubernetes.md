@@ -75,9 +75,10 @@ spec:
         app: rivetkit-app
     spec:
       # Allow enough time for actors to gracefully stop on SIGTERM.
-      # The runner waits up to 120s for actors to finish; 130s provides buffer.
+      # The runner waits up to 30m for actors to finish.
+      # Add buffer for runner shutdown overhead after actors stop.
       # See: /docs/actors/versions#graceful-shutdown-sigterm
-      terminationGracePeriodSeconds: 130
+      terminationGracePeriodSeconds: 2100
       containers:
         - name: rivetkit-app
           image: registry.example.com/your-team/rivetkit-app:latest

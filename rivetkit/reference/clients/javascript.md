@@ -250,7 +250,7 @@ You can also pass the endpoint without auth and provide `RIVET_NAMESPACE` and `R
 
 Requests are normally held at the gateway until the actor is ready to accept traffic. An actor is not ready while it's still starting (before `onWake` finishes) or while it's in the [sleep grace period](/docs/actors/lifecycle#shutdown-sequence) (running `onSleep`, `waitUntil`, and pending disconnects).
 
-Pass `gateway.skipReadyWait: true` on the [low-level HTTP and WebSocket APIs](#low-level-http--websocket) to deliver immediately and reach the actor's `onRequest` / `onWebSocket` handler in either window:
+Pass `skipReadyWait: true` on the [low-level HTTP and WebSocket APIs](#low-level-http--websocket) to deliver immediately and reach the actor's `onRequest` / `onWebSocket` handler in either window:
 
 ```ts @nocheck
 import { createClient } from "rivetkit/client";
@@ -259,15 +259,22 @@ const client = createClient();
 const handle = client.chatRoom.getOrCreate(["general"]);
 
 const response = await handle.fetch("/healthz", {
-  gateway: { skipReadyWait: true },
+  skipReadyWait: true,
 });
 
 const ws = await handle.webSocket("probe", undefined, {
-  gateway: { skipReadyWait: true },
+  skipReadyWait: true,
 });
 ```
 
-Requests still return a transient `actor.stopping` lifecycle error (`{"group":"actor","code":"stopping","message":"Actor is stopping."}`) if the actor has fully stopped, i.e. the sleep grace period has ended but it has not yet restarted. Retry once the actor is available again.
+Requests can still return transient lifecycle or gateway errors. Retry once the actor is available again.
+
+- `actor.stopping`: the actor has fully stopped, i.e. the sleep grace period has ended but it has not yet restarted.
+- `guard.actor_stopped_while_waiting`: the request reached the actor tunnel, but the actor stopped before the gateway received a response.
+- `guard.tunnel_request_aborted`: the actor tunnel aborted the request before a response started.
+- `guard.tunnel_message_timeout`: the gateway dropped the in-flight tunnel request after its tunnel message timeout.
+- `guard.tunnel_response_closed`: the actor tunnel closed before sending a response.
+- `guard.gateway_response_start_timeout`: the gateway timed out waiting for the actor response to start.
 
 ## API Reference
 
