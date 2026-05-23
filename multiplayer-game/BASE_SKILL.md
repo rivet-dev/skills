@@ -1122,7 +1122,7 @@ Actors are long-lived and maintain state across requests. Creating a new actor f
 - [Deploying to Hetzner](reference/connect/hetzner.md)
 - [Deploying to Kubernetes](reference/connect/kubernetes.md)
 - [Deploying to Railway](reference/connect/railway.md)
-- [Deploying to Rivet Compute](reference/connect/_rivet-compute.md)
+- [Deploying to Rivet Compute](reference/connect/rivet-compute.md)
 - [Deploying to Supabase Functions](reference/connect/supabase.md)
 - [Deploying to Vercel](reference/connect/vercel.md)
 - [Deploying to VMs & Bare Metal](reference/connect/vm-and-bare-metal.md)

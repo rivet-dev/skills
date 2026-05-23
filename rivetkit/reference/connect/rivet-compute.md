@@ -1,7 +1,7 @@
 # Deploying to Rivet Compute
 
-> Source: `src/content/docs/connect/_rivet-compute.mdx`
-> Canonical URL: https://rivet.dev/docs/connect/_rivet-compute
+> Source: `src/content/docs/connect/rivet-compute.mdx`
+> Canonical URL: https://rivet.dev/docs/connect/rivet-compute
 > Description: Run your backend on Rivet Compute.
 
 ---
@@ -74,7 +74,7 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v4
-      - uses: rivet-dev/deploy-action@v1
+      - uses: rivet-dev/deploy-action@v1.1
         with:
           rivet-token: ${{ secrets.RIVET_CLOUD_TOKEN }}
 ```
@@ -102,6 +102,18 @@ The dashboard shows live status as Rivet Compute provisions your backend:
 
 Once the status reaches **Ready**, your backend is live and actors are available for connections.
 
+If you are an agent monitoring the deployment via API rather than the dashboard, poll the managed-pool endpoint on the Cloud API.
+
+The `RIVET_CLOUD_TOKEN` secret is a `cloud_api_*` management token scoped to the Cloud API at `cloud-api.rivet.dev`. Use it for `Authorization: Bearer ...` against the Cloud API. Do not confuse it with a `pk_*` publishable key, which is scoped to the Rivet Engine API at `api.rivet.dev` and will 401 against this endpoint.
+
+Substitute `$CLOUD_API_URL` (typically `https://cloud-api.rivet.dev`), `$PROJECT`, `$ORG`, `$CLOUD_NAMESPACE`, and `$CLOUD_TOKEN`.
+
+Poll every 5 seconds until `status` is `ready`. Stop and investigate if `status` is `error`.
+
+```bash
+curl -s "$CLOUD_API_URL/projects/$PROJECT/namespaces/$CLOUD_NAMESPACE/managed-pools/default?org=$ORG" -H "Authorization: Bearer $CLOUD_TOKEN"
+```
+
 ## Troubleshooting
 
 If the status stays in **Provisioning** for more than a few minutes, verify that:
@@ -114,4 +126,4 @@ If the status shows **Error**, check that your container starts successfully and
 - The server file is not calling `registry.startRunner()`
 - A runtime crash on startup — test the image locally with `docker run`
 
-_Source doc path: /docs/connect/_rivet-compute_
+_Source doc path: /docs/connect/rivet-compute_

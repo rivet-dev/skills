@@ -2,7 +2,7 @@
   "name": "rivetkit",
   "description": "RivetKit backend and Rivet Actor runtime guidance. Use for building, modifying, debugging, or testing Rivet Actors, registries, serverless/runner modes, deployment, or actor-based workflows.",
   "skill_url": "/metadata/skills/rivetkit/SKILL.md",
-  "generated_at": "2026-05-05T23:50:20.264Z",
+  "generated_at": "2026-05-23T01:39:35.128Z",
   "references": [
     {
       "name": "actors/access-control",
@@ -208,11 +208,11 @@
       "reference_url": "/metadata/skills/rivetkit/reference/connect/railway.md"
     },
     {
-      "name": "connect/_rivet-compute",
+      "name": "connect/rivet-compute",
       "title": "Deploying to Rivet Compute",
       "description": "Run your backend on Rivet Compute.",
-      "canonical_url": "https://rivet.dev/docs/connect/_rivet-compute",
-      "reference_url": "/metadata/skills/rivetkit/reference/connect/_rivet-compute.md"
+      "canonical_url": "https://rivet.dev/docs/connect/rivet-compute",
+      "reference_url": "/metadata/skills/rivetkit/reference/connect/rivet-compute.md"
     },
     {
       "name": "connect/supabase",

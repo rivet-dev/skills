@@ -2,7 +2,7 @@
   "name": "multiplayer-game",
   "description": "Pragmatic patterns for building multiplayer games: matchmaking, tick loops, realtime state, interest management, and validation.",
   "skill_url": "/metadata/skills/multiplayer-game/SKILL.md",
-  "generated_at": "2026-05-05T23:50:20.278Z",
+  "generated_at": "2026-05-23T01:39:35.141Z",
   "references": [
     {
       "name": "actors/access-control",
@@ -208,11 +208,11 @@
       "reference_url": "/metadata/skills/multiplayer-game/reference/connect/railway.md"
     },
     {
-      "name": "connect/_rivet-compute",
+      "name": "connect/rivet-compute",
       "title": "Deploying to Rivet Compute",
       "description": "Run your backend on Rivet Compute.",
-      "canonical_url": "https://rivet.dev/docs/connect/_rivet-compute",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/connect/_rivet-compute.md"
+      "canonical_url": "https://rivet.dev/docs/connect/rivet-compute",
+      "reference_url": "/metadata/skills/multiplayer-game/reference/connect/rivet-compute.md"
     },
     {
       "name": "connect/supabase",
