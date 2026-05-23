@@ -5,7 +5,7 @@
 > Description: Run your backend on Rivet Compute.
 
 ---
-Rivet Cloud is currently in beta.
+Rivet Compute is currently in beta.
 
 Using an AI coding agent? Open **Connect** on the [Rivet dashboard](https://dashboard.rivet.dev), select **Rivet Cloud**, and paste the one-shot prompt into your agent and have it connect with Rivet Compute for you.
 
@@ -17,14 +17,23 @@ Using an AI coding agent? Open **Connect** on the [Rivet dashboard](https://dash
   - If you don't have one, see the [Quickstart](/docs/actors/quickstart) page or our [Examples](https://github.com/rivet-dev/rivet/tree/main/examples)
 - A [Rivet Cloud](https://dashboard.rivet.dev) account and project
 
-### Configure Runner Mode
+### Configure Serverless Mode
 
-Rivet Compute runs your app as a long-lived container. Make sure your server calls `startRunner()` instead of `serve()`:
+Rivet Compute runs your app as a short-lived, serverless container. Make sure your server `serve()` or uses `handler()` instead of `startRunner()`:
 
 ```typescript src/server.js @nocheck
 import { registry } from "./actors.js";
+import { Hono } from "hono";
+import { serve } from "@hono/node-server";
 
-registry.startRunner();
+const app = new Hono();
+
+// Mount Rivet handler
+app.all("/api/rivet/*", (c) => registry.handler(c.req.raw));
+
+const PORT = parseInt(process.env.PORT);
+
+serve({ fetch: app.fetch, port: PORT });
 ```
 
 See [Runtime Modes](/docs/general/runtime-modes) for details on when to use each mode.
@@ -125,5 +134,6 @@ If the status shows **Error**, check that your container starts successfully and
 
 - The server file is not calling `registry.startRunner()`
 - A runtime crash on startup — test the image locally with `docker run`
+- The Dockerfile is not listening on the `PORT` environmental variable
 
 _Source doc path: /docs/connect/rivet-compute_
