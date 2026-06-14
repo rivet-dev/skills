@@ -70,19 +70,19 @@ Use that canonical URL when citing, not the reference file path.
 
 ## Version Check
 
-Before starting any work, check if the user's project is on the latest version of RivetKit (latest: 2.3.0-rc.5). Look at the `rivetkit` version in the user's `package.json` (check both `dependencies` and `devDependencies`). If the installed version is older than 2.3.0-rc.5, inform the user and suggest upgrading:
+Before starting any work, check if the user's project is on the latest version of RivetKit (latest: 2.3.0-rc.12). Look at the `rivetkit` version in the user's `package.json` (check both `dependencies` and `devDependencies`). If the installed version is older than 2.3.0-rc.12, inform the user and suggest upgrading:
 
 ```bash
-npm install rivetkit@2.3.0-rc.5
+npm install rivetkit@2.3.0-rc.12
 ```
 
 If the user also uses `@rivetkit/react`, `@rivetkit/next-js`, or other `@rivetkit/*` client packages, suggest upgrading those too. Outdated versions may have known bugs or missing features that cause issues.
 
 ## First Steps
 
-1. Install RivetKit (latest: 2.3.0-rc.5)
+1. Install RivetKit (latest: 2.3.0-rc.12)
    ```bash
-   npm install rivetkit@2.3.0-rc.5
+   npm install rivetkit@2.3.0-rc.12
    ```
 2. Define a registry with `setup({ use: { /* actors */ } })`.
 3. Call `registry.start()` to start the server. For custom HTTP server integration, use `registry.handler()` with a router like Hono. For serverless deployments, use `registry.serve()`. For runner-only mode, use `registry.startRunner()`.
@@ -383,7 +383,7 @@ const counter = actor({
 });
 ````
 
-[Documentation](/docs/actors/ephemeral-variables)
+[Documentation](/docs/actors/state)
 
 ### Actions
 
@@ -1036,16 +1036,14 @@ Actors are long-lived and maintain state across requests. Creating a new actor f
 - [Authentication](reference/actors/authentication.md)
 - [Communicating Between Actors](reference/actors/communicating-between-actors.md)
 - [Connections](reference/actors/connections.md)
+- [Custom Inspector Tabs](reference/actors/inspector-tabs.md)
 - [Debugging](reference/actors/debugging.md)
 - [Design Patterns](reference/actors/design-patterns.md)
 - [Destroying Actors](reference/actors/destroy.md)
-- [Ephemeral Variables](reference/actors/ephemeral-variables.md)
 - [Errors](reference/actors/errors.md)
-- [External SQL Database](reference/actors/postgres.md)
 - [Fetch and WebSocket Handler](reference/actors/fetch-and-websocket-handler.md)
 - [Helper Types](reference/actors/helper-types.md)
 - [Icons & Names](reference/actors/appearance.md)
-- [In-Memory State](reference/actors/state.md)
 - [Input Parameters](reference/actors/input.md)
 - [Lifecycle](reference/actors/lifecycle.md)
 - [Limits](reference/actors/limits.md)
@@ -1058,11 +1056,13 @@ Actors are long-lived and maintain state across requests. Creating a new actor f
 - [Queues & Run Loops](reference/actors/queues.md)
 - [React Quickstart](reference/actors/quickstart/react.md)
 - [Realtime](reference/actors/events.md)
+- [Rust Quickstart (Preview)](reference/actors/quickstart/rust.md)
 - [Sandbox Actor](reference/actors/sandbox.md)
 - [Scaling & Concurrency](reference/actors/scaling.md)
 - [Sharing and Joining State](reference/actors/sharing-and-joining-state.md)
 - [SQLite](reference/actors/sqlite.md)
 - [SQLite + Drizzle](reference/actors/sqlite-drizzle.md)
+- [State & Storage](reference/actors/state.md)
 - [Testing](reference/actors/testing.md)
 - [Troubleshooting](reference/actors/troubleshooting.md)
 - [Types](reference/actors/types.md)
@@ -1129,6 +1129,14 @@ Actors are long-lived and maintain state across requests. Creating a new actor f
 
 ### Cookbook
 
+- [AI Agent](reference/cookbook/ai-agent.md)
+- [AI Agent Workspaces](reference/cookbook/ai-agent-workspace.md)
+- [Chat Room](reference/cookbook/chat-room.md)
+- [Collaborative Text Editor](reference/cookbook/collaborative-text-editor.md)
+- [Cron Jobs and Scheduled Tasks](reference/cookbook/cron-jobs.md)
+- [Database per Tenant](reference/cookbook/per-tenant-database.md)
+- [Deploying Rivet in a VPC or Air-Gapped Network](reference/cookbook/vpc-air-gapped.md)
+- [Live Cursors and Presence](reference/cookbook/live-cursors.md)
 - [Multiplayer Game](reference/cookbook/multiplayer-game.md)
 
 ### General
@@ -1142,6 +1150,7 @@ Actors are long-lived and maintain state across requests. Creating a new actor f
 - [Environment Variables](reference/general/environment-variables.md)
 - [HTTP Server](reference/general/http-server.md)
 - [Logging](reference/general/logging.md)
+- [Pool Configuration](reference/general/pool-configuration.md)
 - [Production Checklist](reference/general/production-checklist.md)
 - [Registry Configuration](reference/general/registry-configuration.md)
 - [Runtime Modes](reference/general/runtime-modes.md)

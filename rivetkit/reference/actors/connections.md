@@ -5,7 +5,7 @@
 > Description: Connections represent client connections to your actor. They provide a way to handle client authentication, manage connection-specific data, and control the connection lifecycle.
 
 ---
-For documentation on connecting to actors from clients, see the [Clients documentation](/docs/clients).
+For documentation on connecting to actors from clients, see the [Clients documentation](/docs/clients). For worked presence and chat patterns, see the cookbook: [Live Cursors and Presence](/cookbook/live-cursors/) and [Chat Room](/cookbook/chat-room/).
 
 ## Parameters
 

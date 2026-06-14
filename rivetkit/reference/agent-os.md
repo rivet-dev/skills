@@ -7,6 +7,8 @@
 ---
 agentOS is in preview and the API is subject to change. If you run into issues, please [report them on GitHub](https://github.com/rivet-dev/rivet/issues) or [join our Discord](https://rivet.dev/discord).
 
+For a worked pattern guide, see the cookbook: [AI Agent Workspaces](/cookbook/ai-agent-workspace/).
+
 ## Quickstart
 
 - [Get Started](/docs/agent-os/quickstart) — Boot a VM and run your first coding agent in minutes

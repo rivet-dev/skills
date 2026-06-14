@@ -1,0 +1,288 @@
+# Node.js & Bun
+
+> Source: `src/content/docs/clients/javascript.mdx`
+> Canonical URL: https://rivet.dev/docs/clients/javascript
+> Description: Connect JavaScript apps to Rivet Actors.
+
+---
+## Getting Started
+
+See the [backend quickstart guide](/docs/actors/quickstart/backend) for getting started.
+
+## Minimal Client
+
+```ts client.ts
+import { createClient } from "rivetkit/client";
+import type { registry } from "./index";
+
+const client = createClient<typeof registry>({
+  endpoint: "https://my-namespace:pk_...@api.rivet.dev",
+});
+const counter = client.counter.getOrCreate(["my-counter"]);
+const count = await counter.increment(1);
+```
+
+```ts index.ts @hide
+import { actor, setup } from "rivetkit";
+
+export const counter = actor({
+  state: { count: 0 },
+  actions: {
+    increment: (c, x: number) => {
+      c.state.count += x;
+      return c.state.count;
+    },
+  },
+});
+
+export const registry = setup({
+  use: { counter },
+});
+
+registry.start();
+```
+
+## Stateless vs Stateful
+
+```typescript
+import { createClient } from "rivetkit/client";
+
+const client = createClient();
+const handle = client.counter.getOrCreate(["my-counter"]);
+
+// Stateless: each call is independent
+await handle.increment(1);
+
+// Stateful: keep a connection open for realtime events
+const conn = handle.connect();
+conn.on("count", (value) => console.log(value));
+await conn.increment(1);
+```
+
+## Getting Actors
+
+```typescript
+import { createClient } from "rivetkit/client";
+
+const client = createClient();
+const room = client.chatRoom.getOrCreate(["room-42"]);
+const existing = client.chatRoom.get(["room-42"]);
+
+const created = await client.game.create(["game-1"], {
+  input: { mode: "ranked" },
+});
+
+const byId = client.chatRoom.getForId("actor-id");
+const resolvedId = await room.resolve();
+```
+
+## Connection Parameters
+
+```typescript params
+import { createClient } from "rivetkit/client";
+
+const client = createClient();
+const chat = client.chatRoom.getOrCreate(["general"], {
+  params: { authToken: "jwt-token-here" },
+});
+
+const conn = chat.connect();
+```
+
+```typescript getParams
+import { createClient } from "rivetkit/client";
+
+async function getAuthToken(): Promise<string> {
+  return "jwt-token-here";
+}
+
+const client = createClient();
+const chat = client.chatRoom.getOrCreate(["general"], {
+  getParams: async () => ({
+    authToken: await getAuthToken(),
+  }),
+});
+
+const conn = chat.connect();
+```
+
+Use `params` for static connection parameters. Use `getParams` when the value can change between connection attempts, such as refreshing a JWT before each `.connect()` or reconnect.
+
+## Subscribing to Events
+
+```typescript
+import { createClient } from "rivetkit/client";
+
+const client = createClient();
+const conn = client.chatRoom.getOrCreate(["general"]).connect();
+conn.on("message", (msg) => console.log(msg));
+conn.once("gameOver", () => console.log("done"));
+```
+
+## Connection Lifecycle
+
+```typescript
+import { createClient } from "rivetkit/client";
+
+const client = createClient();
+const conn = client.chatRoom.getOrCreate(["general"]).connect();
+
+conn.onOpen(() => console.log("connected"));
+conn.onClose(() => console.log("disconnected"));
+conn.onError((err) => console.error("error:", err));
+conn.onStatusChange((status) => console.log("status:", status));
+
+await conn.dispose();
+```
+
+## Low-Level HTTP & WebSocket
+
+For actors that implement `onRequest` or `onWebSocket`, call them directly:
+
+```ts @nocheck
+import { createClient } from "rivetkit/client";
+
+const client = createClient();
+const handle = client.chatRoom.getOrCreate(["general"]);
+
+const response = await handle.fetch("history");
+const history = await response.json();
+
+const ws = await handle.webSocket("stream");
+ws.addEventListener("message", (event) => {
+  console.log("message:", event.data);
+});
+ws.send("hello");
+```
+
+## Calling from Backend
+
+```typescript
+import { Hono } from "hono";
+import { createClient } from "rivetkit/client";
+
+const app = new Hono();
+const client = createClient();
+
+app.post("/increment/:name", async (c) => {
+  const counterHandle = client.counter.getOrCreate([c.req.param("name")]);
+  const newCount = await counterHandle.increment(1);
+  return c.json({ count: newCount });
+});
+```
+
+## Error Handling
+
+```typescript
+import { ActorError } from "rivetkit/client";
+import { createClient } from "rivetkit/client";
+
+const client = createClient();
+
+try {
+  await client.user.getOrCreate(["user-123"]).updateUsername("ab");
+} catch (error) {
+  if (error instanceof ActorError) {
+    console.log(error.code, error.metadata);
+  }
+}
+```
+
+## Concepts
+
+### Keys
+
+Keys uniquely identify actor instances. Use compound keys (arrays) for hierarchical addressing:
+
+```ts client.ts
+import { createClient } from "rivetkit/client";
+import type { registry } from "./index";
+
+const client = createClient<typeof registry>("http://localhost:6420");
+
+// Compound key: [org, room]
+client.chatRoom.getOrCreate(["org-acme", "general"]);
+```
+
+```ts index.ts @hide
+import { actor, setup } from "rivetkit";
+
+export const chatRoom = actor({
+  state: { messages: [] as string[] },
+  actions: {
+    getRoomInfo: (c) => ({ org: c.key[0], room: c.key[1] }),
+  },
+});
+
+export const registry = setup({
+  use: { chatRoom },
+});
+
+registry.start();
+```
+
+Don't build keys with string interpolation like `"org:${userId}"` when `userId` contains user data. Use arrays instead to prevent key injection attacks.
+
+### Environment Variables
+
+`createClient()` automatically reads:
+
+- `RIVET_ENDPOINT` (endpoint)
+- `RIVET_NAMESPACE`
+- `RIVET_TOKEN`
+- `RIVET_RUNNER`
+
+Defaults to `http://localhost:6420` when unset. RivetKit runs on port 6420 by default.
+
+### Endpoint Format
+
+Endpoints support URL auth syntax:
+
+```
+https://namespace:token@api.rivet.dev
+```
+
+You can also pass the endpoint without auth and provide `RIVET_NAMESPACE` and `RIVET_TOKEN` separately. For serverless deployments, use your app's `/api/rivet` URL. See [Endpoints](/docs/general/endpoints#url-auth-syntax) for details.
+
+## Advanced
+
+### Skip Ready Wait
+
+Requests are normally held at the gateway until the actor is ready to accept traffic. An actor is not ready while it's still starting (before `onWake` finishes) or while it's in the [sleep grace period](/docs/actors/lifecycle#shutdown-sequence) (running `onSleep`, `waitUntil`, and pending disconnects).
+
+Pass `skipReadyWait: true` on the [low-level HTTP and WebSocket APIs](#low-level-http--websocket) to deliver immediately and reach the actor's `onRequest` / `onWebSocket` handler in either window:
+
+```ts @nocheck
+import { createClient } from "rivetkit/client";
+
+const client = createClient();
+const handle = client.chatRoom.getOrCreate(["general"]);
+
+const response = await handle.fetch("/healthz", {
+  skipReadyWait: true,
+});
+
+const ws = await handle.webSocket("probe", undefined, {
+  skipReadyWait: true,
+});
+```
+
+Requests can still return transient lifecycle or gateway errors. Retry once the actor is available again.
+
+- `actor.stopping`: the actor has fully stopped, i.e. the sleep grace period has ended but it has not yet restarted.
+- `guard.actor_stopped_while_waiting`: the request reached the actor tunnel, but the actor stopped before the gateway received a response.
+- `guard.tunnel_request_aborted`: the actor tunnel aborted the request before a response started.
+- `guard.tunnel_message_timeout`: the gateway dropped the in-flight tunnel request after its tunnel message timeout.
+- `guard.tunnel_response_closed`: the actor tunnel closed before sending a response.
+- `guard.gateway_response_start_timeout`: the gateway timed out waiting for the actor response to start.
+
+## API Reference
+
+**Package:** [rivetkit](https://www.npmjs.com/package/rivetkit)
+
+See the [RivetKit client overview](/docs/clients).
+
+- [`createClient`](/typedoc/functions/rivetkit.client_mod.createClient.html) - Create a client
+- [`Client`](/typedoc/types/rivetkit.mod.Client.html) - Client type
+
+_Source doc path: /docs/clients/javascript_

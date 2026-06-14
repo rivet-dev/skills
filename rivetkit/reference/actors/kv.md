@@ -5,6 +5,8 @@
 > Description: Use the built-in key-value store on ActorContext for durable string and binary data alongside actor state.
 
 ---
+KV is deprecated. It is a low-level escape hatch kept for backward compatibility. For new actors, prefer [in-memory state](/docs/actors/state) for small serializable values or [SQLite](/docs/actors/sqlite) for larger or queryable data.
+
 Every Rivet Actor includes a lightweight key-value store on `c.kv`. It is useful for dynamic keys, blobs, or data that does not fit well in structured state.
 
 If your data has a known schema, prefer [state](/docs/actors/state). KV is best for flexible or user-defined keys.

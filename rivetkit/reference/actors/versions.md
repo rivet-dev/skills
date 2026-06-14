@@ -179,7 +179,7 @@ const registry = setup({
 
 ### Drain on Version Upgrade
 
-The `drainOnVersionUpgrade` option controls whether old actors are stopped when a new version is deployed. This is configured in the Rivet dashboard under your runner configuration.
+The `drainOnVersionUpgrade` option controls whether old actors are stopped when a new version is deployed. This is configured in the Rivet dashboard under your runner configuration. See [Pool Configuration](/docs/general/pool-configuration) for the full set of pool options, including how to rate-limit actor eviction during the drain.
 
 | Value | Behavior |
 |-------|----------|
@@ -315,7 +315,7 @@ When a runner process receives SIGTERM, it gracefully stops all actors before ex
 - The runner waits up to **30 minutes** for all actors to finish stopping
 - If the process is force-killed before actors finish (e.g. SIGKILL), actors are rescheduled with a crash backoff penalty instead of a clean handoff
 
-Ensure your platform's shutdown grace period is at least **35 minutes** so actors have 30 minutes to stop cleanly plus buffer for runner shutdown overhead.
+Actors have a maximum of 30 minutes to clean up during shutdown. Ensure your platform's drain grace period is at most 30 minutes.
 
 ### Shutdown Timeouts
 

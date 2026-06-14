@@ -7,6 +7,13 @@ description: "Pragmatic patterns for building multiplayer games: matchmaking, ti
 
 **IMPORTANT: Before doing anything, you MUST read `BASE_SKILL.md` in this skill's directory. It contains essential guidance on debugging, error handling, state management, deployment, and project setup. Those rules and patterns apply to all RivetKit work. Everything below assumes you have already read and understood it.**
 
+## Working Examples
+
+If you need a reference implementation, read the raw working example code in these templates:
+
+- [multiplayer-game-patterns](https://github.com/rivet-dev/rivet/tree/main/examples/multiplayer-game-patterns)
+
+
 Patterns for building multiplayer games with RivetKit, intended as a practical checklist you can adapt per genre.
 
 ## Starter Code
@@ -725,16 +732,14 @@ sequenceDiagram
 - [Authentication](reference/actors/authentication.md)
 - [Communicating Between Actors](reference/actors/communicating-between-actors.md)
 - [Connections](reference/actors/connections.md)
+- [Custom Inspector Tabs](reference/actors/inspector-tabs.md)
 - [Debugging](reference/actors/debugging.md)
 - [Design Patterns](reference/actors/design-patterns.md)
 - [Destroying Actors](reference/actors/destroy.md)
-- [Ephemeral Variables](reference/actors/ephemeral-variables.md)
 - [Errors](reference/actors/errors.md)
-- [External SQL Database](reference/actors/postgres.md)
 - [Fetch and WebSocket Handler](reference/actors/fetch-and-websocket-handler.md)
 - [Helper Types](reference/actors/helper-types.md)
 - [Icons & Names](reference/actors/appearance.md)
-- [In-Memory State](reference/actors/state.md)
 - [Input Parameters](reference/actors/input.md)
 - [Lifecycle](reference/actors/lifecycle.md)
 - [Limits](reference/actors/limits.md)
@@ -747,11 +752,13 @@ sequenceDiagram
 - [Queues & Run Loops](reference/actors/queues.md)
 - [React Quickstart](reference/actors/quickstart/react.md)
 - [Realtime](reference/actors/events.md)
+- [Rust Quickstart (Preview)](reference/actors/quickstart/rust.md)
 - [Sandbox Actor](reference/actors/sandbox.md)
 - [Scaling & Concurrency](reference/actors/scaling.md)
 - [Sharing and Joining State](reference/actors/sharing-and-joining-state.md)
 - [SQLite](reference/actors/sqlite.md)
 - [SQLite + Drizzle](reference/actors/sqlite-drizzle.md)
+- [State & Storage](reference/actors/state.md)
 - [Testing](reference/actors/testing.md)
 - [Troubleshooting](reference/actors/troubleshooting.md)
 - [Types](reference/actors/types.md)
@@ -818,6 +825,14 @@ sequenceDiagram
 
 ### Cookbook
 
+- [AI Agent](reference/cookbook/ai-agent.md)
+- [AI Agent Workspaces](reference/cookbook/ai-agent-workspace.md)
+- [Chat Room](reference/cookbook/chat-room.md)
+- [Collaborative Text Editor](reference/cookbook/collaborative-text-editor.md)
+- [Cron Jobs and Scheduled Tasks](reference/cookbook/cron-jobs.md)
+- [Database per Tenant](reference/cookbook/per-tenant-database.md)
+- [Deploying Rivet in a VPC or Air-Gapped Network](reference/cookbook/vpc-air-gapped.md)
+- [Live Cursors and Presence](reference/cookbook/live-cursors.md)
 - [Multiplayer Game](reference/cookbook/multiplayer-game.md)
 
 ### General
@@ -831,6 +846,7 @@ sequenceDiagram
 - [Environment Variables](reference/general/environment-variables.md)
 - [HTTP Server](reference/general/http-server.md)
 - [Logging](reference/general/logging.md)
+- [Pool Configuration](reference/general/pool-configuration.md)
 - [Production Checklist](reference/general/production-checklist.md)
 - [Registry Configuration](reference/general/registry-configuration.md)
 - [Runtime Modes](reference/general/runtime-modes.md)

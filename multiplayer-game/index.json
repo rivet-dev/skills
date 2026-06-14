@@ -2,7 +2,7 @@
   "name": "multiplayer-game",
   "description": "Pragmatic patterns for building multiplayer games: matchmaking, tick loops, realtime state, interest management, and validation.",
   "skill_url": "/metadata/skills/multiplayer-game/SKILL.md",
-  "generated_at": "2026-05-27T20:55:05.864Z",
+  "generated_at": "2026-06-14T06:02:28.652Z",
   "references": [
     {
       "name": "actors/access-control",
@@ -61,6 +61,20 @@
       "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/versus-sandbox.md"
     },
     {
+      "name": "cookbook/ai-agent",
+      "title": "AI Agent",
+      "description": "Build an AI agent backend with persistent memory: one Rivet Actor per conversation, queued message handling, and streaming LLM responses as realtime events.",
+      "canonical_url": "https://rivet.dev/cookbook/ai-agent",
+      "reference_url": "/metadata/skills/multiplayer-game/reference/cookbook/ai-agent.md"
+    },
+    {
+      "name": "cookbook/ai-agent-workspace",
+      "title": "AI Agent Workspaces",
+      "description": "Give every AI agent its own computer: a persistent workspace with a filesystem, processes, shells, networking, and agent sessions on a lightweight in-process OS.",
+      "canonical_url": "https://rivet.dev/cookbook/ai-agent-workspace",
+      "reference_url": "/metadata/skills/multiplayer-game/reference/cookbook/ai-agent-workspace.md"
+    },
+    {
       "name": "actors/ai-and-user-generated-actors",
       "title": "AI and User-Generated Rivet Actors",
       "description": "This guide shows you how to programmatically create sandboxed Rivet environments and deploy custom actor code to them.",
@@ -94,6 +108,20 @@
       "description": "Performance benchmarks comparing agentOS to traditional sandbox providers.",
       "canonical_url": "https://rivet.dev/docs/agent-os/benchmarks",
       "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/benchmarks.md"
+    },
+    {
+      "name": "cookbook/chat-room",
+      "title": "Chat Room",
+      "description": "Build a realtime chat room backend with Rivet Actors: one actor per room, SQLite-backed message history, and WebSocket broadcast to every connected client.",
+      "canonical_url": "https://rivet.dev/cookbook/chat-room",
+      "reference_url": "/metadata/skills/multiplayer-game/reference/cookbook/chat-room.md"
+    },
+    {
+      "name": "cookbook/collaborative-text-editor",
+      "title": "Collaborative Text Editor",
+      "description": "Build a collaborative text editor backend with Yjs CRDTs and Rivet Actors: per-document actors relay sync and awareness updates and persist snapshots.",
+      "canonical_url": "https://rivet.dev/cookbook/collaborative-text-editor",
+      "reference_url": "/metadata/skills/multiplayer-game/reference/cookbook/collaborative-text-editor.md"
     },
     {
       "name": "actors/communicating-between-actors",
@@ -138,11 +166,32 @@
       "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/cron.md"
     },
     {
+      "name": "cookbook/cron-jobs",
+      "title": "Cron Jobs and Scheduled Tasks",
+      "description": "Durable cron jobs with Rivet Actors: schedule.after and schedule.at timers survive restarts and crashes, plus re-arming recurring jobs and idempotent handlers.",
+      "canonical_url": "https://rivet.dev/cookbook/cron-jobs",
+      "reference_url": "/metadata/skills/multiplayer-game/reference/cookbook/cron-jobs.md"
+    },
+    {
       "name": "general/cors",
       "title": "Cross-Origin Resource Sharing",
       "description": "Cross-Origin Resource Sharing (CORS) controls which origins (domains) can access your actors. When actors are exposed to the public internet, proper origin validation is critical to prevent security breaches and denial of service attacks.",
       "canonical_url": "https://rivet.dev/docs/general/cors",
       "reference_url": "/metadata/skills/multiplayer-game/reference/general/cors.md"
+    },
+    {
+      "name": "actors/inspector-tabs",
+      "title": "Custom Inspector Tabs",
+      "description": "Ship your own UI tabs alongside a Rivet Actor — embedded directly in the dashboard inspector.",
+      "canonical_url": "https://rivet.dev/docs/actors/inspector-tabs",
+      "reference_url": "/metadata/skills/multiplayer-game/reference/actors/inspector-tabs.md"
+    },
+    {
+      "name": "cookbook/per-tenant-database",
+      "title": "Database per Tenant",
+      "description": "Multi-tenant data isolation with one Rivet Actor per tenant: the actor key is the tenant id, so each tenant gets its own isolated dataset and migrations.",
+      "canonical_url": "https://rivet.dev/cookbook/per-tenant-database",
+      "reference_url": "/metadata/skills/multiplayer-game/reference/cookbook/per-tenant-database.md"
     },
     {
       "name": "actors/debugging",
@@ -157,6 +206,13 @@
       "description": "_AWS Lambda is coming soon_",
       "canonical_url": "https://rivet.dev/docs/connect/aws-lambda",
       "reference_url": "/metadata/skills/multiplayer-game/reference/connect/aws-lambda.md"
+    },
+    {
+      "name": "cookbook/vpc-air-gapped",
+      "title": "Deploying Rivet in a VPC or Air-Gapped Network",
+      "description": "Run Rivet entirely inside your own perimeter: single-binary or Docker Compose install, file system storage with no database infrastructure, and no outbound telemetry by default.",
+      "canonical_url": "https://rivet.dev/cookbook/vpc-air-gapped",
+      "reference_url": "/metadata/skills/multiplayer-game/reference/cookbook/vpc-air-gapped.md"
     },
     {
       "name": "connect/aws-ecs",
@@ -306,13 +362,6 @@
       "reference_url": "/metadata/skills/multiplayer-game/reference/general/environment-variables.md"
     },
     {
-      "name": "actors/ephemeral-variables",
-      "title": "Ephemeral Variables",
-      "description": "In addition to persisted state, Rivet provides a way to store ephemeral data that is not saved to permanent storage using `vars`. This is useful for temporary data that only needs to exist while the actor is running or data that cannot be serialized.",
-      "canonical_url": "https://rivet.dev/docs/actors/ephemeral-variables",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/actors/ephemeral-variables.md"
-    },
-    {
       "name": "actors/errors",
       "title": "Errors",
       "description": "Rivet provides robust error handling with security built in by default. Errors are handled differently based on whether they should be exposed to clients or kept private.",
@@ -325,13 +374,6 @@
       "description": "Full event catalog with payload shapes for agentOS.",
       "canonical_url": "https://rivet.dev/docs/agent-os/events",
       "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/events.md"
-    },
-    {
-      "name": "actors/postgres",
-      "title": "External SQL Database",
-      "description": "While actors can serve as a complete database solution, they can also complement your existing databases. For example, you might use actors to handle frequently-changing data that needs real-time access, while keeping less frequently accessed data in your traditional database.",
-      "canonical_url": "https://rivet.dev/docs/actors/postgres",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/actors/postgres.md"
     },
     {
       "name": "actors/fetch-and-websocket-handler",
@@ -383,13 +425,6 @@
       "reference_url": "/metadata/skills/multiplayer-game/reference/actors/appearance.md"
     },
     {
-      "name": "actors/state",
-      "title": "In-Memory State",
-      "description": "Actor state provides the best of both worlds: it's stored in-memory and persisted automatically. This lets you work with the data without added latency while still being able to survive crashes & upgrades.",
-      "canonical_url": "https://rivet.dev/docs/actors/state",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/actors/state.md"
-    },
-    {
       "name": "actors/input",
       "title": "Input Parameters",
       "description": "Pass initialization data to actors when creating instances",
@@ -430,6 +465,13 @@
       "description": "Limits and constraints for Rivet Actors.",
       "canonical_url": "https://rivet.dev/docs/actors/limits",
       "reference_url": "/metadata/skills/multiplayer-game/reference/actors/limits.md"
+    },
+    {
+      "name": "cookbook/live-cursors",
+      "title": "Live Cursors and Presence",
+      "description": "Live cursors and multiplayer presence with Rivet Actors: per-connection cursor state, realtime updates over events or raw WebSockets, and throttling.",
+      "canonical_url": "https://rivet.dev/cookbook/live-cursors",
+      "reference_url": "/metadata/skills/multiplayer-game/reference/cookbook/live-cursors.md"
     },
     {
       "name": "agent-os/llm-credentials",
@@ -551,6 +593,13 @@
       "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/agents/pi.md"
     },
     {
+      "name": "general/pool-configuration",
+      "title": "Pool Configuration",
+      "description": "Reference for runner pool configuration, including drain behavior, actor eviction rate limiting, and serverless-specific options.",
+      "canonical_url": "https://rivet.dev/docs/general/pool-configuration",
+      "reference_url": "/metadata/skills/multiplayer-game/reference/general/pool-configuration.md"
+    },
+    {
       "name": "self-hosting/postgres",
       "title": "PostgreSQL",
       "description": "Configure PostgreSQL for self-hosted Rivet deployments.",
@@ -649,6 +698,13 @@
       "reference_url": "/metadata/skills/multiplayer-game/reference/general/runtime-modes.md"
     },
     {
+      "name": "actors/quickstart/rust",
+      "title": "Rust Quickstart (Preview)",
+      "description": "Build a Rivet Actor in Rust",
+      "canonical_url": "https://rivet.dev/docs/actors/quickstart/rust",
+      "reference_url": "/metadata/skills/multiplayer-game/reference/actors/quickstart/rust.md"
+    },
+    {
       "name": "actors/sandbox",
       "title": "Sandbox Actor",
       "description": "The legacy TypeScript sandbox actor has been removed while the replacement runtime is rebuilt.",
@@ -724,6 +780,13 @@
       "description": "Use Drizzle ORM with embedded SQLite in Rivet Actors.",
       "canonical_url": "https://rivet.dev/docs/actors/sqlite-drizzle",
       "reference_url": "/metadata/skills/multiplayer-game/reference/actors/sqlite-drizzle.md"
+    },
+    {
+      "name": "actors/state",
+      "title": "State & Storage",
+      "description": "Choose where to store data in your actors: in-memory state for small serializable values, embedded SQLite for large or queryable data, and ephemeral variables for connections to external databases and non-serializable runtime objects.",
+      "canonical_url": "https://rivet.dev/docs/actors/state",
+      "reference_url": "/metadata/skills/multiplayer-game/reference/actors/state.md"
     },
     {
       "name": "clients/swift",

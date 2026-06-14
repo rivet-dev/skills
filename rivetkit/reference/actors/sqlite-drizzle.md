@@ -7,6 +7,8 @@
 ---
 Use Drizzle when you want typed schema, typed queries, and generated migrations on top of actor-local SQLite.
 
+For a high-level overview of where to store actor data, see [State & Storage](/docs/actors/state). For a worked multi-tenant pattern, see the cookbook: [Database per Tenant](/cookbook/per-tenant-database/).
+
 ## What is Drizzle good for?
 
 - **Typed schema**: define tables in TypeScript and get typed query results.

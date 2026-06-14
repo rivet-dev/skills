@@ -1,0 +1,179 @@
+# Node.js & Bun Quickstart
+
+> Source: `src/content/docs/actors/quickstart/backend.mdx`
+> Canonical URL: https://rivet.dev/docs/actors/quickstart/backend
+> Description: Get started with Rivet Actors in Node.js and Bun
+
+---
+## Steps
+
+### Add Rivet Skill to Coding Agent (Optional)
+
+If you're using an AI coding assistant (like Claude Code, Cursor, Windsurf, etc.), add Rivet skills for enhanced development assistance:
+
+```sh
+npx skills add rivet-dev/skills
+```
+
+### Install Rivet
+
+```sh
+npm install rivetkit
+```
+
+### Create Actors and Start Server
+
+Create a file with your actors, set up the registry, and start the server:
+
+```ts index.ts
+import { actor, setup } from "rivetkit";
+
+export const counter = actor({
+	state: { count: 0 },
+	actions: {
+		increment: (c, x: number) => {
+			c.state.count += x;
+			c.broadcast("newCount", c.state.count);
+			return c.state.count;
+		},
+	},
+});
+
+export const registry = setup({
+	use: { counter },
+});
+
+registry.start();
+```
+
+### Run Server
+
+```sh Node.js
+npx tsx --watch index.ts
+```
+
+```sh Bun
+bun --watch index.ts
+```
+
+```sh Deno
+deno run --allow-net --allow-read --allow-env --watch index.ts
+```
+
+Your server is now running on `http://localhost:6420`. Clients connect directly to the Rivet Engine on this port.
+
+### Connect To The Rivet Actor
+
+This code can run either in your frontend or within your backend:
+
+### TypeScript
+
+```ts index.ts @hide
+import { actor, setup } from "rivetkit";
+
+export const counter = actor({
+	state: { count: 0 },
+	actions: {
+		increment: (c, x: number) => {
+			c.state.count += x;
+			c.broadcast("newCount", c.state.count);
+			return c.state.count;
+		},
+	},
+});
+
+export const registry = setup({
+	use: { counter },
+});
+
+registry.start();
+```
+
+```ts client.ts
+import { createClient } from "rivetkit/client";
+import type { registry } from "./index";
+
+const client = createClient<typeof registry>("http://localhost:6420");
+
+// Get or create a counter actor for the key "my-counter"
+const counter = client.counter.getOrCreate(["my-counter"]);
+
+// Call actions
+const count = await counter.increment(3);
+console.log("New count:", count);
+
+// Listen to realtime events
+const connection = counter.connect();
+connection.on("newCount", (newCount: number) => {
+	console.log("Count changed:", newCount);
+});
+
+// Increment through connection
+await connection.increment(1);
+```
+
+See the [JavaScript client documentation](/docs/clients/javascript) for more information.
+
+### React
+
+```ts index.ts @hide
+import { actor, setup } from "rivetkit";
+
+export const counter = actor({
+	state: { count: 0 },
+	actions: {
+		increment: (c, x: number) => {
+			c.state.count += x;
+			c.broadcast("newCount", c.state.count);
+			return c.state.count;
+		},
+	},
+});
+
+export const registry = setup({
+	use: { counter },
+});
+
+registry.start();
+```
+
+```tsx Counter.tsx
+import { createRivetKit } from "@rivetkit/react";
+import { useState } from "react";
+import type { registry } from "./index";
+
+const { useActor } = createRivetKit<typeof registry>("http://localhost:6420");
+
+function Counter() {
+	const [count, setCount] = useState(0);
+
+	// Get or create a counter actor for the key "my-counter"
+	const counter = useActor({
+		name: "counter",
+		key: ["my-counter"]
+	});
+
+	// Listen to realtime events
+	counter.useEvent("newCount", (x: number) => setCount(x));
+
+	const increment = async () => {
+		// Call actions
+		await counter.connection?.increment(1);
+	};
+
+	return (
+		<div>
+			<p>Count: {count}</p>
+			<button onClick={increment}>Increment</button>
+		</div>
+	);
+}
+```
+
+See the [React documentation](/docs/clients/react) for more information.
+
+### Deploy
+
+## Configuration Options
+
+_Source doc path: /docs/actors/quickstart/backend_
