@@ -46,7 +46,7 @@ See also the [raw WebSocket handler example](https://github.com/rivet-dev/rivet/
 
 ### Via RivetKit Client
 
-Use the `.websocket()` method on an actor handle to open a WebSocket connection to the actor's `onWebSocket` handler. This can be executed from either your frontend or backend.
+Use the `.webSocket()` method on an actor handle to open a WebSocket connection to the actor's `onWebSocket` handler. This can be executed from either your frontend or backend.
 
 ```typescript index.ts @hide @nocheck
 import { actor, setup } from "rivetkit";
@@ -86,7 +86,7 @@ ws.addEventListener("message", (event) => {
 ws.send(JSON.stringify({ type: "chat", text: "Hello!" }));
 ```
 
-The `.websocket()` method returns a standard WebSocket.
+The `.webSocket()` method returns a standard WebSocket.
 
 ### Via getGatewayUrl
 
@@ -195,6 +195,12 @@ import { actor, setup } from "rivetkit";
 
 const chatActor = actor({
     state: { messages: [] as string[] },
+    onWebSocket: (c, websocket) => {
+        websocket.addEventListener("message", (event) => {
+            c.state.messages.push(event.data as string);
+            websocket.send(event.data as string);
+        });
+    },
     actions: {}
 });
 

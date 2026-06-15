@@ -728,18 +728,20 @@ sequenceDiagram
 - [Actor Keys](reference/actors/keys.md)
 - [Actor Scheduling](reference/actors/schedule.md)
 - [Actor Statuses](reference/actors/statuses.md)
-- [AI and User-Generated Rivet Actors](reference/actors/ai-and-user-generated-actors.md)
 - [Authentication](reference/actors/authentication.md)
+- [Cloudflare Workers Quickstart](reference/actors/quickstart/cloudflare.md)
 - [Communicating Between Actors](reference/actors/communicating-between-actors.md)
 - [Connections](reference/actors/connections.md)
 - [Custom Inspector Tabs](reference/actors/inspector-tabs.md)
 - [Debugging](reference/actors/debugging.md)
 - [Design Patterns](reference/actors/design-patterns.md)
 - [Destroying Actors](reference/actors/destroy.md)
+- [Effect.ts Quickstart (Beta)](reference/actors/quickstart/effect.md)
 - [Errors](reference/actors/errors.md)
 - [Fetch and WebSocket Handler](reference/actors/fetch-and-websocket-handler.md)
 - [Helper Types](reference/actors/helper-types.md)
 - [Icons & Names](reference/actors/appearance.md)
+- [In-Memory State](reference/actors/state.md)
 - [Input Parameters](reference/actors/input.md)
 - [Lifecycle](reference/actors/lifecycle.md)
 - [Limits](reference/actors/limits.md)
@@ -752,13 +754,12 @@ sequenceDiagram
 - [Queues & Run Loops](reference/actors/queues.md)
 - [React Quickstart](reference/actors/quickstart/react.md)
 - [Realtime](reference/actors/events.md)
-- [Rust Quickstart (Preview)](reference/actors/quickstart/rust.md)
-- [Sandbox Actor](reference/actors/sandbox.md)
+- [Rust Quickstart (Beta)](reference/actors/quickstart/rust.md)
 - [Scaling & Concurrency](reference/actors/scaling.md)
 - [Sharing and Joining State](reference/actors/sharing-and-joining-state.md)
 - [SQLite](reference/actors/sqlite.md)
 - [SQLite + Drizzle](reference/actors/sqlite-drizzle.md)
-- [State & Storage](reference/actors/state.md)
+- [Supabase Functions Quickstart](reference/actors/quickstart/supabase.md)
 - [Testing](reference/actors/testing.md)
 - [Troubleshooting](reference/actors/troubleshooting.md)
 - [Types](reference/actors/types.md)
@@ -774,6 +775,7 @@ sequenceDiagram
 - [Benchmarks](reference/agent-os/benchmarks.md)
 - [Configuration](reference/agent-os/configuration.md)
 - [Core Package](reference/agent-os/core.md)
+- [Crash Course](reference/agent-os/crash-course.md)
 - [Cron Jobs](reference/agent-os/cron.md)
 - [Deployment](reference/agent-os/deployment.md)
 - [Embedded LLM Gateway](reference/agent-os/llm-gateway.md)
@@ -783,7 +785,6 @@ sequenceDiagram
 - [LLM Credentials](reference/agent-os/llm-credentials.md)
 - [Multiplayer](reference/agent-os/multiplayer.md)
 - [Networking & Previews](reference/agent-os/networking.md)
-- [Overview](reference/agent-os.md)
 - [Permissions](reference/agent-os/permissions.md)
 - [Persistence & Sleep](reference/agent-os/persistence.md)
 - [Pi](reference/agent-os/agents/pi.md)
@@ -801,27 +802,16 @@ sequenceDiagram
 - [Webhooks](reference/agent-os/webhooks.md)
 - [Workflow Automation](reference/agent-os/workflows.md)
 
+### Cli
+
+- [CLI](reference/cli.md)
+
 ### Clients
 
 - [Node.js & Bun](reference/clients/javascript.md)
 - [React](reference/clients/react.md)
 - [Swift](reference/clients/swift.md)
 - [SwiftUI](reference/clients/swiftui.md)
-
-### Connect
-
-- [Deploy To Amazon Web Services Lambda](reference/connect/aws-lambda.md)
-- [Deploying to AWS ECS](reference/connect/aws-ecs.md)
-- [Deploying to Cloudflare Workers](reference/connect/cloudflare.md)
-- [Deploying to Freestyle](reference/connect/freestyle.md)
-- [Deploying to Google Cloud Run](reference/connect/gcp-cloud-run.md)
-- [Deploying to Hetzner](reference/connect/hetzner.md)
-- [Deploying to Kubernetes](reference/connect/kubernetes.md)
-- [Deploying to Railway](reference/connect/railway.md)
-- [Deploying to Rivet Compute](reference/connect/rivet-compute.md)
-- [Deploying to Supabase Functions](reference/connect/supabase.md)
-- [Deploying to Vercel](reference/connect/vercel.md)
-- [Deploying to VMs & Bare Metal](reference/connect/vm-and-bare-metal.md)
 
 ### Cookbook
 
@@ -834,6 +824,21 @@ sequenceDiagram
 - [Deploying Rivet in a VPC or Air-Gapped Network](reference/cookbook/vpc-air-gapped.md)
 - [Live Cursors and Presence](reference/cookbook/live-cursors.md)
 - [Multiplayer Game](reference/cookbook/multiplayer-game.md)
+
+### Deploy
+
+- [Deploy To Amazon Web Services Lambda](reference/deploy/aws-lambda.md)
+- [Deploying to AWS ECS](reference/deploy/aws-ecs.md)
+- [Deploying to Cloudflare Workers](reference/deploy/cloudflare.md)
+- [Deploying to Freestyle](reference/deploy/freestyle.md)
+- [Deploying to Google Cloud Run](reference/deploy/gcp-cloud-run.md)
+- [Deploying to Hetzner](reference/deploy/hetzner.md)
+- [Deploying to Kubernetes](reference/deploy/kubernetes.md)
+- [Deploying to Railway](reference/deploy/railway.md)
+- [Deploying to Rivet Compute](reference/deploy/rivet-compute.md)
+- [Deploying to Supabase Functions](reference/deploy/supabase.md)
+- [Deploying to Vercel](reference/deploy/vercel.md)
+- [Deploying to VMs & Bare Metal](reference/deploy/vm-and-bare-metal.md)
 
 ### General
 
@@ -850,6 +855,7 @@ sequenceDiagram
 - [Production Checklist](reference/general/production-checklist.md)
 - [Registry Configuration](reference/general/registry-configuration.md)
 - [Runtime Modes](reference/general/runtime-modes.md)
+- [WASM vs Native SDK](reference/general/wasm-vs-native-sdk.md)
 
 ### Self Hosting
 

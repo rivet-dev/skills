@@ -1,29 +1,29 @@
-# Rust Quickstart (Preview)
+# Rust Quickstart (Beta)
 
 > Source: `src/content/docs/actors/quickstart/rust.mdx`
 > Canonical URL: https://rivet.dev/docs/actors/quickstart/rust
 > Description: Build a Rivet Actor in Rust
 
 ---
-Rust support is in preview. The supported public Rust API is `rivetkit` and `rivetkit-client`; lower-level crates are internal implementation details and do not carry a stability guarantee.
+Rust support is in beta. The supported public Rust API is `rivetkit` and `rivetkit-client`; lower-level crates are internal implementation details and do not carry a stability guarantee. See the full API reference on [docs.rs/rivetkit](https://docs.rs/rivetkit), or the runnable [`hello-world-rust`](https://github.com/rivet-dev/rivet/tree/main/examples/hello-world-rust) example.
 
 ## Steps
 
 ### Add Rivet
 
-Add the `rivetkit` crate:
+Add the `rivetkit` crate and its companions:
 
 ```sh
-cargo add rivetkit@2.3.0-rc.12 anyhow async-trait
+cargo add rivetkit anyhow async-trait
 cargo add serde --features derive
 cargo add tokio --features full
 ```
 
-### Create An Actor And Serve
+### Define Your Actor
 
-An actor is a type that implements `Actor`, plus one `Handles` implementation for each action. Persisted state lives in `type State`; ephemeral runtime state is just fields on your actor struct.
+Put the actor in `src/lib.rs` so both your server and your client can share the same types. An actor is a type that implements `Actor`, plus one `Handles` implementation for each action. Persisted state lives in `type State`; ephemeral runtime state is just fields on your actor struct.
 
-```rust src/main.rs
+```rust src/lib.rs
 use std::{future::Future, pin::Pin, sync::Arc};
 
 use async_trait::async_trait;
@@ -32,16 +32,16 @@ use serde::{Deserialize, Serialize};
 
 type BoxFuture<T> = Pin<Box<dyn Future<Output = Result<T>> + Send>>;
 
-struct Counter;
+pub struct Counter;
 
 #[derive(Default, Serialize, Deserialize)]
-struct CounterState {
-	count: i64,
+pub struct CounterState {
+	pub count: i64,
 }
 
 #[derive(Serialize, Deserialize)]
-struct Increment {
-	amount: i64,
+pub struct Increment {
+	pub amount: i64,
 }
 
 impl Action for Increment {
@@ -51,8 +51,8 @@ impl Action for Increment {
 }
 
 #[derive(Serialize, Deserialize)]
-struct NewCount {
-	count: i64,
+pub struct NewCount {
+	pub count: i64,
 }
 
 impl Event for NewCount {
@@ -95,24 +95,39 @@ impl Handles<Increment> for Counter {
 	}
 }
 
-#[tokio::main]
-async fn main() -> Result<()> {
+pub fn registry() -> Registry {
 	let mut registry = Registry::new();
 	registry.register_actor::<Counter>("counter");
-	registry.start().await
+	registry
 }
 ```
 
+### Serve The Registry
+
+Your `src/main.rs` just starts the registry from the library:
+
+```rust src/main.rs
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
+	counter::registry().start().await
+}
+```
+
+Replace `counter` with your crate name (the package `name` in `Cargo.toml`, with dashes as underscores).
+
 ### Run The Server
 
-The Rust runtime connects to the Rivet Engine. Build the engine binary once, then start your server. `RIVET_ENGINE_BINARY_PATH` tells the runtime where to find the engine; it spawns or reuses a local engine at `http://localhost:6420`.
+The Rust runtime connects to the Rivet Engine. Setting `RIVETKIT_ENGINE_AUTO_DOWNLOAD=1` lets the runtime download and cache a matching engine binary the first time you run, so there is nothing else to install:
 
 ```sh
-cargo build -p rivet-engine
-RIVET_ENGINE_BINARY_PATH=./target/debug/rivet-engine cargo run
+RIVETKIT_ENGINE_AUTO_DOWNLOAD=1 cargo run
 ```
 
 Your server now connects to the Rivet Engine on `http://localhost:6420`. Clients connect directly to the engine on this port.
+
+Visit [http://localhost:6420](http://localhost:6420) in your browser (or point your AI agent at it) to open the Rivet developer tools and inspect your actors live.
+
+Already have an engine binary? Set `RIVET_ENGINE_BINARY_PATH=/path/to/rivet-engine` to point at it instead. If you are working inside the [Rivet monorepo](https://github.com/rivet-dev/rivet), a local `cargo build -p rivet-engine` is discovered automatically from `target/debug`.
 
 ### Connect To The Rivet Actor
 
@@ -120,55 +135,15 @@ This code can run either in your frontend or within your backend:
 
 ### Rust
 
-```rust src/client.rs
-use anyhow::Result;
+Add a `src/bin/client.rs` that imports the same actor types from your library. There is no need to redefine the actor on the client.
+
+```rust src/bin/client.rs
+use counter::{Counter, Increment, NewCount};
 use rivetkit::{
-	client::{Client, ClientConfig, GetOrCreateOptions},
+	client::{Client, ClientConfig},
 	prelude::*,
 	TypedClientExt,
 };
-use serde::{Deserialize, Serialize};
-
-struct Counter;
-
-#[derive(Serialize, Deserialize)]
-struct Increment {
-	amount: i64,
-}
-
-impl Action for Increment {
-	type Output = i64;
-
-	const NAME: &'static str = "increment";
-}
-
-#[derive(Serialize, Deserialize)]
-struct NewCount {
-	count: i64,
-}
-
-impl Event for NewCount {
-	const NAME: &'static str = "newCount";
-}
-
-impl Actor for Counter {
-	type State = ();
-	type Input = ();
-	type Actions = (Increment,);
-	type Events = (NewCount,);
-	type Queue = ();
-	type ConnParams = ();
-	type ConnState = ();
-	type Action = action::Raw;
-}
-
-impl Handles<Increment> for Counter {
-	type Future = std::future::Ready<Result<i64>>;
-
-	fn handle(self: std::sync::Arc<Self>, _ctx: Ctx<Self>, _action: Increment) -> Self::Future {
-		unreachable!("client-only type marker")
-	}
-}
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -188,6 +163,12 @@ async fn main() -> Result<()> {
 }
 ```
 
+With the server still running, start the client in another terminal:
+
+```sh
+cargo run --bin client
+```
+
 See the [`hello-world-rust`](https://github.com/rivet-dev/rivet/tree/main/examples/hello-world-rust) example for a complete runnable counter.
 
 ### TypeScript
@@ -201,15 +182,15 @@ const client = createClient("http://localhost:6420");
 
 const counter = client.counter.getOrCreate(["my-counter"]);
 
-const count = await counter.increment(3);
-console.log("New count:", count);
-
-const connection = counter.connect();
-connection.on("newCount", (newCount: { count: number }) => {
-	console.log("Count changed:", newCount.count);
+const counterConnection = counter.connect();
+counterConnection.on("newCount", (event) => {
+	console.log("Event count:", event.count);
 });
 
-await connection.increment(1);
+const count = await counterConnection.increment(3);
+console.log("New count:", count);
+
+await counterConnection.increment(1);
 ```
 
 See the [JavaScript client documentation](/docs/clients/javascript) for more information.
@@ -230,11 +211,13 @@ function Counter() {
 		key: ["my-counter"],
 	});
 
-	counter.useEvent("newCount", (event: { count: number }) => setCount(event.count));
-
 	const increment = async () => {
 		await counter.connection?.increment(1);
 	};
+
+	counter.useEvent("newCount", (event) => {
+		setCount(event.count);
+	});
 
 	return (
 		<div>
@@ -248,5 +231,19 @@ function Counter() {
 See the [React documentation](/docs/clients/react) for more information.
 
 ### Deploy
+
+## Next Steps
+
+	
+- [API Reference](https://docs.rs/rivetkit) — Full `rivetkit` crate documentation on docs.rs.
+
+	
+- [Actions](/docs/actors/actions) — Define the RPC surface clients call on your actor.
+
+	
+- [State](/docs/actors/state) — Persist and load actor state across sleeps and restarts.
+
+	
+- [Events](/docs/actors/events) — Broadcast realtime updates to connected clients.
 
 _Source doc path: /docs/actors/quickstart/rust_

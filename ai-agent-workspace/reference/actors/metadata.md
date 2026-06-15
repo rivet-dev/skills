@@ -132,6 +132,6 @@ console.log("Actor metadata:", metadata);
 ## API Reference
 
 - [`ActorDefinition`](/typedoc/interfaces/rivetkit.mod.ActorDefinition.html) - Interface for defining metadata
-- [`CreateOptions`](/typedoc/interfaces/rivetkit.client_mod.CreateOptions.html) - Includes metadata options
+- [`CreateOptions`](/typedoc/interfaces/rivetkit.client_mod.CreateOptions.html) - Options for creating an actor, including `region` and `input`
 
 _Source doc path: /docs/actors/metadata_

@@ -1,0 +1,96 @@
+# Supabase Functions Quickstart
+
+> Source: `src/content/docs/actors/quickstart/supabase.mdx`
+> Canonical URL: https://rivet.dev/docs/actors/quickstart/supabase
+> Description: Set up a Rivet project locally targeting Supabase Edge Functions.
+
+---
+Set up a Rivet project locally that runs on Supabase Edge Functions. The `@rivetkit/supabase` package wires the WebAssembly runtime for you.
+
+Prefer to start from a complete project? See the runnable [`hello-world-supabase-functions`](https://github.com/rivet-dev/rivet/tree/main/examples/hello-world-supabase-functions) example.
+
+## Steps
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/)
+- [Supabase CLI](https://supabase.com/docs/guides/cli)
+- Docker, for Supabase's local Edge Runtime
+
+The CLI runs the local Rivet engine as a bundled native binary, so Docker is only needed for Supabase itself. A Supabase project is only needed to deploy.
+
+### Create the Function
+
+```sh
+npx supabase functions new rivet
+```
+
+Add the packages used by the function:
+
+```sh
+npm install rivetkit @rivetkit/supabase
+```
+
+### Configure the Function
+
+Call `serve` from `@rivetkit/supabase`. It loads the WebAssembly runtime and serves the Rivet handler.
+
+```ts supabase/functions/rivet/index.ts @nocheck
+import { actor } from "rivetkit";
+import { serve, setup } from "@rivetkit/supabase";
+
+const counter = actor({
+  state: { count: 0 },
+  actions: {
+    increment: (c, amount = 1) => {
+      c.state.count += amount;
+      return c.state.count;
+    },
+  },
+});
+
+// `setup` returns a typed registry, so a client can type itself with
+// `typeof registry`.
+export const registry = setup({ use: { counter } });
+
+await serve(registry);
+```
+
+### Run Locally
+
+Start Rivet. The CLI runs the local engine, spawns `supabase functions serve` for you, and populates the connection values:
+
+```sh
+npx @rivetkit/cli dev --provider supabase
+```
+
+Visit [http://localhost:6420](http://localhost:6420) in your browser (or point your AI agent at it) to open the Rivet developer tools and inspect your actors live.
+
+### Call the Actor
+
+Connect to your actor from a client. This connects directly to the local engine on `http://localhost:6420`:
+
+```ts client.ts @nocheck
+import { createClient } from "rivetkit/client";
+import type { registry } from "./supabase/functions/rivet/index";
+
+const client = createClient<typeof registry>("http://localhost:6420");
+
+const counter = client.counter.getOrCreate(["my-counter"]);
+const count = await counter.increment(3);
+console.log("New count:", count);
+```
+
+See the [JavaScript client documentation](/docs/clients/javascript) for more information.
+
+### Deploy
+
+Ready to ship? See [Deploying to Supabase Functions](/docs/deploy/supabase).
+
+## Related
+
+- [Quickstart](/docs/actors/quickstart)
+- [Deploying to Supabase Functions](/docs/deploy/supabase)
+- [SQLite](/docs/actors/sqlite)
+
+_Source doc path: /docs/actors/quickstart/supabase_

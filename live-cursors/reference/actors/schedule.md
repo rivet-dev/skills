@@ -59,7 +59,7 @@ const reminderService = actor({
   state: { reminders: {} } as ReminderState,
 
   actions: {
-    setReminder: (c, userId: string, message: string, delayMs: number) => {
+    setReminder: async (c, userId: string, message: string, delayMs: number) => {
       const reminderId = crypto.randomUUID();
 
       // Store the reminder in state
@@ -70,7 +70,7 @@ const reminderService = actor({
       };
 
       // Schedule the sendReminder action to run after the delay
-      c.schedule.after(delayMs, "sendReminder", reminderId);
+      await c.schedule.after(delayMs, "sendReminder", reminderId);
 
       return { reminderId };
     },

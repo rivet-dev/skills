@@ -30,11 +30,12 @@ Loading ──Start──▶ Ready ──spawn driver──▶ Started
 
 **On Create** (runs once per actor)
 
-1. `createState`
-2. `onCreate`
-3. `createVars`
-4. `onWake`
-5. `run` (background, does not block)
+1. `onMigrate`
+2. `createState`
+3. `onCreate`
+4. `createVars`
+5. `onWake`
+6. `run` (background, does not block)
 
 **On Destroy**
 
@@ -42,9 +43,10 @@ Loading ──Start──▶ Ready ──spawn driver──▶ Started
 
 **On Wake** (after sleep, restart, or crash)
 
-1. `createVars`
-2. `onWake`
-3. `run` (background, does not block)
+1. `onMigrate`
+2. `createVars`
+3. `onWake`
+4. `run` (background, does not block)
 
 **On Sleep** (after idle period)
 
@@ -92,6 +94,26 @@ const counter = actor({
 });
 ```
 
+### `onMigrate`
+
+[API Reference](/typedoc/interfaces/rivetkit.mod.ActorDefinition.html)
+
+The `onMigrate` hook runs on every actor start, before `createState`, `onCreate`, `createVars`, and `onWake`. Can be async. It runs early so that database migrations are applied before any other lifecycle hook accesses the database. The second parameter is `true` when the actor is being created for the first time.
+
+```typescript
+import { actor } from "rivetkit";
+
+const counter = actor({
+  state: { count: 0 },
+
+  onMigrate: (c, isNew) => {
+    // Run database migrations before any other lifecycle hook
+  },
+
+  actions: { /* ... */ }
+});
+```
+
 ### `createState`
 
 [API Reference](/typedoc/interfaces/rivetkit.mod.ActorDefinition.html)
@@ -127,7 +149,7 @@ const counter = actor({
 
 [API Reference](/typedoc/interfaces/rivetkit.mod.ActorDefinition.html)
 
-The `createVars` function dynamically initializes ephemeral variables. Can be async. Use this when you need to initialize values at runtime. The `driverCtx` parameter provides driver-specific context. See [ephemeral variables documentation](/docs/actors/state#ephemeral-variables) for more information.
+The `createVars` function dynamically initializes ephemeral variables. Can be async. Use this when you need to initialize values at runtime. See [ephemeral variables documentation](/docs/actors/state#ephemeral-variables) for more information.
 
 ```typescript
 import { actor } from "rivetkit";
@@ -139,7 +161,7 @@ interface CounterVars {
 
 const counter = actor({
   state: { count: 0 },
-  createVars: (c, driverCtx): CounterVars => ({
+  createVars: (c): CounterVars => ({
     lastAccessTime: Date.now(),
     emitter: new EventTarget()
   }),
@@ -912,8 +934,8 @@ const myActor = actor({
     // Total graceful shutdown budget for both sleep and destroy. Default: 15000ms.
     sleepGracePeriod: 15_000,
 
-    // Interval for saving state (default: 10000ms)
-    stateSaveInterval: 10_000,
+    // Interval for saving state (default: 1000ms)
+    stateSaveInterval: 1_000,
 
     // Timeout for action execution (default: 60000ms)
     actionTimeout: 60_000,
@@ -942,7 +964,7 @@ const myActor = actor({
 | `createConnStateTimeout` | 5000ms | Timeout for `createConnState` function |
 | `onConnectTimeout` | 5000ms | Timeout for `onConnect` hook |
 | `sleepGracePeriod` | 15000ms | Total graceful shutdown window for both sleep and destroy |
-| `stateSaveInterval` | 10000ms | Interval for persisting state |
+| `stateSaveInterval` | 1000ms | Interval for persisting state |
 | `actionTimeout` | 60000ms | Timeout for action execution |
 | `connectionLivenessTimeout` | 2500ms | Timeout for connection liveness check |
 | `connectionLivenessInterval` | 5000ms | Interval for connection liveness check |

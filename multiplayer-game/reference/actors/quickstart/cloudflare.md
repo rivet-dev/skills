@@ -1,0 +1,263 @@
+# Cloudflare Workers Quickstart
+
+> Source: `src/content/docs/actors/quickstart/cloudflare.mdx`
+> Canonical URL: https://rivet.dev/docs/actors/quickstart/cloudflare
+> Description: Set up a Rivet project locally targeting Cloudflare Workers.
+
+---
+Set up a Rivet project locally that runs on Cloudflare Workers. The `@rivetkit/cloudflare-workers` package wires the WebAssembly runtime for you.
+
+Prefer to start from a complete project? See the runnable [`hello-world-cloudflare-workers`](https://github.com/rivet-dev/rivet/tree/main/examples/hello-world-cloudflare-workers) example (with [Hono](https://github.com/rivet-dev/rivet/tree/main/examples/hello-world-cloudflare-workers-hono) and [raw router](https://github.com/rivet-dev/rivet/tree/main/examples/hello-world-cloudflare-workers-raw) variants).
+
+## Steps
+
+### Install Packages
+
+```sh
+npm install rivetkit @rivetkit/cloudflare-workers
+npm install --save-dev wrangler
+```
+
+### Configure Wrangler
+
+```toml wrangler.toml
+name = "rivetkit-cloudflare"
+main = "src/index.ts"
+compatibility_date = "2025-04-01"
+compatibility_flags = ["nodejs_compat"]
+```
+
+The `nodejs_compat` flag is required so the runtime can read its connection config from `process.env`.
+
+### Create the Worker
+
+`createHandler` serves the Rivet manager API on `/api/rivet`. Pick how you want to handle your own routes:
+
+- **Default**: Rivet handles everything.
+- **Hono**: Mount a [Hono](https://hono.dev) app for your routes (`npm install hono`).
+- **Raw**: Provide a `fetch` and route requests yourself.
+
+```ts Default @nocheck
+import { actor } from "rivetkit";
+import { createHandler } from "@rivetkit/cloudflare-workers";
+
+const counter = actor({
+  state: { count: 0 },
+  actions: {
+    increment: (c, amount = 1) => {
+      c.state.count += amount;
+      return c.state.count;
+    },
+  },
+});
+
+export default createHandler({ use: { counter } });
+```
+
+```ts Hono @nocheck
+import { actor } from "rivetkit";
+import { createClient } from "rivetkit/client";
+import { createHandler, setup } from "@rivetkit/cloudflare-workers";
+import { Hono } from "hono";
+
+const counter = actor({
+  state: { count: 0 },
+  actions: {
+    increment: (c, amount = 1) => {
+      c.state.count += amount;
+      return c.state.count;
+    },
+  },
+});
+
+// `setup` returns a typed registry, so the client below is fully typed.
+const registry = setup({ use: { counter } });
+
+const app = new Hono();
+
+app.get("/", (c) => c.text("Hello from Hono + Rivet Actors!"));
+
+app.post("/increment/:name", async (c) => {
+  // `createClient` reads RIVET_ENDPOINT from the environment (passed by `rivet
+  // dev`, or set as a Worker secret in production).
+  const client = createClient<typeof registry>();
+  const count = await client.counter.getOrCreate(c.req.param("name")).increment(1);
+  return c.json({ count });
+});
+
+// Rivet keeps `/api/rivet`; Hono handles everything else.
+export default createHandler(registry, { fetch: app.fetch });
+```
+
+```ts Raw @nocheck
+import { actor } from "rivetkit";
+import { createClient } from "rivetkit/client";
+import { createHandler, setup } from "@rivetkit/cloudflare-workers";
+
+const counter = actor({
+  state: { count: 0 },
+  actions: {
+    increment: (c, amount = 1) => {
+      c.state.count += amount;
+      return c.state.count;
+    },
+  },
+});
+
+// `setup` returns a typed registry, so the client below is fully typed.
+const registry = setup({ use: { counter } });
+
+// Rivet keeps `/api/rivet`; your `fetch` handles everything else.
+export default createHandler(registry, {
+  fetch: async (request: Request) => {
+    const url = new URL(request.url);
+
+    if (url.pathname === "/") {
+      return new Response("Hello from a raw Rivet Worker router!");
+    }
+
+    const increment = url.pathname.match(/^\/increment\/(.+)$/);
+    if (request.method === "POST" && increment) {
+      // `createClient` reads RIVET_ENDPOINT from the environment (passed by
+      // `rivet dev`, or set as a Worker secret in production).
+      const client = createClient<typeof registry>();
+      const count = await client.counter.getOrCreate(increment[1]).increment(1);
+      return Response.json({ count });
+    }
+
+    return new Response("Not found", { status: 404 });
+  },
+});
+```
+
+### Run Locally
+
+Start Rivet. The CLI runs the local engine and spawns `wrangler dev` for you:
+
+```sh
+npx @rivetkit/cli dev --provider cloudflare
+```
+
+Visit [http://localhost:6420](http://localhost:6420) in your browser (or point your AI agent at it) to open the Rivet developer tools and inspect your actors live.
+
+### Connect To The Rivet Actor
+
+This code can run either in your frontend or within your backend. It connects directly to the local engine on `http://localhost:6420`:
+
+### TypeScript
+
+```ts index.ts @hide
+import { actor, setup } from "rivetkit";
+
+export const counter = actor({
+	state: { count: 0 },
+	actions: {
+		increment: (c, x: number) => {
+			c.state.count += x;
+			c.broadcast("newCount", c.state.count);
+			return c.state.count;
+		},
+	},
+});
+
+export const registry = setup({
+	use: { counter },
+});
+
+registry.start();
+```
+
+```ts client.ts
+import { createClient } from "rivetkit/client";
+import type { registry } from "./index";
+
+const client = createClient<typeof registry>("http://localhost:6420");
+
+// Get or create a counter actor for the key "my-counter"
+const counter = client.counter.getOrCreate(["my-counter"]);
+
+// Call actions
+const count = await counter.increment(3);
+console.log("New count:", count);
+
+// Listen to realtime events
+const connection = counter.connect();
+connection.on("newCount", (newCount: number) => {
+	console.log("Count changed:", newCount);
+});
+
+// Increment through connection
+await connection.increment(1);
+```
+
+See the [JavaScript client documentation](/docs/clients/javascript) for more information.
+
+### React
+
+```ts index.ts @hide
+import { actor, setup } from "rivetkit";
+
+export const counter = actor({
+	state: { count: 0 },
+	actions: {
+		increment: (c, x: number) => {
+			c.state.count += x;
+			c.broadcast("newCount", c.state.count);
+			return c.state.count;
+		},
+	},
+});
+
+export const registry = setup({
+	use: { counter },
+});
+
+registry.start();
+```
+
+```tsx Counter.tsx
+import { createRivetKit } from "@rivetkit/react";
+import { useState } from "react";
+import type { registry } from "./index";
+
+const { useActor } = createRivetKit<typeof registry>("http://localhost:6420");
+
+function Counter() {
+	const [count, setCount] = useState(0);
+
+	// Get or create a counter actor for the key "my-counter"
+	const counter = useActor({
+		name: "counter",
+		key: ["my-counter"]
+	});
+
+	// Listen to realtime events
+	counter.useEvent("newCount", (x: number) => setCount(x));
+
+	const increment = async () => {
+		// Call actions
+		await counter.connection?.increment(1);
+	};
+
+	return (
+		<div>
+			<p>Count: {count}</p>
+			<button onClick={increment}>Increment</button>
+		</div>
+	);
+}
+```
+
+See the [React documentation](/docs/clients/react) for more information.
+
+### Deploy
+
+Ready to ship? See [Deploying to Cloudflare Workers](/docs/deploy/cloudflare).
+
+## Related
+
+- [Quickstart](/docs/actors/quickstart)
+- [Deploying to Cloudflare Workers](/docs/deploy/cloudflare)
+- [SQLite](/docs/actors/sqlite)
+
+_Source doc path: /docs/actors/quickstart/cloudflare_

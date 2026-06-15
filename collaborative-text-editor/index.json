@@ -2,7 +2,7 @@
   "name": "collaborative-text-editor",
   "description": "Build a collaborative text editor backend with Yjs CRDTs and Rivet Actors: per-document actors relay sync and awareness updates and persist snapshots.",
   "skill_url": "/metadata/skills/collaborative-text-editor/SKILL.md",
-  "generated_at": "2026-06-14T06:02:28.608Z",
+  "generated_at": "2026-06-15T00:17:36.691Z",
   "references": [
     {
       "name": "actors/access-control",
@@ -75,13 +75,6 @@
       "reference_url": "/metadata/skills/collaborative-text-editor/reference/cookbook/ai-agent-workspace.md"
     },
     {
-      "name": "actors/ai-and-user-generated-actors",
-      "title": "AI and User-Generated Rivet Actors",
-      "description": "This guide shows you how to programmatically create sandboxed Rivet environments and deploy custom actor code to them.",
-      "canonical_url": "https://rivet.dev/docs/actors/ai-and-user-generated-actors",
-      "reference_url": "/metadata/skills/collaborative-text-editor/reference/actors/ai-and-user-generated-actors.md"
-    },
-    {
       "name": "general/architecture",
       "title": "Architecture",
       "description": "- rivetkit is the typescript library used for both local development & to connect your application to rivet - a rivetkit instance is called a \"runner.\" you can run multiple runners to scale rivetkit horiziotnally. read omre about runners below.",
@@ -115,6 +108,20 @@
       "description": "Build a realtime chat room backend with Rivet Actors: one actor per room, SQLite-backed message history, and WebSocket broadcast to every connected client.",
       "canonical_url": "https://rivet.dev/cookbook/chat-room",
       "reference_url": "/metadata/skills/collaborative-text-editor/reference/cookbook/chat-room.md"
+    },
+    {
+      "name": "cli",
+      "title": "CLI",
+      "description": "Reference for the optional rivet CLI: deploy to Rivet Compute and run local dev for serverless platforms.",
+      "canonical_url": "https://rivet.dev/docs/cli",
+      "reference_url": "/metadata/skills/collaborative-text-editor/reference/cli.md"
+    },
+    {
+      "name": "actors/quickstart/cloudflare",
+      "title": "Cloudflare Workers Quickstart",
+      "description": "Set up a Rivet project locally targeting Cloudflare Workers.",
+      "canonical_url": "https://rivet.dev/docs/actors/quickstart/cloudflare",
+      "reference_url": "/metadata/skills/collaborative-text-editor/reference/actors/quickstart/cloudflare.md"
     },
     {
       "name": "cookbook/collaborative-text-editor",
@@ -159,6 +166,13 @@
       "reference_url": "/metadata/skills/collaborative-text-editor/reference/agent-os/core.md"
     },
     {
+      "name": "agent-os/crash-course",
+      "title": "Crash Course",
+      "description": "Run coding agents inside isolated VMs with full filesystem, process, and network control.",
+      "canonical_url": "https://rivet.dev/docs/agent-os/crash-course",
+      "reference_url": "/metadata/skills/collaborative-text-editor/reference/agent-os/crash-course.md"
+    },
+    {
       "name": "agent-os/cron",
       "title": "Cron Jobs",
       "description": "Schedule recurring commands and agent sessions in agentOS VMs.",
@@ -201,11 +215,11 @@
       "reference_url": "/metadata/skills/collaborative-text-editor/reference/actors/debugging.md"
     },
     {
-      "name": "connect/aws-lambda",
+      "name": "deploy/aws-lambda",
       "title": "Deploy To Amazon Web Services Lambda",
       "description": "_AWS Lambda is coming soon_",
-      "canonical_url": "https://rivet.dev/docs/connect/aws-lambda",
-      "reference_url": "/metadata/skills/collaborative-text-editor/reference/connect/aws-lambda.md"
+      "canonical_url": "https://rivet.dev/docs/deploy/aws-lambda",
+      "reference_url": "/metadata/skills/collaborative-text-editor/reference/deploy/aws-lambda.md"
     },
     {
       "name": "cookbook/vpc-air-gapped",
@@ -215,81 +229,81 @@
       "reference_url": "/metadata/skills/collaborative-text-editor/reference/cookbook/vpc-air-gapped.md"
     },
     {
-      "name": "connect/aws-ecs",
+      "name": "deploy/aws-ecs",
       "title": "Deploying to AWS ECS",
       "description": "Run your backend on Amazon ECS with Fargate.",
-      "canonical_url": "https://rivet.dev/docs/connect/aws-ecs",
-      "reference_url": "/metadata/skills/collaborative-text-editor/reference/connect/aws-ecs.md"
+      "canonical_url": "https://rivet.dev/docs/deploy/aws-ecs",
+      "reference_url": "/metadata/skills/collaborative-text-editor/reference/deploy/aws-ecs.md"
     },
     {
-      "name": "connect/cloudflare",
+      "name": "deploy/cloudflare",
       "title": "Deploying to Cloudflare Workers",
-      "description": "Run RivetKit on Cloudflare Workers with the WebAssembly runtime.",
-      "canonical_url": "https://rivet.dev/docs/connect/cloudflare",
-      "reference_url": "/metadata/skills/collaborative-text-editor/reference/connect/cloudflare.md"
+      "description": "Deploy an existing Rivet project to Cloudflare Workers.",
+      "canonical_url": "https://rivet.dev/docs/deploy/cloudflare",
+      "reference_url": "/metadata/skills/collaborative-text-editor/reference/deploy/cloudflare.md"
     },
     {
-      "name": "connect/freestyle",
+      "name": "deploy/freestyle",
       "title": "Deploying to Freestyle",
       "description": "Deploy RivetKit app to Freestyle.sh, a cloud platform for running AI-generated code with built-in security and scalability.",
-      "canonical_url": "https://rivet.dev/docs/connect/freestyle",
-      "reference_url": "/metadata/skills/collaborative-text-editor/reference/connect/freestyle.md"
+      "canonical_url": "https://rivet.dev/docs/deploy/freestyle",
+      "reference_url": "/metadata/skills/collaborative-text-editor/reference/deploy/freestyle.md"
     },
     {
-      "name": "connect/gcp-cloud-run",
+      "name": "deploy/gcp-cloud-run",
       "title": "Deploying to Google Cloud Run",
       "description": "Deploy your RivetKit app to Google Cloud Run.",
-      "canonical_url": "https://rivet.dev/docs/connect/gcp-cloud-run",
-      "reference_url": "/metadata/skills/collaborative-text-editor/reference/connect/gcp-cloud-run.md"
+      "canonical_url": "https://rivet.dev/docs/deploy/gcp-cloud-run",
+      "reference_url": "/metadata/skills/collaborative-text-editor/reference/deploy/gcp-cloud-run.md"
     },
     {
-      "name": "connect/hetzner",
+      "name": "deploy/hetzner",
       "title": "Deploying to Hetzner",
       "description": "Please see the VM & Bare Metal guide.",
-      "canonical_url": "https://rivet.dev/docs/connect/hetzner",
-      "reference_url": "/metadata/skills/collaborative-text-editor/reference/connect/hetzner.md"
+      "canonical_url": "https://rivet.dev/docs/deploy/hetzner",
+      "reference_url": "/metadata/skills/collaborative-text-editor/reference/deploy/hetzner.md"
     },
     {
-      "name": "connect/kubernetes",
+      "name": "deploy/kubernetes",
       "title": "Deploying to Kubernetes",
       "description": "Deploy your RivetKit app to any Kubernetes cluster.",
-      "canonical_url": "https://rivet.dev/docs/connect/kubernetes",
-      "reference_url": "/metadata/skills/collaborative-text-editor/reference/connect/kubernetes.md"
+      "canonical_url": "https://rivet.dev/docs/deploy/kubernetes",
+      "reference_url": "/metadata/skills/collaborative-text-editor/reference/deploy/kubernetes.md"
     },
     {
-      "name": "connect/railway",
+      "name": "deploy/railway",
       "title": "Deploying to Railway",
       "description": "Deploy your RivetKit app to Railway.",
-      "canonical_url": "https://rivet.dev/docs/connect/railway",
-      "reference_url": "/metadata/skills/collaborative-text-editor/reference/connect/railway.md"
+      "canonical_url": "https://rivet.dev/docs/deploy/railway",
+      "reference_url": "/metadata/skills/collaborative-text-editor/reference/deploy/railway.md"
     },
     {
-      "name": "connect/rivet-compute",
+      "name": "deploy/rivet-compute",
       "title": "Deploying to Rivet Compute",
       "description": "Run your backend on Rivet Compute.",
-      "canonical_url": "https://rivet.dev/docs/connect/rivet-compute",
-      "reference_url": "/metadata/skills/collaborative-text-editor/reference/connect/rivet-compute.md"
+      "canonical_url": "https://rivet.dev/docs/deploy/rivet-compute",
+      "reference_url": "/metadata/skills/collaborative-text-editor/reference/deploy/rivet-compute.md"
     },
     {
-      "name": "connect/supabase",
+      "name": "deploy/supabase",
       "title": "Deploying to Supabase Functions",
-      "description": "Run RivetKit on Supabase Edge Functions with the WebAssembly runtime.",
-      "canonical_url": "https://rivet.dev/docs/connect/supabase",
-      "reference_url": "/metadata/skills/collaborative-text-editor/reference/connect/supabase.md"
+      "description": "Deploy an existing Rivet project to Supabase Edge Functions.",
+      "canonical_url": "https://rivet.dev/docs/deploy/supabase",
+      "reference_url": "/metadata/skills/collaborative-text-editor/reference/deploy/supabase.md"
     },
     {
-      "name": "connect/vercel",
+      "name": "deploy/vercel",
       "title": "Deploying to Vercel",
-      "description": "Deploy your RivetKit app to Vercel.",
-      "canonical_url": "https://rivet.dev/docs/connect/vercel",
-      "reference_url": "/metadata/skills/collaborative-text-editor/reference/connect/vercel.md"
+      "description": "Deploy your Next.js Rivet app to Vercel.",
+      "canonical_url": "https://rivet.dev/docs/deploy/vercel",
+      "reference_url": "/metadata/skills/collaborative-text-editor/reference/deploy/vercel.md"
     },
     {
-      "name": "connect/vm-and-bare-metal",
+      "name": "deploy/vm-and-bare-metal",
       "title": "Deploying to VMs & Bare Metal",
       "description": "Deploy your RivetKit app to any Linux VM or bare metal host.",
-      "canonical_url": "https://rivet.dev/docs/connect/vm-and-bare-metal",
-      "reference_url": "/metadata/skills/collaborative-text-editor/reference/connect/vm-and-bare-metal.md"
+      "canonical_url": "https://rivet.dev/docs/deploy/vm-and-bare-metal",
+      "reference_url": "/metadata/skills/collaborative-text-editor/reference/deploy/vm-and-bare-metal.md"
     },
     {
       "name": "agent-os/deployment",
@@ -339,6 +353,13 @@
       "description": "Actors automatically run near your users on your provider's global network.",
       "canonical_url": "https://rivet.dev/docs/general/edge",
       "reference_url": "/metadata/skills/collaborative-text-editor/reference/general/edge.md"
+    },
+    {
+      "name": "actors/quickstart/effect",
+      "title": "Effect.ts Quickstart (Beta)",
+      "description": "Build a Rivet Actor with the Effect SDK",
+      "canonical_url": "https://rivet.dev/docs/actors/quickstart/effect",
+      "reference_url": "/metadata/skills/collaborative-text-editor/reference/actors/quickstart/effect.md"
     },
     {
       "name": "agent-os/llm-gateway",
@@ -423,6 +444,13 @@
       "description": "Customize actors with display names and icons for the Rivet inspector and dashboard.",
       "canonical_url": "https://rivet.dev/docs/actors/appearance",
       "reference_url": "/metadata/skills/collaborative-text-editor/reference/actors/appearance.md"
+    },
+    {
+      "name": "actors/state",
+      "title": "In-Memory State",
+      "description": "Actors store state in memory for instant reads and writes. State can be persisted automatically or kept ephemeral.",
+      "canonical_url": "https://rivet.dev/docs/actors/state",
+      "reference_url": "/metadata/skills/collaborative-text-editor/reference/actors/state.md"
     },
     {
       "name": "actors/input",
@@ -565,13 +593,6 @@
       "reference_url": "/metadata/skills/collaborative-text-editor/reference/actors/quickstart/backend.md"
     },
     {
-      "name": "agent-os",
-      "title": "Overview",
-      "description": "Run coding agents inside isolated VMs with full filesystem, process, and network control.",
-      "canonical_url": "https://rivet.dev/docs/agent-os",
-      "reference_url": "/metadata/skills/collaborative-text-editor/reference/agent-os.md"
-    },
-    {
       "name": "agent-os/permissions",
       "title": "Permissions",
       "description": "Approve or deny agent tool use with human-in-the-loop or auto-approve patterns.",
@@ -699,17 +720,10 @@
     },
     {
       "name": "actors/quickstart/rust",
-      "title": "Rust Quickstart (Preview)",
+      "title": "Rust Quickstart (Beta)",
       "description": "Build a Rivet Actor in Rust",
       "canonical_url": "https://rivet.dev/docs/actors/quickstart/rust",
       "reference_url": "/metadata/skills/collaborative-text-editor/reference/actors/quickstart/rust.md"
-    },
-    {
-      "name": "actors/sandbox",
-      "title": "Sandbox Actor",
-      "description": "The legacy TypeScript sandbox actor has been removed while the replacement runtime is rebuilt.",
-      "canonical_url": "https://rivet.dev/docs/actors/sandbox",
-      "reference_url": "/metadata/skills/collaborative-text-editor/reference/actors/sandbox.md"
     },
     {
       "name": "agent-os/sandbox",
@@ -782,11 +796,11 @@
       "reference_url": "/metadata/skills/collaborative-text-editor/reference/actors/sqlite-drizzle.md"
     },
     {
-      "name": "actors/state",
-      "title": "State & Storage",
-      "description": "Choose where to store data in your actors: in-memory state for small serializable values, embedded SQLite for large or queryable data, and ephemeral variables for connections to external databases and non-serializable runtime objects.",
-      "canonical_url": "https://rivet.dev/docs/actors/state",
-      "reference_url": "/metadata/skills/collaborative-text-editor/reference/actors/state.md"
+      "name": "actors/quickstart/supabase",
+      "title": "Supabase Functions Quickstart",
+      "description": "Set up a Rivet project locally targeting Supabase Edge Functions.",
+      "canonical_url": "https://rivet.dev/docs/actors/quickstart/supabase",
+      "reference_url": "/metadata/skills/collaborative-text-editor/reference/actors/quickstart/supabase.md"
     },
     {
       "name": "clients/swift",
@@ -857,6 +871,13 @@
       "description": "When you deploy new code, Rivet ensures actors are upgraded seamlessly without downtime.",
       "canonical_url": "https://rivet.dev/docs/actors/versions",
       "reference_url": "/metadata/skills/collaborative-text-editor/reference/actors/versions.md"
+    },
+    {
+      "name": "general/wasm-vs-native-sdk",
+      "title": "WASM vs Native SDK",
+      "description": "RivetKit runs your actors on a native or a WebAssembly runtime depending on your platform.",
+      "canonical_url": "https://rivet.dev/docs/general/wasm-vs-native-sdk",
+      "reference_url": "/metadata/skills/collaborative-text-editor/reference/general/wasm-vs-native-sdk.md"
     },
     {
       "name": "agent-os/webhooks",

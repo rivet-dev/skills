@@ -5,6 +5,8 @@
 > Description: Get started with Rivet Actors in Node.js and Bun
 
 ---
+Prefer to start from a complete project? See the runnable [`hello-world`](https://github.com/rivet-dev/rivet/tree/main/examples/hello-world) example.
+
 ## Steps
 
 ### Add Rivet Skill to Coding Agent (Optional)
@@ -61,6 +63,8 @@ deno run --allow-net --allow-read --allow-env --watch index.ts
 ```
 
 Your server is now running on `http://localhost:6420`. Clients connect directly to the Rivet Engine on this port.
+
+Visit [http://localhost:6420](http://localhost:6420) in your browser (or point your AI agent at it) to open the Rivet developer tools and inspect your actors live.
 
 ### Connect To The Rivet Actor
 

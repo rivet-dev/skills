@@ -175,7 +175,6 @@ interface UserSessionState {
 }
 
 const userSession = actor({
-  state: { userId: "", loginTime: 0, preferences: {} } as UserSessionState,
   createState: (c): UserSessionState => ({
     userId: c.key[0], // Extract user ID from key
     loginTime: Date.now(),
@@ -225,7 +224,6 @@ interface ChatRoomInput {
 }
 
 const chatRoom = actor({
-  state: { maxUsers: 0, isPrivate: false, moderators: [] as string[], settings: { allowImages: true, slowMode: false } },
   createState: (c, input: ChatRoomInput) => ({
     maxUsers: input.maxUsers,
     isPrivate: input.isPrivate,

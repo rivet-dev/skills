@@ -273,7 +273,6 @@ interface CounterState {
 }
 
 const counter = actor({
-  state: { count: 0 } as CounterState,
   createState: (c, input: { start?: number }): CounterState => ({
     count: input.start ?? 0,
   }),
@@ -428,7 +427,7 @@ const chatRoom = actor({
 
 ### Connections
 
-Access the current connection via `c.conn` or all connected clients via `c.conns`. Use `c.conn.id` or `c.conn.state` to securely identify who is calling an action. Connection state is initialized via `connState` or `createConnState`, which receives parameters passed by the client on connect.
+Access the current connection via `c.conn` or all connected clients via `c.conns`. Use `c.conn.id` or `c.conn.state` to securely identify who is calling an action. `c.conn` is only available for actions invoked through a connected client; stateless actor-handle calls run without a connection, so guard against that. Connection state is initialized via `connState` or `createConnState`, which receives parameters passed by the client on connect.
 
 ### Static Connection Initial State
 
@@ -639,9 +638,6 @@ interface ConnState {
 }
 
 const chatRoom = actor({
-	state: { users: {} } as RoomState,
-	vars: { startTime: 0 },
-	connState: { userId: "", joinedAt: 0 } as ConnState,
 	events: {
 		stateChanged: event<RoomState>(),
 	},
@@ -676,8 +672,8 @@ const chatRoom = actor({
 	onBeforeConnect: (c, params) => {
 		/* validate auth */
 	},
-	onConnect: (c, conn) => console.log("connected:", conn.state.userId),
-	onDisconnect: (c, conn) => console.log("disconnected:", conn.state.userId),
+	onConnect: (c, conn) => console.log("connected:", (conn.state as ConnState).userId),
+	onDisconnect: (c, conn) => console.log("disconnected:", (conn.state as ConnState).userId),
 
 	// Networking
 	onRequest: (c, req) => new Response(JSON.stringify(c.state)),
@@ -756,12 +752,22 @@ c.state.username = username;
 ### Client
 
 ```ts
-import { actor, setup } from "rivetkit";
+import { actor, setup, UserError } from "rivetkit";
 import { createClient, ActorError } from "rivetkit/client";
 
 const user = actor({
   state: { username: "" },
-  actions: { updateUsername: (c, username: string) => { c.state.username = username; } }
+  actions: {
+    updateUsername: (c, username: string) => {
+      if (username.length < 3) {
+        throw new UserError("Username too short", {
+          code: "username_too_short",
+          metadata: { minLength: 3, actual: username.length },
+        });
+      }
+      c.state.username = username;
+    },
+  },
 });
 
 const registry = setup({ use: { user } });
@@ -1032,18 +1038,20 @@ Actors are long-lived and maintain state across requests. Creating a new actor f
 - [Actor Keys](reference/actors/keys.md)
 - [Actor Scheduling](reference/actors/schedule.md)
 - [Actor Statuses](reference/actors/statuses.md)
-- [AI and User-Generated Rivet Actors](reference/actors/ai-and-user-generated-actors.md)
 - [Authentication](reference/actors/authentication.md)
+- [Cloudflare Workers Quickstart](reference/actors/quickstart/cloudflare.md)
 - [Communicating Between Actors](reference/actors/communicating-between-actors.md)
 - [Connections](reference/actors/connections.md)
 - [Custom Inspector Tabs](reference/actors/inspector-tabs.md)
 - [Debugging](reference/actors/debugging.md)
 - [Design Patterns](reference/actors/design-patterns.md)
 - [Destroying Actors](reference/actors/destroy.md)
+- [Effect.ts Quickstart (Beta)](reference/actors/quickstart/effect.md)
 - [Errors](reference/actors/errors.md)
 - [Fetch and WebSocket Handler](reference/actors/fetch-and-websocket-handler.md)
 - [Helper Types](reference/actors/helper-types.md)
 - [Icons & Names](reference/actors/appearance.md)
+- [In-Memory State](reference/actors/state.md)
 - [Input Parameters](reference/actors/input.md)
 - [Lifecycle](reference/actors/lifecycle.md)
 - [Limits](reference/actors/limits.md)
@@ -1056,13 +1064,12 @@ Actors are long-lived and maintain state across requests. Creating a new actor f
 - [Queues & Run Loops](reference/actors/queues.md)
 - [React Quickstart](reference/actors/quickstart/react.md)
 - [Realtime](reference/actors/events.md)
-- [Rust Quickstart (Preview)](reference/actors/quickstart/rust.md)
-- [Sandbox Actor](reference/actors/sandbox.md)
+- [Rust Quickstart (Beta)](reference/actors/quickstart/rust.md)
 - [Scaling & Concurrency](reference/actors/scaling.md)
 - [Sharing and Joining State](reference/actors/sharing-and-joining-state.md)
 - [SQLite](reference/actors/sqlite.md)
 - [SQLite + Drizzle](reference/actors/sqlite-drizzle.md)
-- [State & Storage](reference/actors/state.md)
+- [Supabase Functions Quickstart](reference/actors/quickstart/supabase.md)
 - [Testing](reference/actors/testing.md)
 - [Troubleshooting](reference/actors/troubleshooting.md)
 - [Types](reference/actors/types.md)
@@ -1078,6 +1085,7 @@ Actors are long-lived and maintain state across requests. Creating a new actor f
 - [Benchmarks](reference/agent-os/benchmarks.md)
 - [Configuration](reference/agent-os/configuration.md)
 - [Core Package](reference/agent-os/core.md)
+- [Crash Course](reference/agent-os/crash-course.md)
 - [Cron Jobs](reference/agent-os/cron.md)
 - [Deployment](reference/agent-os/deployment.md)
 - [Embedded LLM Gateway](reference/agent-os/llm-gateway.md)
@@ -1087,7 +1095,6 @@ Actors are long-lived and maintain state across requests. Creating a new actor f
 - [LLM Credentials](reference/agent-os/llm-credentials.md)
 - [Multiplayer](reference/agent-os/multiplayer.md)
 - [Networking & Previews](reference/agent-os/networking.md)
-- [Overview](reference/agent-os.md)
 - [Permissions](reference/agent-os/permissions.md)
 - [Persistence & Sleep](reference/agent-os/persistence.md)
 - [Pi](reference/agent-os/agents/pi.md)
@@ -1105,27 +1112,16 @@ Actors are long-lived and maintain state across requests. Creating a new actor f
 - [Webhooks](reference/agent-os/webhooks.md)
 - [Workflow Automation](reference/agent-os/workflows.md)
 
+### Cli
+
+- [CLI](reference/cli.md)
+
 ### Clients
 
 - [Node.js & Bun](reference/clients/javascript.md)
 - [React](reference/clients/react.md)
 - [Swift](reference/clients/swift.md)
 - [SwiftUI](reference/clients/swiftui.md)
-
-### Connect
-
-- [Deploy To Amazon Web Services Lambda](reference/connect/aws-lambda.md)
-- [Deploying to AWS ECS](reference/connect/aws-ecs.md)
-- [Deploying to Cloudflare Workers](reference/connect/cloudflare.md)
-- [Deploying to Freestyle](reference/connect/freestyle.md)
-- [Deploying to Google Cloud Run](reference/connect/gcp-cloud-run.md)
-- [Deploying to Hetzner](reference/connect/hetzner.md)
-- [Deploying to Kubernetes](reference/connect/kubernetes.md)
-- [Deploying to Railway](reference/connect/railway.md)
-- [Deploying to Rivet Compute](reference/connect/rivet-compute.md)
-- [Deploying to Supabase Functions](reference/connect/supabase.md)
-- [Deploying to Vercel](reference/connect/vercel.md)
-- [Deploying to VMs & Bare Metal](reference/connect/vm-and-bare-metal.md)
 
 ### Cookbook
 
@@ -1138,6 +1134,21 @@ Actors are long-lived and maintain state across requests. Creating a new actor f
 - [Deploying Rivet in a VPC or Air-Gapped Network](reference/cookbook/vpc-air-gapped.md)
 - [Live Cursors and Presence](reference/cookbook/live-cursors.md)
 - [Multiplayer Game](reference/cookbook/multiplayer-game.md)
+
+### Deploy
+
+- [Deploy To Amazon Web Services Lambda](reference/deploy/aws-lambda.md)
+- [Deploying to AWS ECS](reference/deploy/aws-ecs.md)
+- [Deploying to Cloudflare Workers](reference/deploy/cloudflare.md)
+- [Deploying to Freestyle](reference/deploy/freestyle.md)
+- [Deploying to Google Cloud Run](reference/deploy/gcp-cloud-run.md)
+- [Deploying to Hetzner](reference/deploy/hetzner.md)
+- [Deploying to Kubernetes](reference/deploy/kubernetes.md)
+- [Deploying to Railway](reference/deploy/railway.md)
+- [Deploying to Rivet Compute](reference/deploy/rivet-compute.md)
+- [Deploying to Supabase Functions](reference/deploy/supabase.md)
+- [Deploying to Vercel](reference/deploy/vercel.md)
+- [Deploying to VMs & Bare Metal](reference/deploy/vm-and-bare-metal.md)
 
 ### General
 
@@ -1154,6 +1165,7 @@ Actors are long-lived and maintain state across requests. Creating a new actor f
 - [Production Checklist](reference/general/production-checklist.md)
 - [Registry Configuration](reference/general/registry-configuration.md)
 - [Runtime Modes](reference/general/runtime-modes.md)
+- [WASM vs Native SDK](reference/general/wasm-vs-native-sdk.md)
 
 ### Self Hosting
 

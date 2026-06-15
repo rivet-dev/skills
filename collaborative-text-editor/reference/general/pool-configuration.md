@@ -14,9 +14,11 @@ There are two pool kinds:
 
 ## Setting the Configuration
 
-Configure a pool via the dashboard, the API directly, or the TypeScript SDK:
+Configure a pool from the [Rivet dashboard](https://dashboard.rivet.dev) under your namespace's runner settings. The dashboard is the recommended way to manage pool configuration.
 
-```typescript SDK
+You can also set pool configuration directly through the API or the TypeScript SDK:
+
+```typescript SDK @nocheck
 import { RivetClient } from "@rivetkit/engine-api-full";
 
 const rivet = new RivetClient({
@@ -27,7 +29,7 @@ const rivet = new RivetClient({
 await rivet.runnerConfigsUpsert("default", {
   namespace: "default",
   datacenters: {
-    "us-east-1": {
+    default: {
       serverless: {
         url: "https://my-app.example.com/api/rivet",
         requestLifespan: 60 * 15,

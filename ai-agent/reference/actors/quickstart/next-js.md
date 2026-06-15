@@ -55,7 +55,7 @@ import { registry } from "@/rivet/registry";
 
 export const maxDuration = 300;
 
-export const { GET, POST, PUT, PATCH, HEAD, OPTIONS } = toNextHandler(registry);
+export const { GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS } = toNextHandler(registry);
 ```
 
 ### Use the Actor in a component
@@ -69,9 +69,12 @@ import { createRivetKit } from "@rivetkit/next-js/client";
 import type { registry } from "@/rivet/registry";
 import { useState } from "react";
 
-export const { useActor } = createRivetKit<typeof registry>(
-	process.env.NEXT_RIVET_ENDPOINT ?? "http://localhost:3000/api/rivet",
-);
+export const { useActor } = createRivetKit<typeof registry>({
+	endpoint:
+		process.env.NEXT_PUBLIC_RIVET_ENDPOINT ?? "http://localhost:3000/api/rivet",
+	namespace: process.env.NEXT_PUBLIC_RIVET_NAMESPACE,
+	token: process.env.NEXT_PUBLIC_RIVET_TOKEN,
+});
 
 export function Counter() {
 	const [count, setCount] = useState(0);
@@ -114,8 +117,20 @@ export default function Home() {
 
 For information about the Next.js client API, see the [React Client API Reference](/docs/clients/react).
 
+### Run Locally
+
+Start the Next.js dev server. Rivet auto-starts a local engine alongside it:
+
+```sh
+npm run dev
+```
+
+Open `http://localhost:3000` in your browser to use the app.
+
+Visit [http://localhost:6420](http://localhost:6420) in your browser (or point your AI agent at it) to open the Rivet developer tools and inspect your actors live.
+
 ### Deploy to Vercel
 
-See the [Vercel deployment guide](/docs/connect/vercel) for detailed instructions on deploying your Rivet app to Vercel.
+See the [Vercel deployment guide](/docs/deploy/vercel) for detailed instructions on deploying your Rivet app to Vercel.
 
 _Source doc path: /docs/actors/quickstart/next-js_

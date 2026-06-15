@@ -79,9 +79,7 @@ const gameRoom = actor({
     }>()
   },
 
-  connState: { playerId: "", role: "player" } as ConnState,
-
-  createConnState: (c, params: { playerId: string, role?: string }) => ({
+  createConnState: (c, params: { playerId: string, role?: string }): ConnState => ({
     playerId: params.playerId,
     role: params.role || "player"
   }),
@@ -133,9 +131,7 @@ const gameRoom = actor({
     }>()
   },
 
-  connState: { playerId: "", role: "player" } as ConnState,
-
-  createConnState: (c, params: { playerId: string, role?: string }) => ({
+  createConnState: (c, params: { playerId: string, role?: string }): ConnState => ({
     playerId: params.playerId,
     role: params.role || "player"
   }),

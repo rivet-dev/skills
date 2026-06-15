@@ -13,7 +13,7 @@ Each runner has a **version number**. When you deploy new code with a new versio
 - **Multiple versions can coexist**: Old actors continue running on old versions while new actors are created on the new version
 - **Drain old actors**: When enabled, a runner connecting with a newer version number will gracefully stop old actors to be rescheduled to the new version
 
-Versions are not configured by default. See [Registry Configuration](/docs/connect/registry-configuration) to learn how to configure the runner version.
+Versions are not configured by default. See [Registry Configuration](/docs/general/registry-configuration) to learn how to configure the runner version.
 
 `RIVET_ENVOY_VERSION` is only needed when self-hosting or using a custom runner. Rivet Compute handles versioning automatically.
 
@@ -21,7 +21,7 @@ Versions are not configured by default. See [Registry Configuration](/docs/conne
 
 ### Drain Enabled
 
-When a new version is deployed, existing actors are immediately drained from the old runner and live migrated to the new version.
+When a new version is deployed, existing actors are gracefully stopped on the old runner and rescheduled onto the new version.
 
 ```mermaid
 sequenceDiagram
@@ -31,8 +31,8 @@ sequenceDiagram
     Note over R1: Currently running
     Note over R2: Deployed
 	R2->>R1: Drain old actors
-    R1->>R2: Live migrate actors
-    Note over R1: Shut down when all actors migrated
+    R1->>R2: Reschedule actors
+    Note over R1: Shut down when all actors stopped
 ```
 
 ### Drain Disabled
@@ -183,8 +183,8 @@ The `drainOnVersionUpgrade` option controls whether old actors are stopped when 
 
 | Value | Behavior |
 |-------|----------|
-| `false` (default in [runner mode](/docs/general/runtime-modes)) | Old actors continue running. New actors go to new version. Versions coexist. |
-| `true` (default in [serverless mode](/docs/general/runtime-modes)) | Old actors receive stop signal and have 30m to finish gracefully. |
+| `false` | Old actors continue running. New actors go to new version. Versions coexist. |
+| `true` (default) | Old actors receive stop signal and have 30m to finish gracefully. |
 
 ## Upgrading Actor State
 

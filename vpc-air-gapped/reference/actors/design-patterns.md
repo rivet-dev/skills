@@ -450,7 +450,7 @@ await session.updateEmail("alice@example.com");
 
 ### Syncing State Changes
 
-Use `onStateChange` to automatically sync actor state changes to external resources. This hook is called whenever the actor's state is modified.
+Use `onStateChange` to automatically sync actor state changes to external resources. This hook runs after state changes are flushed, which is coalesced to once per event loop tick rather than once per individual field mutation.
 
 Use this when:
 
@@ -546,7 +546,7 @@ await user.updateEmail("alice2@example.com");
 const userData = await user.getUser();
 ```
 
-`onStateChange` is called after every state modification, ensuring external resources stay in sync.
+`onStateChange` is called once per flush with the final coalesced state, ensuring external resources stay in sync. In the `updateEmail` example above, the two synchronous assignments produce a single `onStateChange` call.
 
 Do not mutate `c.state` inside `onStateChange`; re-entrant state mutation is rejected.
 
@@ -588,7 +588,7 @@ const processor = actor({
   state: {},
   actions: {
     process: (c, body: unknown) => ({ processed: true }),
-    destroy: (c) => {},
+    destroySelf: (c) => c.destroy(),
   },
 });
 
@@ -600,7 +600,7 @@ const app = new Hono();
 app.post("/process", async (c) => {
   const actorHandle = client.processor.getOrCreate([crypto.randomUUID()]);
   const result = await actorHandle.process(await c.req.json());
-  await actorHandle.destroy();
+  await actorHandle.destroySelf();
   return c.json(result);
 });
 ```

@@ -1,0 +1,106 @@
+# Deploying to Rivet Compute
+
+> Source: `src/content/docs/deploy/rivet-compute.mdx`
+> Canonical URL: https://rivet.dev/docs/deploy/rivet-compute
+> Description: Run your backend on Rivet Compute.
+
+---
+Rivet Compute is currently in beta.
+
+Using an AI coding agent? Open **Connect** on the [Rivet dashboard](https://dashboard.rivet.dev), select **Rivet Cloud**, and paste the one-shot prompt into your agent and have it connect with Rivet Compute for you.
+
+## Steps
+
+### Prerequisites
+
+- Your RivetKit app
+  - If you don't have one, see the [Quickstart](/docs/actors/quickstart) page or our [Examples](https://github.com/rivet-dev/rivet/tree/main/examples)
+- A [Rivet Cloud](https://dashboard.rivet.dev) account and project
+- Docker running locally
+
+### Create a Dockerfile
+
+Add a `Dockerfile` to your project root that builds and runs your RivetKit server:
+
+```dockerfile @nocheck
+FROM node:24-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit=dev
+COPY . .
+CMD ["node", "src/server.js"]
+```
+
+### Get Your Cloud Token
+
+1. Open the [Rivet dashboard](https://dashboard.rivet.dev) and navigate to your project
+2. Click **Connect** and select **Rivet Cloud**
+3. Copy the **`RIVET_CLOUD_TOKEN`** value shown
+
+### Deploy
+
+Run the deploy command from your project root. The token is saved to `~/.rivet/credentials`, so later deploys can omit it.
+
+```bash
+npx @rivetkit/cli deploy --token cloud_api_xxxxx
+```
+
+The CLI resolves your project from the token, builds and pushes your Docker image to Rivet's built-in registry, upserts the managed pool, and prints the deployment URL on stdout when the pool is ready.
+
+### Optionally Add CI
+
+After local deploys work, install the GitHub Actions workflow that deploys on every push and pull request:
+
+```bash
+npx @rivetkit/cli setup-ci
+```
+
+This writes `.github/workflows/rivet-deploy.yml`. Add your token as a repository secret to enable it:
+
+```bash
+gh secret set RIVET_CLOUD_TOKEN
+```
+
+The workflow creates production and pull-request namespaces, posts preview links, and cleans up PR namespaces when pull requests close. See the [CLI reference](/docs/cli) for all commands.
+
+### Monitor Deployment
+
+The dashboard shows live status as Rivet Compute provisions your backend:
+
+| Status | Description |
+| --- | --- |
+| Provisioning | Allocating compute resources |
+| Initializing | Starting the runtime environment |
+| Allocating | Assigning the runner to your pool |
+| Deploying | Pulling and launching your container |
+| Binding | Connecting the runner to the network |
+| Ready | Deployment complete |
+
+Once the status reaches **Ready**, your backend is live and actors are available for connections.
+
+If you are an agent monitoring the deployment via API rather than the dashboard, poll the managed-pool endpoint on the Cloud API.
+
+The `RIVET_CLOUD_TOKEN` secret is a `cloud_api_*` management token scoped to the Cloud API at `cloud-api.rivet.dev`. Use it for `Authorization: Bearer ...` against the Cloud API. Do not confuse it with a `pk_*` publishable key, which is scoped to the Rivet Engine API at `api.rivet.dev` and will 401 against this endpoint.
+
+Substitute `$CLOUD_API_URL` (typically `https://cloud-api.rivet.dev`), `$PROJECT`, `$ORG`, `$CLOUD_NAMESPACE`, and `$CLOUD_TOKEN`.
+
+Poll every 5 seconds until `status` is `ready`. Stop and investigate if `status` is `error`.
+
+```bash
+curl -s "$CLOUD_API_URL/projects/$PROJECT/namespaces/$CLOUD_NAMESPACE/managed-pools/default?org=$ORG" -H "Authorization: Bearer $CLOUD_TOKEN"
+```
+
+## Troubleshooting
+
+If the status stays in **Provisioning** for more than a few minutes, verify that:
+
+- The `RIVET_CLOUD_TOKEN` secret is correctly set in your GitHub repository
+- The GitHub Actions workflow completed without errors — check the run logs
+
+If the status shows **Error**, check that your container starts successfully and does not exit immediately. Common causes:
+
+- The server file is not calling `registry.startRunner()`
+- A runtime crash on startup — test the image locally with `docker run`
+- The Dockerfile is not listening on the `PORT` environmental variable
+
+_Source doc path: /docs/deploy/rivet-compute_

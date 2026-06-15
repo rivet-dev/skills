@@ -13,10 +13,8 @@ Context types define what properties and methods are available in different part
 import { actor } from "rivetkit";
 
 const counter = actor({
-  state: { count: 0 },
-
   // CreateContext in createState hook
-  createState: (c, input: { initial: number }) => {
+  createState: (c, input: { initial: number }): { count: number } => {
     return { count: input.initial };
   },
 
@@ -38,14 +36,9 @@ When writing helper functions that work with actor contexts, use context extract
 import { actor, CreateContextOf, ActionContextOf } from "rivetkit";
 
 const gameRoom = actor({
-  state: {
-    players: [] as string[],
-    score: 0
-  },
-
-  createState: (c, input: { roomId: string }) => {
+  createState: (c, input: { roomId: string }): { players: string[]; score: number } => {
     initializeRoom(c, input.roomId);
-    return { players: [], score: 0 };
+    return { players: [] as string[], score: 0 };
   },
 
   actions: {

@@ -585,6 +585,8 @@ console.log(await handle.getState());
 
 Use step timeouts and retries for slow or flaky dependencies.
 
+Step timeouts are critical by default and fail immediately. Set `retryOnTimeout: true` if a timeout should retry like any other error using `maxRetries`.
+
 ```ts
 import { actor, queue, setup } from "rivetkit";
 import { type WorkflowContextOf, type WorkflowLoopContextOf, type WorkflowBranchContextOf, workflow } from "rivetkit/workflow";
@@ -607,6 +609,7 @@ export const timeoutActor = actor({
         const chargeId = await loopCtx.step<string>({
           name: "charge-card",
           timeout: 5_000,
+          retryOnTimeout: true,
           maxRetries: 5,
           retryBackoffBase: 200,
           retryBackoffMax: 2_000,
@@ -1554,8 +1557,10 @@ export const checkoutSagaActor = actor({
         await loopCtx.step({
           name: "reserve-inventory",
           run: async () => reserveInventoryForCheckout(loopCtx, checkout.orderId),
+          // Rollback callbacks only receive a rollback context, not actor
+          // APIs like client(). Compensate with direct external calls.
           rollback: async (_rollbackCtx, output) => {
-            await releaseInventoryForCheckout(loopCtx, output as string);
+            await releaseInventoryForCheckout(output as string);
           },
         });
 
@@ -1563,7 +1568,7 @@ export const checkoutSagaActor = actor({
           name: "charge-card",
           run: async () => chargeCheckout(loopCtx, checkout.amount),
           rollback: async (_rollbackCtx, output) => {
-            await refundCheckout(loopCtx, output as string);
+            await refundCheckout(output as string);
           },
         });
 
@@ -1586,12 +1591,12 @@ async function reserveInventoryForCheckout(
 }
 
 async function releaseInventoryForCheckout(
-  ctx: WorkflowLoopContextOf<typeof checkoutSagaActor>,
   reservationId: string,
 ): Promise<void> {
-  const client = ctx.client();
-  const inventory = client.inventoryActor.getOrCreate(["main"]);
-  await inventory.release(reservationId);
+  await fetch("https://api.example.com/inventory/release", {
+    method: "POST",
+    body: JSON.stringify({ reservationId }),
+  });
 }
 
 async function chargeCheckout(
@@ -1604,12 +1609,12 @@ async function chargeCheckout(
 }
 
 async function refundCheckout(
-  ctx: WorkflowLoopContextOf<typeof checkoutSagaActor>,
   chargeId: string,
 ): Promise<void> {
-  const client = ctx.client();
-  const billing = client.billingActor.getOrCreate(["main"]);
-  await billing.refund(chargeId);
+  await fetch("https://api.example.com/billing/refund", {
+    method: "POST",
+    body: JSON.stringify({ chargeId }),
+  });
 }
 
 function markOrderComplete(
@@ -1705,12 +1710,13 @@ export const pollBackoffActor = actor({
           return;
         }
 
-        await loopCtx.step("grow-backoff", async () => {
+        const retryDelay = await loopCtx.step("grow-backoff", async () => {
           loopCtx.state.status = "retrying";
           loopCtx.state.backoffMs = Math.min(loopCtx.state.backoffMs * 2, 5_000);
+          return loopCtx.state.backoffMs;
         });
 
-        await loopCtx.sleep("retry-delay", loopCtx.state.backoffMs);
+        await loopCtx.sleep("retry-delay", retryDelay);
       });
   }),
   actions: {

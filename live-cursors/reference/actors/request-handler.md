@@ -175,7 +175,7 @@ const response = await fetch(
   {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${token}`,
+      "x-rivet-token": token,
     },
   }
 );
@@ -185,7 +185,7 @@ console.log(data); // { count: 1 }
 
 ```bash
 curl -X POST "https://api.rivet.dev/gateway/{actorId}/request/increment" \
-  -H "Authorization: Bearer {token}"
+  -H "x-rivet-token: {token}"
 ```
 
 The request is routed to the actor's `onRequest` handler where:
@@ -214,9 +214,14 @@ app.all("/actors/:id/:path{.*}", async (c) => {
     const actorId = c.req.param("id");
     const actorPath = (c.req.param("path") || "");
 
-    // Forward to actor's onRequest handler
+    // Rewrite the incoming request to the actor-relative path, preserving
+    // method, headers, and body
+    const url = new URL(actorPath, "http://actor");
+    const actorRequest = new Request(url, c.req.raw);
+
+    // Forward the rewritten Request to the actor's onRequest handler
     const actor = client.counter.get(actorId);
-    return await actor.fetch(actorPath, c.req.raw);
+    return await actor.fetch(actorRequest);
 });
 
 serve(app);

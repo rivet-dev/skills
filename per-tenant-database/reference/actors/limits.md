@@ -12,7 +12,7 @@ There are two types of limits:
 - **Soft Limit**: Application-level limit, configurable in RivetKit. These cannot exceed the hard limit.
 - **Hard Limit**: Infrastructure-level limit that cannot be configured.
 
-Soft limits can be configured in RivetKit by passing options to `setup`:
+Soft limits are configured in two places. Registry-level WebSocket message-size limits are passed to `setup`:
 
 ```typescript
 import { setup } from "rivetkit";
@@ -21,6 +21,20 @@ const rivet = setup({
   use: { /* ... */ },
   maxIncomingMessageSize: 1_048_576,
   maxOutgoingMessageSize: 10_485_760,
+});
+```
+
+Per-actor limits such as queue sizes and lifecycle timeouts are passed to `actor(...)` via `options`:
+
+```typescript
+import { actor } from "rivetkit";
+
+const myActor = actor({
+  options: {
+    maxQueueSize: 1000,
+    actionTimeout: 60_000,
+    stateSaveInterval: 1_000,
+  },
   // ...
 });
 ```
@@ -134,7 +148,7 @@ See [Actor Input](/docs/actors/input) for details.
 | On connect timeout | 5 seconds | — | Timeout for `onConnect` hook. Configurable via `onConnectTimeout`. |
 | Sleep grace period | 15 seconds | — | Total graceful shutdown budget for both sleep and destroy. Covers `onSleep`/`onDestroy`, run handler shutdown, `waitUntil`, `keepAwake`, async raw WebSocket handlers, and connection cleanup. Configurable via `sleepGracePeriod`. |
 | Sleep timeout | 30 seconds | — | Time of inactivity before actor hibernates. Configurable via `sleepTimeout`. |
-| State save interval | 10 seconds | — | Interval between automatic state saves. Configurable via `stateSaveInterval`. |
+| State save interval | 1 second | — | Interval between automatic state saves. Configurable via `stateSaveInterval`. |
 
 ### Serverless Shutdown
 

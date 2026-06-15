@@ -232,7 +232,7 @@ function showError(message: string) {
 }
 
 const conn = actorHandle.connect();
-conn.on("error", (error: ActorError) => {
+conn.onError((error: ActorError) => {
   if (error.code === "forbidden") {
     window.location.href = "/login";
   } else if (error.code === "insufficient_permissions") {
@@ -592,7 +592,7 @@ const cachedAuthActor = actor({
 ## API Reference
 
 - [`AuthIntent`](/typedoc/types/rivetkit.mod.AuthIntent.html) - Authentication intent type
-- [`BeforeConnectContext`](/typedoc/interfaces/rivetkit.mod.BeforeConnectContext.html) - Context for auth checks
-- [`ConnectContext`](/typedoc/interfaces/rivetkit.mod.ConnectContext.html) - Context after connection
+- [`OnBeforeConnectContext`](/typedoc/interfaces/rivetkit.mod.OnBeforeConnectContext.html) - Context for auth checks
+- [`OnConnectContext`](/typedoc/interfaces/rivetkit.mod.OnConnectContext.html) - Context after connection
 
 _Source doc path: /docs/actors/authentication_
