@@ -2,7 +2,7 @@
   "name": "per-tenant-database",
   "description": "Multi-tenant data isolation with one Rivet Actor per tenant: the actor key is the tenant id, so each tenant gets its own isolated dataset and migrations.",
   "skill_url": "/metadata/skills/per-tenant-database/SKILL.md",
-  "generated_at": "2026-06-15T00:17:36.779Z",
+  "generated_at": "2026-06-15T19:53:42.332Z",
   "references": [
     {
       "name": "actors/access-control",

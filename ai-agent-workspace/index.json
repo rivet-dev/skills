@@ -2,7 +2,7 @@
   "name": "ai-agent-workspace",
   "description": "Give every AI agent its own computer: a persistent workspace with a filesystem, processes, shells, networking, and agent sessions on a lightweight in-process OS.",
   "skill_url": "/metadata/skills/ai-agent-workspace/SKILL.md",
-  "generated_at": "2026-06-15T00:17:36.660Z",
+  "generated_at": "2026-06-15T19:53:42.239Z",
   "references": [
     {
       "name": "actors/access-control",
