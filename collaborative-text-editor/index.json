@@ -2,7 +2,7 @@
   "name": "collaborative-text-editor",
   "description": "Build a collaborative text editor backend with Yjs CRDTs and Rivet Actors: per-document actors relay sync and awareness updates and persist snapshots.",
   "skill_url": "/metadata/skills/collaborative-text-editor/SKILL.md",
-  "generated_at": "2026-06-15T19:53:42.286Z",
+  "generated_at": "2026-06-15T20:24:02.514Z",
   "references": [
     {
       "name": "actors/access-control",
