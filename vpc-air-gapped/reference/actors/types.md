@@ -9,67 +9,9 @@
 
 Context types define what properties and methods are available in different parts of the actor lifecycle.
 
-```typescript
-import { actor } from "rivetkit";
-
-const counter = actor({
-  // CreateContext in createState hook
-  createState: (c, input: { initial: number }): { count: number } => {
-    return { count: input.initial };
-  },
-
-  // ActionContext in actions
-  actions: {
-    increment: (c) => {
-      c.state.count += 1;
-      return c.state.count;
-    }
-  }
-});
-```
-
 ### Extracting Context Types
 
 When writing helper functions that work with actor contexts, use context extractor types like `CreateContextOf` or `ActionContextOf` to extract the appropriate context type from your actor definition.
-
-```typescript
-import { actor, CreateContextOf, ActionContextOf } from "rivetkit";
-
-const gameRoom = actor({
-  createState: (c, input: { roomId: string }): { players: string[]; score: number } => {
-    initializeRoom(c, input.roomId);
-    return { players: [] as string[], score: 0 };
-  },
-
-  actions: {
-    addPlayer: (c, playerId: string) => {
-      validatePlayer(c, playerId);
-      c.state.players.push(playerId);
-    }
-  }
-});
-
-// Extract CreateContext type for createState hook
-function initializeRoom(
-  context: CreateContextOf<typeof gameRoom>,
-  roomId: string
-) {
-  console.log(`Initializing room: ${roomId}`);
-  // context.state is not available here (being created)
-  // context.vars is not available here (not created yet)
-}
-
-// Extract ActionContext type for actions
-function validatePlayer(
-  context: ActionContextOf<typeof gameRoom>,
-  playerId: string
-) {
-  // Full context available in actions
-  if (context.state.players.includes(playerId)) {
-    throw new Error("Player already in room");
-  }
-}
-```
 
 ### All Context Types
 
@@ -92,10 +34,8 @@ Each lifecycle hook and handler has a corresponding `*ContextOf` type, exported 
 | `onBeforeActionResponse` | `BeforeActionResponseContextOf` |
 | `actions.*` | `ActionContextOf` |
 | `run` | `RunContextOf` |
-| `workflow` root context helpers | `WorkflowContextOf` |
-| `workflow` loop helpers | `WorkflowLoopContextOf` |
-| `workflow` branch helpers | `WorkflowBranchContextOf` |
-| `workflow` standalone step helpers | `WorkflowStepContextOf` |
+| `workflow` orchestration helpers (root, `loop`, `try`, `race`, `join` branches) | `WorkflowContextOf` |
+| `workflow` `step` / `tryStep` run + rollback helpers | `WorkflowStepContextOf` |
 | `onRequest` | `RequestContextOf` |
 | `onWebSocket` | `WebSocketContextOf` |
 

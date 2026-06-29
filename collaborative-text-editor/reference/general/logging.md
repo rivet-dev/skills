@@ -33,29 +33,6 @@ When using `c.log`, the actor's name, key, and actor ID are automatically includ
 
 ### Examples
 
-```typescript
-import { actor } from "rivetkit";
-
-const myActor = actor({
-  state: {},
-  actions: {
-    logExamples: (c) => {
-      // Just a message
-      c.log.info('server started');
-      // Prints: level=INFO actor=myActor key=foo actorId=44096d46632fd087 msg="server started"
-
-      // Object with message and additional fields
-      c.log.info({ msg: 'user connected', userId: 123, ip: '192.168.1.1' });
-      // Prints: level=INFO actor=myActor key=foo actorId=44096d46632fd087 msg="user connected" userId=123 ip="192.168.1.1"
-
-      // Just an object (no message)
-      c.log.info({ action: 'purchase', amount: 99.99, currency: 'USD' });
-      // Prints: level=INFO actor=myActor key=foo actorId=44096d46632fd087 action="purchase" amount=99.99 currency="USD"
-    }
-  }
-});
-```
-
 The logging system is built on [Pino](https://getpino.io/#/docs/api?id=logger), a high-performance structured logger for Node.js.
 
 ## Configuration
@@ -82,49 +59,9 @@ RIVET_LOG_LEVEL=debug RIVET_LOG_TARGET=1 RIVET_LOG_TIMESTAMP=1 node server.js
 
 You can configure the log level programmatically when setting up your registry:
 
-```typescript
-import { actor, setup } from "rivetkit";
-
-const counter = actor({
-  state: { count: 0 },
-  actions: { increment: (c) => c.state.count++ }
-});
-
-const registry = setup({
-  use: { counter },
-  logging: {
-    level: "debug"
-  }
-});
-```
-
 ### Custom Pino Logger
 
 You can also provide a custom Pino base logger for more advanced logging configurations:
-
-```typescript
-import { actor, setup } from "rivetkit";
-import { pino } from "pino";
-
-const counter = actor({
-  state: { count: 0 },
-  actions: { increment: (c) => c.state.count++ }
-});
-
-const customLogger = pino({
-  level: "info",
-  transport: {
-    target: "pino-pretty"
-  }
-});
-
-const registry = setup({
-  use: { counter },
-  logging: {
-    baseLogger: customLogger,  // Use your custom Pino logger
-  }
-});
-```
 
 If using a custom base logger, you must manually configure your own log level in the Pino logger.
 
@@ -133,19 +70,5 @@ For more advanced Pino configuration options, see the [Pino API documentation](h
 ### Disable Welcome Message
 
 You can disable the default RivetKit welcome message with:
-
-```typescript
-import { actor, setup } from "rivetkit";
-
-const counter = actor({
-  state: { count: 0 },
-  actions: { increment: (c) => c.state.count++ }
-});
-
-const registry = setup({
-  use: { counter },
-  noWelcome: true
-});
-```
 
 _Source doc path: /docs/general/logging_

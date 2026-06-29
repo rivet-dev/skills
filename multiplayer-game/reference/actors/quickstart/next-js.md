@@ -26,25 +26,6 @@ cd my-app
 
 Create a file at `src/rivet/registry.ts` with a simple counter actor:
 
-```ts src/rivet/registry.ts
-import { actor, setup } from "rivetkit";
-
-export const counter = actor({
-	state: { count: 0 },
-	actions: {
-		increment: (c, x: number) => {
-			c.state.count += x;
-			c.broadcast("newCount", c.state.count);
-			return c.state.count;
-		},
-	},
-});
-
-export const registry = setup({
-	use: { counter },
-});
-```
-
 ### Setup Rivet API route
 
 Create a file at `src/app/api/rivet/[...all]/route.ts` to setup the API routes:

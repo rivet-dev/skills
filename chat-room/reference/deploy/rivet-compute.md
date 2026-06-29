@@ -69,9 +69,7 @@ The dashboard shows live status as Rivet Compute provisions your backend:
 
 | Status | Description |
 | --- | --- |
-| Provisioning | Allocating compute resources |
 | Initializing | Starting the runtime environment |
-| Allocating | Assigning the runner to your pool |
 | Deploying | Pulling and launching your container |
 | Binding | Connecting the runner to the network |
 | Ready | Deployment complete |
@@ -90,17 +88,59 @@ Poll every 5 seconds until `status` is `ready`. Stop and investigate if `status`
 curl -s "$CLOUD_API_URL/projects/$PROJECT/namespaces/$CLOUD_NAMESPACE/managed-pools/default?org=$ORG" -H "Authorization: Bearer $CLOUD_TOKEN"
 ```
 
+## Checking Logs
+
+Use the CLI to read your deployment's logs. By default `rivet logs` prints the last 100 lines from the `production` namespace, oldest to newest, then exits.
+
+```bash
+npx @rivetkit/cli logs
+```
+
+The CLI resolves your token the same way `deploy` does (the `--token` flag, then the `RIVET_CLOUD_TOKEN` environment variable, then `~/.rivet/credentials`).
+
+### Follow logs live
+
+Pass `--follow` (`-f`) to stream new logs as they arrive instead of fetching history:
+
+```bash
+npx @rivetkit/cli logs --follow
+```
+
+Each formatted line is printed as `<timestamp> [] <region> <message>`:
+
+```
+2026-06-16T18:26:51.160Z [INFO] eu-central-1 server listening on port 3000
+2026-06-17T11:24:20.425Z [ERROR] us-east-1 failed to connect to upstream
+```
+
+A few examples:
+
+```bash
+# Last 200 lines from a specific namespace
+npx @rivetkit/cli logs --namespace production -n 200
+
+# Live tail, only lines containing "error"
+npx @rivetkit/cli logs --follow --contains error
+
+# JSON output piped to jq
+npx @rivetkit/cli logs -n 50 --json | jq .
+```
+
 ## Troubleshooting
 
-If the status stays in **Provisioning** for more than a few minutes, verify that:
+If the status stays in **Initializing** for more than a few minutes, verify that:
 
 - The `RIVET_CLOUD_TOKEN` secret is correctly set in your GitHub repository
 - The GitHub Actions workflow completed without errors — check the run logs
 
-If the status shows **Error**, check that your container starts successfully and does not exit immediately. Common causes:
+If the status shows **Error**, check that your container starts successfully and does not exit immediately (you can check this with container logs). Common causes:
 
-- The server file is not calling `registry.startRunner()`
+- The server file is not calling `registry.start()`
 - A runtime crash on startup — test the image locally with `docker run`
-- The Dockerfile is not listening on the `PORT` environmental variable
+- The server is not listening on the `RIVET_PORT` environment variable (RivetKit reads `RIVET_PORT`, defaulting to `3000`)
+
+## Pricing
+
+You are billed for the compute resources your deployment uses while it is running.
 
 _Source doc path: /docs/deploy/rivet-compute_

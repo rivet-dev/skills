@@ -15,20 +15,6 @@ By default, actions run in parallel. If you need advanced control over concurren
 
 Actions are defined in the `actions` object when creating an actor:
 
-```typescript
-import { actor } from "rivetkit";
-
-const mathUtils = actor({
-  state: {},
-  actions: {
-    // This is an action
-    multiplyByTwo: (c, x: number) => {
-      return x * 2;
-    }
-  }
-});
-```
-
 Each action receives a context object (commonly named `c`) as its first parameter, which provides access to state, connections, and other utilities. Additional parameters follow after that.
 
 ## Calling Actions
@@ -37,105 +23,13 @@ Actions can be called in different ways depending on your use case:
 
 ### Frontend (createClient)
 
-```typescript frontend.ts
-import { createClient } from "rivetkit/client";
-import { actor, setup } from "rivetkit";
-
-// Define actor
-const counter = actor({
-  state: { count: 0 },
-  actions: {
-    increment: (c, amount: number) => {
-      c.state.count += amount;
-      return c.state.count;
-    }
-  }
-});
-
-// Create registry
-const registry = setup({ use: { counter } });
-
-// Create client
-const client = createClient<typeof registry>("http://localhost:6420");
-const counterActor = await client.counter.getOrCreate();
-const result = await counterActor.increment(42);
-console.log(result); // The value returned by the action
-```
-
 Learn more about [communicating with actors from the frontend](/docs/actors/communicating-between-actors).
 
 ### Backend (registry.handler)
 
-```typescript server.ts
-import { actor, setup } from "rivetkit";
-import { createClient } from "rivetkit/client";
-import { Hono } from "hono";
-
-// Define actor
-const counter = actor({
-  state: { count: 0 },
-  actions: {
-    increment: (c, amount: number) => {
-      c.state.count += amount;
-      return c.state.count;
-    }
-  }
-});
-
-// Create registry
-const registry = setup({ use: { counter } });
-
-// Create client
-const client = createClient<typeof registry>("http://localhost:6420");
-
-const app = new Hono();
-
-// Mount Rivet handler
-app.all("/api/rivet/*", (c) => registry.handler(c.req.raw));
-
-// Use the client to call actions on a request
-app.get("/foo", async (c) => {
-	const counterActor = client.counter.getOrCreate();
-	const result = await counterActor.increment(42);
-	return c.text(String(result));
-});
-
-export default app;
-```
-
 Learn more about [communicating with actors from the backend](/docs/actors/communicating-between-actors).
 
 ### Actor-to-Actor (c.client())
-
-```typescript actor.ts
-import { actor, setup } from "rivetkit";
-
-// Define counter actor
-const counter = actor({
-  state: { count: 0 },
-  actions: {
-    increment: (c, amount: number) => {
-      c.state.count += amount;
-      return c.state.count;
-    }
-  }
-});
-
-// Define actorA that calls counter
-const actorA = actor({
-  state: {},
-  actions: {
-    callOtherActor: async (c) => {
-      const client = c.client();
-      const counterActor = await client.counter.getOrCreate();
-      return await counterActor.increment(10);
-    }
-  }
-});
-
-// Create registry
-export const registry = setup({ use: { counter, actorA } });
-```
 
 Learn more about [communicating between actors](/docs/actors/communicating-between-actors).
 
@@ -144,51 +38,6 @@ Calling actions from the client are async and require an `await`, even if the ac
 ### Type Safety
 
 The actor client includes type safety out of the box. When you use `createClient<typeof registry>()`, TypeScript automatically infers action parameter and return types:
-
-```typescript index.ts
-import { actor, setup } from "rivetkit";
-
-// Create simple counter
-const counter = actor({
-  state: { count: 0 },
-  actions: {
-    increment: (c, count: number) => {
-      c.state.count += count;
-      return c.state.count;
-    }
-  }
-});
-
-// Create and export the registry
-export const registry = setup({
-  use: { counter }
-});
-```
-
-```typescript client.ts
-import { actor, setup } from "rivetkit";
-import { createClient } from "rivetkit/client";
-
-// Define the actor inline for type inference
-const counter = actor({
-  state: { count: 0 },
-  actions: {
-    increment: (c, count: number) => {
-      c.state.count += count;
-      return c.state.count;
-    }
-  }
-});
-
-const registry = setup({ use: { counter } });
-const client = createClient<typeof registry>("http://localhost:6420");
-
-// Type-safe client usage
-const counterActor = await client.counter.get();
-await counterActor.increment(123); // OK
-// await counterActor.increment("non-number type"); // TypeScript error
-// await counterActor.nonexistentMethod(123); // TypeScript error
-```
 
 ## Error Handling
 
@@ -204,66 +53,6 @@ Actors provide robust error handling out of the box for actions.
 
 For example:
 
-```typescript actor.ts
-import { actor, UserError } from "rivetkit";
-
-const user = actor({
-  state: { username: "" },
-  actions: {
-    updateUsername: (c, username: string) => {
-      // Validate username
-      if (username.length > 32) {
-        // Throw a simple error with a message
-        throw new UserError("Username is too long", {
-          code: "username_too_long",
-          metadata: {
-            maxLength: 32
-          }
-        });
-      }
-
-      // Update username
-      c.state.username = username;
-    }
-  }
-});
-```
-
-```typescript client.ts
-import { actor, setup, UserError } from "rivetkit";
-import { ActorError, createClient } from "rivetkit/client";
-
-// Define the user actor
-const user = actor({
-  state: { username: "" },
-  actions: {
-    updateUsername: (c, username: string) => {
-      if (username.length > 32) {
-        throw new UserError("Username is too long", {
-          code: "username_too_long",
-          metadata: { maxLength: 32 }
-        });
-      }
-      c.state.username = username;
-    }
-  }
-});
-
-const registry = setup({ use: { user } });
-const client = createClient<typeof registry>("http://localhost:6420");
-const userActor = await client.user.getOrCreate();
-
-try {
-  await userActor.updateUsername("extremely_long_username_that_exceeds_limit");
-} catch (error) {
-  if (error instanceof ActorError) {
-    console.log("Message", error.message); // "Username is too long"
-    console.log("Code", error.code); // "username_too_long"
-    console.log("Metadata", error.metadata); // { maxLength: 32 }
-  }
-}
-```
-
 ### Internal Errors
 
 All other errors will return an error with the code `internal_error` to the client. This helps keep your application secure, as errors can sometimes expose sensitive information.
@@ -274,34 +63,6 @@ If passing data to an actor from the frontend, use a library like [Zod](https://
 
 For example, to validate action parameters:
 
-```typescript actor.ts
-import { actor, UserError } from "rivetkit";
-import { z } from "zod";
-
-// Define schema for action parameters
-const IncrementSchema = z.object({
-  count: z.number().int().positive()
-});
-
-const counter = actor({
-  state: { count: 0 },
-  actions: {
-    increment: (c, params: unknown) => {
-      // Validate parameters
-      const result = IncrementSchema.safeParse(params);
-      if (!result.success) {
-        throw new UserError("Invalid parameters", {
-          code: "invalid_params",
-          metadata: { errors: result.error.issues }
-        });
-      }
-      c.state.count += result.data.count;
-      return c.state.count;
-    }
-  }
-});
-```
-
 ## Streaming Data
 
 Actions have a single return value. To stream realtime data in response to an action, use [events](/docs/actors/events).
@@ -310,34 +71,6 @@ Actions have a single return value. To stream realtime data in response to an ac
 
 For operations that should be cancelable on-demand, create your own `AbortController`. Chain it with `c.abortSignal` so actor shutdown also cancels the operation.
 
-```typescript
-import { actor } from "rivetkit";
-
-const chatActor = actor({
-  createVars: () => ({ controller: null as AbortController | null }),
-
-  actions: {
-    generate: async (c, prompt: string) => {
-      const controller = new AbortController();
-      c.vars.controller = controller;
-      c.abortSignal.addEventListener("abort", () => controller.abort());
-
-      const response = await fetch("https://api.example.com/generate", {
-        method: "POST",
-        body: JSON.stringify({ prompt }),
-        signal: controller.signal
-      });
-
-      return await response.json();
-    },
-
-    cancel: (c) => {
-      c.vars.controller?.abort();
-    }
-  }
-});
-```
-
 See [Actor Shutdown Abort Signal](/docs/actors/lifecycle#actor-shutdown-abort-signal) for automatically canceling operations when the actor stops.
 
 ## Using `ActionContext` Externally
@@ -345,25 +78,6 @@ See [Actor Shutdown Abort Signal](/docs/actors/lifecycle#actor-shutdown-abort-si
 When writing complex logic for actions, you may want to extract parts of your implementation into separate helper functions. When doing this, you'll need a way to properly type the context parameter.
 
 Rivet provides the `ActionContextOf` utility type for exactly this purpose:
-
-```typescript
-import { actor, ActionContextOf } from "rivetkit";
-
-const counter = actor({
-  state: { count: 0 },
-  
-  actions: {
-    increment: (c) => {
-      incrementCount(c);
-    }
-  }
-});
-
-// Simple helper function with typed context
-function incrementCount(c: ActionContextOf<typeof counter>) {
-  c.state.count += 1;
-}
-```
 
 See [types](/docs/actors/types) for more details on using `ActionContextOf` and other utility types.
 

@@ -9,85 +9,11 @@
 
 ### Basic Setup
 
-```typescript
-import { setup, actor } from "rivetkit";
-
-const myActor = actor({ state: {}, actions: {} });
-
-const registry = setup({
-  use: { myActor },
-});
-```
-
 ### Connecting to Rivet Engine
-
-```typescript Environment-Variables
-import { setup, actor } from "rivetkit";
-
-const myActor = actor({ state: {}, actions: {} });
-
-// Reads from RIVET_ENDPOINT, RIVET_TOKEN, and RIVET_NAMESPACE
-const registry = setup({
-  use: { myActor },
-});
-```
-
-```typescript Config
-import { setup, actor } from "rivetkit";
-
-const myActor = actor({ state: {}, actions: {} });
-
-const registry = setup({
-  use: { myActor },
-  endpoint: "https://api.rivet.dev",
-  token: process.env.RIVET_TOKEN,
-  namespace: "production",
-});
-```
 
 ## Starting Your App
 
 After configuring your registry, start it:
-
-```typescript registry.start()
-import { actor, setup } from "rivetkit";
-
-const myActor = actor({ state: {}, actions: {} });
-const registry = setup({ use: { myActor } });
-
-registry.start();
-```
-
-```typescript Serverless
-import { actor, setup } from "rivetkit";
-
-const myActor = actor({ state: {}, actions: {} });
-const registry = setup({ use: { myActor } });
-
-export default registry.serve();
-```
-
-```typescript Serverless-with-Router
-import { Hono } from "hono";
-import { actor, setup } from "rivetkit";
-
-const myActor = actor({ state: {}, actions: {} });
-const registry = setup({ use: { myActor } });
-
-const app = new Hono();
-app.all("/api/rivet/*", (c) => registry.handler(c.req.raw));
-
-export default app;
-```
-
-```typescript Envoy
-import { actor, setup } from "rivetkit";
-
-const myActor = actor({ state: {}, actions: {} });
-const registry = setup({ use: { myActor } });
-
-registry.startEnvoy();
-```
 
 See [Runtime Modes](/docs/general/runtime-modes) for details on when to use each mode.
 

@@ -15,146 +15,11 @@ For worked realtime patterns, see the cookbook: [Live Cursors and Presence](/coo
 
 Define event names and payload types with `events` and `event()`, then use `c.broadcast(eventName, ...args)` to send events to all connected clients:
 
-```typescript
-import { actor, event } from "rivetkit";
-
-type Message = {
-  id: string;
-  userId: string;
-  text: string;
-  timestamp: number;
-};
-
-const chatRoom = actor({
-  state: {
-    messages: [] as Message[]
-  },
-
-  events: {
-    messageReceived: event<Message>()
-  },
-
-  actions: {
-    sendMessage: (c, userId: string, text: string) => {
-      const message = {
-        id: crypto.randomUUID(),
-        userId,
-        text,
-        timestamp: Date.now()
-      };
-      
-      c.state.messages.push(message);
-      
-      // Broadcast to all connected clients
-      c.broadcast('messageReceived', message);
-      
-      return message;
-    },
-  }
-});
-```
-
 ### Sending to Specific Connections
 
 Send events to individual connections using `conn.send(eventName, ...args)`:
 
-```typescript
-import { actor, event } from "rivetkit";
-
-interface ConnState {
-  playerId: string;
-  role: string;
-}
-
-const gameRoom = actor({
-  state: {
-    players: {} as Record<string, {health: number, position: {x: number, y: number}}>
-  },
-
-  events: {
-    privateMessage: event<{
-      from?: string;
-      message: string;
-      timestamp: number;
-    }>()
-  },
-
-  createConnState: (c, params: { playerId: string, role?: string }): ConnState => ({
-    playerId: params.playerId,
-    role: params.role || "player"
-  }),
-
-  actions: {
-    sendPrivateMessage: (c, targetPlayerId: string, message: string) => {
-      // Find the target player's connection
-      let targetConn = null;
-      for (const conn of c.conns.values()) {
-        if (conn.state.playerId === targetPlayerId) {
-          targetConn = conn;
-          break;
-        }
-      }
-
-      if (targetConn) {
-        targetConn.send('privateMessage', {
-          from: c.conn?.state.playerId,
-          message,
-          timestamp: Date.now()
-        });
-      } else {
-        throw new Error("Player not found or not connected");
-      }
-    }
-  }
-});
-```
-
 Send events to all connections except the sender:
-
-```typescript
-import { actor, event } from "rivetkit";
-
-interface ConnState {
-  playerId: string;
-  role: string;
-}
-
-const gameRoom = actor({
-  state: {
-    players: {} as Record<string, {health: number, position: {x: number, y: number}}>
-  },
-
-  events: {
-    playerMoved: event<{
-      playerId: string;
-      position: { x: number; y: number };
-    }>()
-  },
-
-  createConnState: (c, params: { playerId: string, role?: string }): ConnState => ({
-    playerId: params.playerId,
-    role: params.role || "player"
-  }),
-
-  actions: {
-    updatePlayerPosition: (c, position: {x: number, y: number}) => {
-      const playerId = c.conn?.state.playerId;
-      if (!playerId) return;
-
-      if (c.state.players[playerId]) {
-        c.state.players[playerId].position = position;
-
-        // Send position update to all OTHER players
-        for (const conn of c.conns.values()) {
-          if (conn.state.playerId !== playerId) {
-            conn.send('playerMoved', { playerId, position });
-          }
-        }
-      }
-    }
-  }
-});
-```
 
 ## Subscribing to Events from Clients
 
@@ -163,50 +28,6 @@ Clients must establish a connection to receive events from actors. Use `.connect
 ### Basic Event Subscription
 
 Use `connection.on(eventName, callback)` to listen for events:
-
-```typescript TypeScript
-import { actor, event, setup } from "rivetkit";
-import { createClient } from "rivetkit/client";
-
-type Message = { id: string; userId: string; text: string };
-
-// Define the actor
-const chatRoom = actor({
-  state: { messages: [] as Message[] },
-  events: {
-    messageReceived: event<Message>()
-  },
-  actions: {
-    sendMessage: (c, userId: string, text: string) => {
-      const message = { id: crypto.randomUUID(), userId, text };
-      c.state.messages.push(message);
-      c.broadcast('messageReceived', message);
-      return message;
-    }
-  }
-});
-
-const registry = setup({ use: { chatRoom } });
-const client = createClient<typeof registry>("http://localhost:6420");
-
-// Helper function for demonstration
-function displayMessage(message: Message) {
-  console.log("Display:", message);
-}
-
-// Get actor handle and establish connection
-const chatRoomHandle = client.chatRoom.getOrCreate(["general"]);
-const connection = chatRoomHandle.connect();
-
-// Listen for events
-connection.on('messageReceived', (message: Message) => {
-  console.log(`${message.userId}: ${message.text}`);
-  displayMessage(message);
-});
-
-// Call actions through the connection
-await connection.sendMessage("user-123", "Hello everyone!");
-```
 
 ```tsx React @nocheck
 import { useState } from "react";
@@ -232,40 +53,6 @@ function ChatRoom() {
 ### One-time Event Listeners
 
 Use `connection.once(eventName, callback)` for events that should only trigger once:
-
-```typescript TypeScript
-import { actor, event, setup } from "rivetkit";
-import { createClient } from "rivetkit/client";
-
-const gameRoom = actor({
-  state: { started: false },
-  events: {
-    gameStarted: event<[]>()
-  },
-  actions: {
-    startGame: (c) => {
-      c.state.started = true;
-      c.broadcast('gameStarted');
-    }
-  }
-});
-
-const registry = setup({ use: { gameRoom } });
-const client = createClient<typeof registry>("http://localhost:6420");
-
-function showGameInterface() {
-  console.log("Showing game interface");
-}
-
-const gameRoomHandle = client.gameRoom.getOrCreate(["room-456"]);
-const connection = gameRoomHandle.connect();
-
-// Listen for game start (only once)
-connection.once('gameStarted', () => {
-  console.log('Game has started!');
-  showGameInterface();
-});
-```
 
 ```tsx React @nocheck
 import { useState, useEffect } from "react";
@@ -302,38 +89,6 @@ function GameLobby() {
 ### Removing Event Listeners
 
 Use the callback returned from `.on()` to remove event listeners:
-
-```typescript TypeScript
-import { actor, event, setup } from "rivetkit";
-import { createClient } from "rivetkit/client";
-
-type Message = { text: string };
-
-const chatRoom = actor({
-  state: { messages: [] as string[] },
-  events: {
-    messageReceived: event<Message>()
-  },
-  actions: {
-    sendMessage: (c, text: string) => {
-      c.state.messages.push(text);
-      c.broadcast('messageReceived', { text });
-    }
-  }
-});
-
-const registry = setup({ use: { chatRoom } });
-const client = createClient<typeof registry>("http://localhost:6420");
-const connection = client.chatRoom.getOrCreate(["general"]).connect();
-
-// Add listener
-const unsubscribe = connection.on('messageReceived', (message) => {
-  console.log("Received:", message);
-});
-
-// Remove listener
-unsubscribe();
-```
 
 ```tsx React @nocheck
 import { useState, useEffect } from "react";

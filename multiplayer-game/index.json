@@ -2,7 +2,7 @@
   "name": "multiplayer-game",
   "description": "Pragmatic patterns for building multiplayer games: matchmaking, tick loops, realtime state, interest management, and validation.",
   "skill_url": "/metadata/skills/multiplayer-game/SKILL.md",
-  "generated_at": "2026-06-15T20:24:02.573Z",
+  "generated_at": "2026-06-29T06:23:18.075Z",
   "references": [
     {
       "name": "actors/access-control",
@@ -47,20 +47,6 @@
       "reference_url": "/metadata/skills/multiplayer-game/reference/actors/statuses.md"
     },
     {
-      "name": "agent-os/agent-to-agent",
-      "title": "Agent-to-Agent Communication",
-      "description": "Use host tools to let agents communicate with each other.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/agent-to-agent",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/agent-to-agent.md"
-    },
-    {
-      "name": "agent-os/versus-sandbox",
-      "title": "agentOS vs Sandbox",
-      "description": "When to use the lightweight agentOS VM, a full sandbox, or both together.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/versus-sandbox",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/versus-sandbox.md"
-    },
-    {
       "name": "cookbook/ai-agent",
       "title": "AI Agent",
       "description": "Build an AI agent backend with persistent memory: one Rivet Actor per conversation, queued message handling, and streaming LLM responses as realtime events.",
@@ -68,16 +54,9 @@
       "reference_url": "/metadata/skills/multiplayer-game/reference/cookbook/ai-agent.md"
     },
     {
-      "name": "cookbook/ai-agent-workspace",
-      "title": "AI Agent Workspaces",
-      "description": "Give every AI agent its own computer: a persistent workspace with a filesystem, processes, shells, networking, and agent sessions on a lightweight in-process OS.",
-      "canonical_url": "https://rivet.dev/cookbook/ai-agent-workspace",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/cookbook/ai-agent-workspace.md"
-    },
-    {
       "name": "general/architecture",
       "title": "Architecture",
-      "description": "- rivetkit is the typescript library used for both local development & to connect your application to rivet - a rivetkit instance is called a \"runner.\" you can run multiple runners to scale rivetkit horiziotnally. read omre about runners below.",
+      "description": "- rivetkit is the typescript library used for both local development & to connect your application to rivet - a rivetkit instance is called a \"runner.\" you can run multiple runners to scale rivetkit horizontally. read omre about runners below.",
       "canonical_url": "https://rivet.dev/docs/general/architecture",
       "reference_url": "/metadata/skills/multiplayer-game/reference/general/architecture.md"
     },
@@ -87,20 +66,6 @@
       "description": "Secure your actors with authentication and authorization.",
       "canonical_url": "https://rivet.dev/docs/actors/authentication",
       "reference_url": "/metadata/skills/multiplayer-game/reference/actors/authentication.md"
-    },
-    {
-      "name": "agent-os/authentication",
-      "title": "Authentication",
-      "description": "Authenticate connections to agentOS actors using hooks.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/authentication",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/authentication.md"
-    },
-    {
-      "name": "agent-os/benchmarks",
-      "title": "Benchmarks",
-      "description": "Performance benchmarks comparing agentOS to traditional sandbox providers.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/benchmarks",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/benchmarks.md"
     },
     {
       "name": "cookbook/chat-room",
@@ -138,13 +103,6 @@
       "reference_url": "/metadata/skills/multiplayer-game/reference/actors/communicating-between-actors.md"
     },
     {
-      "name": "agent-os/configuration",
-      "title": "Configuration",
-      "description": "Configure the agentOS VM options, preview settings, and lifecycle hooks.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/configuration",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/configuration.md"
-    },
-    {
       "name": "self-hosting/configuration",
       "title": "Configuration",
       "description": "Rivet Engine can be configured through environment variables or configuration files.",
@@ -157,27 +115,6 @@
       "description": "Connections represent client connections to your actor. They provide a way to handle client authentication, manage connection-specific data, and control the connection lifecycle.",
       "canonical_url": "https://rivet.dev/docs/actors/connections",
       "reference_url": "/metadata/skills/multiplayer-game/reference/actors/connections.md"
-    },
-    {
-      "name": "agent-os/core",
-      "title": "Core Package",
-      "description": "Use @rivet-dev/agent-os-core standalone for direct VM control without the Rivet Actor runtime.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/core",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/core.md"
-    },
-    {
-      "name": "agent-os/crash-course",
-      "title": "Crash Course",
-      "description": "Run coding agents inside isolated VMs with full filesystem, process, and network control.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/crash-course",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/crash-course.md"
-    },
-    {
-      "name": "agent-os/cron",
-      "title": "Cron Jobs",
-      "description": "Schedule recurring commands and agent sessions in agentOS VMs.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/cron",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/cron.md"
     },
     {
       "name": "cookbook/cron-jobs",
@@ -306,13 +243,6 @@
       "reference_url": "/metadata/skills/multiplayer-game/reference/deploy/vm-and-bare-metal.md"
     },
     {
-      "name": "agent-os/deployment",
-      "title": "Deployment",
-      "description": "Choose the right deployment option for agentOS.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/deployment",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/deployment.md"
-    },
-    {
       "name": "actors/design-patterns",
       "title": "Design Patterns",
       "description": "Common patterns and anti-patterns for building scalable actor systems.",
@@ -362,13 +292,6 @@
       "reference_url": "/metadata/skills/multiplayer-game/reference/actors/quickstart/effect.md"
     },
     {
-      "name": "agent-os/llm-gateway",
-      "title": "Embedded LLM Gateway",
-      "description": "Route, meter, and manage LLM API calls from agents.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/llm-gateway",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/llm-gateway.md"
-    },
-    {
       "name": "general/endpoints",
       "title": "Endpoints",
       "description": "Configure how your backend connects to Rivet and how clients reach your actors.",
@@ -390,13 +313,6 @@
       "reference_url": "/metadata/skills/multiplayer-game/reference/actors/errors.md"
     },
     {
-      "name": "agent-os/events",
-      "title": "Events",
-      "description": "Full event catalog with payload shapes for agentOS.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/events",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/events.md"
-    },
-    {
       "name": "actors/fetch-and-websocket-handler",
       "title": "Fetch and WebSocket Handler",
       "description": "These docs have moved to [Low-Level WebSocket Handler](/docs/actors/websocket-handler) and [Low-Level Request Handler](/docs/actors/request-handler).",
@@ -409,13 +325,6 @@
       "description": "The file system backend stores all data on the local disk. This is suitable for single-node deployments, development, and testing.",
       "canonical_url": "https://rivet.dev/docs/self-hosting/filesystem",
       "reference_url": "/metadata/skills/multiplayer-game/reference/self-hosting/filesystem.md"
-    },
-    {
-      "name": "agent-os/filesystem",
-      "title": "Filesystem",
-      "description": "Read, write, mount, and manage files inside agentOS.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/filesystem",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/filesystem.md"
     },
     {
       "name": "self-hosting/foundationdb",
@@ -481,13 +390,6 @@
       "reference_url": "/metadata/skills/multiplayer-game/reference/actors/lifecycle.md"
     },
     {
-      "name": "agent-os/limitations",
-      "title": "Limitations",
-      "description": "What the agentOS VM does not support, and how to work around it.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/limitations",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/limitations.md"
-    },
-    {
       "name": "actors/limits",
       "title": "Limits",
       "description": "Limits and constraints for Rivet Actors.",
@@ -500,13 +402,6 @@
       "description": "Live cursors and multiplayer presence with Rivet Actors: per-connection cursor state, realtime updates over events or raw WebSockets, and throttling.",
       "canonical_url": "https://rivet.dev/cookbook/live-cursors",
       "reference_url": "/metadata/skills/multiplayer-game/reference/cookbook/live-cursors.md"
-    },
-    {
-      "name": "agent-os/llm-credentials",
-      "title": "LLM Credentials",
-      "description": "Pass LLM API keys to agent sessions securely.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/llm-credentials",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/llm-credentials.md"
     },
     {
       "name": "general/logging",
@@ -551,25 +446,11 @@
       "reference_url": "/metadata/skills/multiplayer-game/reference/self-hosting/multi-region.md"
     },
     {
-      "name": "agent-os/multiplayer",
-      "title": "Multiplayer",
-      "description": "Connect multiple clients to the same agentOS actor for collaborative agent workflows.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/multiplayer",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/multiplayer.md"
-    },
-    {
       "name": "cookbook/multiplayer-game",
       "title": "Multiplayer Game",
       "description": "Pragmatic patterns for building multiplayer games: matchmaking, tick loops, realtime state, interest management, and validation.",
       "canonical_url": "https://rivet.dev/cookbook/multiplayer-game",
       "reference_url": "/metadata/skills/multiplayer-game/reference/cookbook/multiplayer-game.md"
-    },
-    {
-      "name": "agent-os/networking",
-      "title": "Networking & Previews",
-      "description": "Proxy HTTP requests into agentOS VMs and create shareable preview URLs.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/networking",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/networking.md"
     },
     {
       "name": "actors/quickstart/next-js",
@@ -593,27 +474,6 @@
       "reference_url": "/metadata/skills/multiplayer-game/reference/actors/quickstart/backend.md"
     },
     {
-      "name": "agent-os/permissions",
-      "title": "Permissions",
-      "description": "Approve or deny agent tool use with human-in-the-loop or auto-approve patterns.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/permissions",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/permissions.md"
-    },
-    {
-      "name": "agent-os/persistence",
-      "title": "Persistence & Sleep",
-      "description": "How agentOS persists data and manages sleep/wake cycles.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/persistence",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/persistence.md"
-    },
-    {
-      "name": "agent-os/agents/pi",
-      "title": "Pi",
-      "description": "Run the Pi coding agent inside a VM with extensions and custom configuration.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/agents/pi",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/agents/pi.md"
-    },
-    {
       "name": "general/pool-configuration",
       "title": "Pool Configuration",
       "description": "Reference for runner pool configuration, including drain behavior, actor eviction rate limiting, and serverless-specific options.",
@@ -626,13 +486,6 @@
       "description": "Configure PostgreSQL for self-hosted Rivet deployments.",
       "canonical_url": "https://rivet.dev/docs/self-hosting/postgres",
       "reference_url": "/metadata/skills/multiplayer-game/reference/self-hosting/postgres.md"
-    },
-    {
-      "name": "agent-os/processes",
-      "title": "Processes & Shell",
-      "description": "Execute commands, spawn long-running processes, and open interactive shells in agentOS VMs.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/processes",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/processes.md"
     },
     {
       "name": "general/production-checklist",
@@ -649,25 +502,11 @@
       "reference_url": "/metadata/skills/multiplayer-game/reference/self-hosting/production-checklist.md"
     },
     {
-      "name": "agent-os/queues",
-      "title": "Queues",
-      "description": "Serialize agent work with durable queues for backpressure and rate limiting.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/queues",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/queues.md"
-    },
-    {
       "name": "actors/queues",
       "title": "Queues & Run Loops",
       "description": "Use actor-local durable queues for serial run loops and request/response workflows.",
       "canonical_url": "https://rivet.dev/docs/actors/queues",
       "reference_url": "/metadata/skills/multiplayer-game/reference/actors/queues.md"
-    },
-    {
-      "name": "agent-os/quickstart",
-      "title": "Quickstart",
-      "description": "Set up an agentOS actor, create a session, and run your first coding agent.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/quickstart",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/quickstart.md"
     },
     {
       "name": "self-hosting/railway",
@@ -719,18 +558,18 @@
       "reference_url": "/metadata/skills/multiplayer-game/reference/general/runtime-modes.md"
     },
     {
+      "name": "clients/rust",
+      "title": "Rust (Beta)",
+      "description": "Connect Rust apps to Rivet Actors.",
+      "canonical_url": "https://rivet.dev/docs/clients/rust",
+      "reference_url": "/metadata/skills/multiplayer-game/reference/clients/rust.md"
+    },
+    {
       "name": "actors/quickstart/rust",
       "title": "Rust Quickstart (Beta)",
       "description": "Build a Rivet Actor in Rust",
       "canonical_url": "https://rivet.dev/docs/actors/quickstart/rust",
       "reference_url": "/metadata/skills/multiplayer-game/reference/actors/quickstart/rust.md"
-    },
-    {
-      "name": "agent-os/sandbox",
-      "title": "Sandbox Mounting",
-      "description": "Extend agentOS with full sandboxes for heavy workloads like browsers, desktop automation, and compilation.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/sandbox",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/sandbox.md"
     },
     {
       "name": "actors/scaling",
@@ -740,27 +579,6 @@
       "reference_url": "/metadata/skills/multiplayer-game/reference/actors/scaling.md"
     },
     {
-      "name": "agent-os/security",
-      "title": "Security & Auth",
-      "description": "Configure resource limits, network control, authentication, and filesystem isolation for agentOS.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/security",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/security.md"
-    },
-    {
-      "name": "agent-os/security-model",
-      "title": "Security Model",
-      "description": "Trust boundaries, isolation guarantees, and the agentOS threat model.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/security-model",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/security-model.md"
-    },
-    {
-      "name": "agent-os/sessions",
-      "title": "Sessions",
-      "description": "Create agent sessions, send prompts, stream responses, and replay event history.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/sessions",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/sessions.md"
-    },
-    {
       "name": "actors/sharing-and-joining-state",
       "title": "Sharing and Joining State",
       "description": "This page has moved to [design patterns](/docs/actors/design-patterns).",
@@ -768,25 +586,11 @@
       "reference_url": "/metadata/skills/multiplayer-game/reference/actors/sharing-and-joining-state.md"
     },
     {
-      "name": "agent-os/software",
-      "title": "Software",
-      "description": "Install software packages and configure the commands available inside agentOS.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/software",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/software.md"
-    },
-    {
       "name": "actors/sqlite",
       "title": "SQLite",
       "description": "Use embedded SQLite in Rivet Actors with raw SQL queries.",
       "canonical_url": "https://rivet.dev/docs/actors/sqlite",
       "reference_url": "/metadata/skills/multiplayer-game/reference/actors/sqlite.md"
-    },
-    {
-      "name": "agent-os/sqlite",
-      "title": "SQLite",
-      "description": "Give agents access to a persistent SQLite database via host tools.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/sqlite",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/sqlite.md"
     },
     {
       "name": "actors/sqlite-drizzle",
@@ -817,13 +621,6 @@
       "reference_url": "/metadata/skills/multiplayer-game/reference/clients/swiftui.md"
     },
     {
-      "name": "agent-os/system-prompt",
-      "title": "System Prompt",
-      "description": "How agentOS injects context into agent sessions.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/system-prompt",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/system-prompt.md"
-    },
-    {
       "name": "actors/testing",
       "title": "Testing",
       "description": "Rivet provides a straightforward testing framework to build reliable and maintainable applications. This guide covers how to write effective tests for your actor-based services.",
@@ -836,13 +633,6 @@
       "description": "How Rivet validates TLS root certificates.",
       "canonical_url": "https://rivet.dev/docs/self-hosting/tls",
       "reference_url": "/metadata/skills/multiplayer-game/reference/self-hosting/tls.md"
-    },
-    {
-      "name": "agent-os/tools",
-      "title": "Tools",
-      "description": "Expose custom tools to agents as CLI commands inside the VM.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/tools",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/tools.md"
     },
     {
       "name": "actors/troubleshooting",
@@ -878,20 +668,6 @@
       "description": "RivetKit runs your actors on a native or a WebAssembly runtime depending on your platform.",
       "canonical_url": "https://rivet.dev/docs/general/wasm-vs-native-sdk",
       "reference_url": "/metadata/skills/multiplayer-game/reference/general/wasm-vs-native-sdk.md"
-    },
-    {
-      "name": "agent-os/webhooks",
-      "title": "Webhooks",
-      "description": "Trigger agent workflows from external webhooks using Hono and queues.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/webhooks",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/webhooks.md"
-    },
-    {
-      "name": "agent-os/workflows",
-      "title": "Workflow Automation",
-      "description": "Orchestrate multi-step agent tasks with durable workflows.",
-      "canonical_url": "https://rivet.dev/docs/agent-os/workflows",
-      "reference_url": "/metadata/skills/multiplayer-game/reference/agent-os/workflows.md"
     },
     {
       "name": "actors/workflows",

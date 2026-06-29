@@ -22,28 +22,6 @@ Serverless is the default and recommended mode. Rivet sends HTTP requests to you
 
 ### Example
 
-```typescript Direct
-import { actor, setup } from "rivetkit";
-
-const myActor = actor({ state: {}, actions: {} });
-const registry = setup({ use: { myActor } });
-
-export default registry.serve();
-```
-
-```typescript With-Router
-import { Hono } from "hono";
-import { actor, setup } from "rivetkit";
-
-const myActor = actor({ state: {}, actions: {} });
-const registry = setup({ use: { myActor } });
-
-const app = new Hono();
-app.all("/api/rivet/*", (c) => registry.handler(c.req.raw));
-
-export default app;
-```
-
 See [Server Setup](/docs/general/http-server/) for more configuration options.
 
 ### Architecture
@@ -89,15 +67,6 @@ Runners run actors as long-running background processes without exposing an HTTP
 
 ### Example
 
-```typescript runner.ts
-import { actor, setup } from "rivetkit";
-
-const myActor = actor({ state: {}, actions: {} });
-const registry = setup({ use: { myActor } });
-
-registry.startEnvoy();
-```
-
 The runner runs in the background, ready to run actors.
 
 ### Architecture
@@ -114,19 +83,6 @@ Use `RIVET_RUNNER` to assign runners to a pool. This lets you control which runn
 
 ```bash
 RIVET_RUNNER=gpu-workers
-```
-
-```typescript
-import { actor, setup } from "rivetkit";
-
-const myActor = actor({ state: {}, actions: {} });
-
-const registry = setup({
-  use: { myActor },
-  envoy: {
-    poolName: "gpu-workers",
-  },
-});
 ```
 
 See [Pool Configuration](/docs/general/pool-configuration) for how pools are scaled, drained on version upgrades, and rate-limited during actor eviction.

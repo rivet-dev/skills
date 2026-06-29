@@ -18,14 +18,6 @@ The native runtime is the default and requires no configuration. It loads
 platform-specific native bindings for the best performance and full feature
 support on Node.js and Bun.
 
-```typescript
-import { actor, setup } from "rivetkit";
-
-const counter = actor({ state: { count: 0 }, actions: {} });
-
-const registry = setup({ use: { counter } });
-```
-
 ## WebAssembly runtime
 
 Edge platforms run on isolates (V8, Deno) that cannot load native binaries, so

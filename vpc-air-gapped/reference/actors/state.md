@@ -13,133 +13,9 @@ There are three ways to store data in an actor, depending on what it looks like 
 
 Simple, serializable data on `c.state` that is automatically persisted and restored across restarts. The default starting point.
 
-```typescript Basic
-import { actor } from "rivetkit";
-
-const counter = actor({
-  // Constant initial state
-  state: { count: 0 },
-
-  actions: {
-    get: (c) => c.state.count,
-
-    // Update state, changes are persisted automatically
-    increment: (c) => {
-      c.state.count += 1;
-      return c.state.count;
-    }
-  }
-});
-```
-
-```typescript Dynamic init
-import { actor } from "rivetkit";
-
-interface CounterState {
-  count: number;
-}
-
-const counter = actor({
-  // Compute the initial state when the actor is created
-  createState: (): CounterState => ({ count: 0 }),
-
-  actions: {
-    get: (c) => c.state.count,
-
-    increment: (c) => {
-      c.state.count += 1;
-      return c.state.count;
-    }
-  }
-});
-```
-
-```typescript With input
-import { actor } from "rivetkit";
-
-interface CounterState {
-  count: number;
-}
-
-const counter = actor({
-  // Compute the initial state from input passed at creation
-  createState: (c, input: { startingCount: number }): CounterState => ({
-    count: input.startingCount,
-  }),
-
-  actions: {
-    get: (c) => c.state.count,
-
-    increment: (c) => {
-      c.state.count += 1;
-      return c.state.count;
-    }
-  }
-});
-```
-
 ### Ephemeral
 
 Live objects on `c.vars` like database connections, API clients, and event emitters, or data loaded from an external source. Never persisted.
-
-```typescript Basic
-import { actor } from "rivetkit";
-
-const counter = actor({
-  state: { count: 0 },
-
-  // Constant ephemeral value, reset each time the actor starts
-  vars: { lastAccessedAt: 0 },
-
-  actions: {
-    increment: (c) => {
-      // Read and write the ephemeral var
-      c.vars.lastAccessedAt = Date.now();
-      return ++c.state.count;
-    },
-
-    getLastAccessed: (c) => c.vars.lastAccessedAt
-  }
-});
-```
-
-```typescript Dynamic init
-import { actor } from "rivetkit";
-
-const chatRoom = actor({
-  state: { messages: [] as string[] },
-
-  // Build a non-serializable emitter on each start
-  createVars: () => ({ emitter: createEventEmitter() }),
-
-  actions: {
-    broadcast: (c, text: string) => {
-      c.state.messages.push(text);
-      // Use the ephemeral emitter
-      c.vars.emitter.emit("message", text);
-    }
-  }
-});
-
-// Mock event emitter for demonstration
-interface EventEmitter {
-  on: (event: string, callback: (data: unknown) => void) => void;
-  emit: (event: string, data: unknown) => void;
-}
-
-function createEventEmitter(): EventEmitter {
-  const listeners: Record<string, ((data: unknown) => void)[]> = {};
-  return {
-    on: (event, callback) => {
-      listeners[event] = listeners[event] || [];
-      listeners[event].push(callback);
-    },
-    emit: (event, data) => {
-      listeners[event]?.forEach(cb => cb(data));
-    }
-  };
-}
-```
 
 ```typescript @nocheck External database
 import { actor } from "rivetkit";
@@ -258,31 +134,6 @@ To force a save mid-action, call `c.saveState()`:
 
 Force an immediate save before a risky side effect so a crash can't lose progress:
 
-```typescript
-import { actor } from "rivetkit";
-
-const checkout = actor({
-  state: { status: "pending" as "pending" | "charged" | "fulfilled" },
-
-  actions: {
-    fulfill: async (c) => {
-      c.state.status = "charged";
-      // Persist before the side effect so a crash can't undo it
-      await c.saveState({ immediate: true });
-
-      await chargeExternalProvider();
-
-      c.state.status = "fulfilled";
-      return c.state.status;
-    }
-  }
-});
-
-async function chargeExternalProvider() {
-  await new Promise((resolve) => setTimeout(resolve, 100));
-}
-```
-
 ### Supported types
 
 State must be serializable.
@@ -304,24 +155,6 @@ When data grows large or needs querying, store it in [Embedded SQLite](#embedded
 ### Runtime objects
 
 Build non-serializable objects in `createVars` and use them from actions:
-
-```typescript
-import { actor } from "rivetkit";
-
-const room = actor({
-  state: { messages: [] as string[] },
-
-  // EventTarget can't be serialized, so it lives in vars
-  createVars: () => ({ events: new EventTarget() }),
-
-  actions: {
-    send: (c, text: string) => {
-      c.state.messages.push(text);
-      c.vars.events.dispatchEvent(new CustomEvent("message", { detail: text }));
-    }
-  }
-});
-```
 
 ### Loading from external sources
 

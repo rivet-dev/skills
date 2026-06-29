@@ -19,21 +19,6 @@ Under the hood, Rivet and Cloudflare use [Anycast routing](https://en.wikipedia.
 
 The region an actor is created in can be overridden using region options:
 
-```typescript client.ts
-import { createClient } from "rivetkit/client";
-import { actor, setup } from "rivetkit";
-
-const example = actor({ state: {}, actions: {} });
-const registry = setup({ use: { example } });
-
-const client = createClient<typeof registry>("http://localhost:6420");
-
-// Create actor in a specific region using getOrCreate
-const actorHandle = client.example.getOrCreate(["my-actor"], {
-  createInRegion: "atl"
-});
-```
-
 See [Create  Manage Actors](/docs/actors/communicating-between-actors) for more information.
 
 _Source doc path: /docs/general/edge_

@@ -39,24 +39,6 @@ Key properties:
 
 `c.schedule` is one-shot, so recurring jobs are built by having the scheduled action re-arm itself at the end of each run:
 
-```typescript
-import { actor } from "rivetkit";
-
-const DAY_MS = 24 * 60 * 60 * 1000;
-
-export const dailyReport = actor({
-  state: { lastRunAt: 0 },
-  actions: {
-    runReport: (c) => {
-      // Do the job's work, then record the run.
-      c.state.lastRunAt = Date.now();
-      // Re-arm the next run before returning.
-      c.schedule.after(DAY_MS, "runReport");
-    },
-  },
-});
-```
-
 Arm the first run from `onCreate` or a setup action; after that, the action keeps the chain alive by rescheduling itself.
 
 Re-arming with `after` measures the next run from the end of the current one, so the cadence drifts later by the job's runtime on every cycle. If runs must stay aligned to a fixed cadence, re-arm with `c.schedule.at(c.state.lastRunAt + DAY_MS, "runReport")` instead.
@@ -195,41 +177,6 @@ The example is intentionally open: any client can connect to the shared `["main"
 - [Versions & Upgrades](reference/actors/versions.md)
 - [Workflows](reference/actors/workflows.md)
 
-### Agent Os
-
-- [Agent-to-Agent Communication](reference/agent-os/agent-to-agent.md)
-- [agentOS vs Sandbox](reference/agent-os/versus-sandbox.md)
-- [Authentication](reference/agent-os/authentication.md)
-- [Benchmarks](reference/agent-os/benchmarks.md)
-- [Configuration](reference/agent-os/configuration.md)
-- [Core Package](reference/agent-os/core.md)
-- [Crash Course](reference/agent-os/crash-course.md)
-- [Cron Jobs](reference/agent-os/cron.md)
-- [Deployment](reference/agent-os/deployment.md)
-- [Embedded LLM Gateway](reference/agent-os/llm-gateway.md)
-- [Events](reference/agent-os/events.md)
-- [Filesystem](reference/agent-os/filesystem.md)
-- [Limitations](reference/agent-os/limitations.md)
-- [LLM Credentials](reference/agent-os/llm-credentials.md)
-- [Multiplayer](reference/agent-os/multiplayer.md)
-- [Networking & Previews](reference/agent-os/networking.md)
-- [Permissions](reference/agent-os/permissions.md)
-- [Persistence & Sleep](reference/agent-os/persistence.md)
-- [Pi](reference/agent-os/agents/pi.md)
-- [Processes & Shell](reference/agent-os/processes.md)
-- [Queues](reference/agent-os/queues.md)
-- [Quickstart](reference/agent-os/quickstart.md)
-- [Sandbox Mounting](reference/agent-os/sandbox.md)
-- [Security & Auth](reference/agent-os/security.md)
-- [Security Model](reference/agent-os/security-model.md)
-- [Sessions](reference/agent-os/sessions.md)
-- [Software](reference/agent-os/software.md)
-- [SQLite](reference/agent-os/sqlite.md)
-- [System Prompt](reference/agent-os/system-prompt.md)
-- [Tools](reference/agent-os/tools.md)
-- [Webhooks](reference/agent-os/webhooks.md)
-- [Workflow Automation](reference/agent-os/workflows.md)
-
 ### Cli
 
 - [CLI](reference/cli.md)
@@ -238,13 +185,13 @@ The example is intentionally open: any client can connect to the shared `["main"
 
 - [Node.js & Bun](reference/clients/javascript.md)
 - [React](reference/clients/react.md)
+- [Rust (Beta)](reference/clients/rust.md)
 - [Swift](reference/clients/swift.md)
 - [SwiftUI](reference/clients/swiftui.md)
 
 ### Cookbook
 
 - [AI Agent](reference/cookbook/ai-agent.md)
-- [AI Agent Workspaces](reference/cookbook/ai-agent-workspace.md)
 - [Chat Room](reference/cookbook/chat-room.md)
 - [Collaborative Text Editor](reference/cookbook/collaborative-text-editor.md)
 - [Cron Jobs and Scheduled Tasks](reference/cookbook/cron-jobs.md)

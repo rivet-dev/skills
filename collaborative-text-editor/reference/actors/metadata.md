@@ -9,57 +9,15 @@
 
 Get the unique instance ID of the actor:
 
-```typescript
-import { actor } from "rivetkit";
-
-const example = actor({
-	state: {},
-	actions: {
-		getId: (c) => {
-			const actorId = c.actorId;
-			return actorId;
-		},
-	},
-});
-```
-
 ## Actor Name
 
 Get the actor type name:
-
-```typescript
-import { actor } from "rivetkit";
-
-const example = actor({
-	state: {},
-	actions: {
-		getName: (c) => {
-			const actorName = c.name;
-			return actorName;
-		},
-	},
-});
-```
 
 This is useful when you need to know which actor type is running, especially if you have generic utility functions that are shared between different actor implementations.
 
 ## Actor Key
 
 Get the actor key used to identify this actor instance:
-
-```typescript
-import { actor } from "rivetkit";
-
-const example = actor({
-	state: {},
-	actions: {
-		getKey: (c) => {
-			const actorKey = c.key;
-			return actorKey;
-		},
-	},
-});
-```
 
 The key is used to route requests to the correct actor instance and can include parameters passed when creating the actor.
 
@@ -69,65 +27,9 @@ Learn more about using keys for actor addressing and configuration in the [keys 
 
 Region can be accessed from the context object via `c.region`.
 
-```typescript
-import { actor } from "rivetkit";
-
-const example = actor({
-	state: {},
-	actions: {
-		getRegion: (c) => {
-			const region = c.region;
-			return region;
-		},
-	},
-});
-```
-
 `c.region` is only supported on Rivet at the moment.
 
 ## Example Usage
-
-```typescript index.ts
-import { actor, setup } from "rivetkit";
-
-const chatRoom = actor({
-	state: {
-		messages: [],
-	},
-
-	actions: {
-		// Get actor metadata
-		getMetadata: (c) => {
-			return {
-				actorId: c.actorId,
-				name: c.name,
-				key: c.key,
-				region: c.region,
-			};
-		},
-	},
-});
-
-export const registry = setup({
-	use: { chatRoom },
-});
-
-registry.start();
-```
-
-```typescript client.ts
-import { createClient } from "rivetkit/client";
-import type { registry } from "./index";
-
-const client = createClient<typeof registry>("http://localhost:6420");
-
-// Connect to a chat room
-const chatRoomHandle = client.chatRoom.get(["general"]);
-
-// Get actor metadata
-const metadata = await chatRoomHandle.getMetadata();
-console.log("Actor metadata:", metadata);
-```
 
 ## API Reference
 

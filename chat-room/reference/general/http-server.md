@@ -11,15 +11,6 @@
 
 The simplest way to run your server. Starts a local RivetKit server, serves static files from a `public` directory, and starts the actor runner:
 
-```ts index.ts
-import { actor, setup } from "rivetkit";
-
-const myActor = actor({ state: {}, actions: {} });
-const registry = setup({ use: { myActor } });
-
-registry.start();
-```
-
 Run with `npx tsx --watch index.ts` (Node.js), `bun --watch index.ts` (Bun), or `deno run --allow-net --allow-read --allow-env --watch index.ts` (Deno). Clients connect to the Rivet Engine on `http://localhost:6420`.
 
 ### With Fetch Handlers
@@ -28,48 +19,11 @@ A [fetch handler](https://wintercg.org/) is a function that takes a `Request` an
 
 Use `registry.serve()` to get a fetch handler:
 
-```ts server.ts
-import { actor, setup } from "rivetkit";
-
-const myActor = actor({ state: {}, actions: {} });
-const registry = setup({ use: { myActor } });
-
-export default registry.serve();
-```
-
 To integrate with a router like [Hono](https://hono.dev/) or [Elysia](https://elysiajs.com/), use `registry.handler()`:
 
 ### Hono
 
-```ts server.ts
-import { Hono } from "hono";
-import { actor, setup } from "rivetkit";
-
-const myActor = actor({ state: {}, actions: {} });
-const registry = setup({ use: { myActor } });
-
-const app = new Hono();
-app.get("/health", (c) => c.text("OK"));
-app.all("/api/rivet/*", (c) => registry.handler(c.req.raw));
-
-export default app;
-```
-
 ### Elysia
-
-```ts server.ts
-import { Elysia } from "elysia";
-import { actor, setup } from "rivetkit";
-
-const myActor = actor({ state: {}, actions: {} });
-const registry = setup({ use: { myActor } });
-
-const app = new Elysia()
-  .get("/health", () => "OK")
-  .all("/api/rivet/*", ({ request }) => registry.handler(request));
-
-export default app;
-```
 
 Then run your server:
 
@@ -92,20 +46,6 @@ If you need to explicitly start the HTTP server instead of using the fetch handl
 ### Node.js (Hono)
 
 Using Hono with `@hono/node-server`:
-
-```ts server.ts
-import { Hono } from "hono";
-import { serve } from "@hono/node-server";
-import { actor, setup } from "rivetkit";
-
-const myActor = actor({ state: {}, actions: {} });
-const registry = setup({ use: { myActor } });
-
-const app = new Hono();
-app.all("/api/rivet/*", (c) => registry.handler(c.req.raw));
-
-serve({ fetch: app.fetch, port: 3000 });
-```
 
 ### Node.js (Adapter)
 

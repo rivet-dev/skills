@@ -27,20 +27,6 @@ RIVET_ENDPOINT=https://my-namespace:sk_xxxxx@api.rivet.dev
 
 ### Config
 
-```typescript
-import { actor, setup } from "rivetkit";
-
-const myActor = actor({
-  state: {},
-  actions: {}
-});
-
-const registry = setup({
-  use: { myActor },
-  endpoint: "https://my-namespace:sk_xxxxx@api.rivet.dev",
-});
-```
-
 ### Public Endpoint
 
 The public endpoint tells clients where to connect to reach your actors.
@@ -56,22 +42,6 @@ RIVET_PUBLIC_ENDPOINT=https://my-namespace:pk_xxxxx@api.rivet.dev
 ```
 
 ### Config
-
-```typescript
-import { actor, setup } from "rivetkit";
-
-const myActor = actor({
-  state: {},
-  actions: {}
-});
-
-const registry = setup({
-  use: { myActor },
-  serverless: {
-    publicEndpoint: "https://my-namespace:pk_xxxxx@api.rivet.dev",
-  },
-});
-```
 
 ## Advanced
 

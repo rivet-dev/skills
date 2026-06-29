@@ -19,27 +19,6 @@ Actors sleep when idle, so destruction is only needed to permanently remove data
 
 To destroy an actor, use `c.destroy()` like this:
 
-```typescript
-import { actor } from "rivetkit";
-
-interface UserInput {
-  email: string;
-  name: string;
-}
-
-const userActor = actor({
-  createState: (c, input: UserInput) => ({
-    email: input.email,
-    name: input.name,
-  }),
-  actions: {
-    deleteAccount: (c) => {
-      c.destroy();
-    },
-  },
-});
-```
-
 ### Destroy via HTTP
 
 Send a DELETE request to destroy an actor. This requires a token for authentication:
@@ -79,37 +58,6 @@ To destroy an actor via the dashboard, navigate to the actor and press the red "
 ## Lifecycle Hook
 
 Once destroyed, the `onDestroy` hook will be called. This can be used to clean up resources related to the actor. For example:
-
-```typescript
-import { actor } from "rivetkit";
-
-interface UserState {
-  email: string;
-  name: string;
-}
-
-// Example email service interface
-const emailService = {
-  send: async (options: { from: string; to: string; subject: string; text: string }) => {},
-};
-
-const userActor = actor({
-  state: { email: "", name: "" } as UserState,
-  onDestroy: async (c) => {
-    await emailService.send({
-      from: "noreply@example.com",
-      to: c.state.email,
-      subject: "Account Deleted",
-      text: `Goodbye ${c.state.name}, your account has been deleted.`,
-    });
-  },
-  actions: {
-    deleteAccount: (c) => {
-      c.destroy();
-    },
-  },
-});
-```
 
 ## Accessing Actor After Destroy
 

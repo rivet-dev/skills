@@ -13,21 +13,6 @@ Actors can be customized with a display name and icon that appear in the Rivet i
 
 Set the `name` and `icon` properties in your actor's `options`:
 
-```typescript
-import { actor } from "rivetkit";
-
-const chatRoom = actor({
-  options: {
-    name: "Chat Room",    // Human-friendly display name
-    icon: "comments",     // FontAwesome icon name
-  },
-  state: { messages: [] },
-  actions: {
-    // ...
-  }
-});
-```
-
 ## Icon Formats
 
 The `icon` property accepts two formats:
@@ -36,41 +21,9 @@ The `icon` property accepts two formats:
 
 Use any emoji character directly:
 
-```typescript
-import { actor } from "rivetkit";
-
-const notificationService = actor({
-  options: {
-    name: "Notifications",
-    icon: "🔔",
-  },
-  // ...
-});
-```
-
 ### FontAwesome Icons
 
 Use [FontAwesome](https://fontawesome.com/search) icon names without the "fa" prefix:
-
-```typescript
-import { actor } from "rivetkit";
-
-const gameServer = actor({
-  options: {
-    name: "Game Server",
-    icon: "gamepad",
-  },
-  // ...
-});
-
-const analyticsWorker = actor({
-  options: {
-    name: "Analytics",
-    icon: "chart-line",
-  },
-  // ...
-});
-```
 
 ## Default Behavior
 
@@ -80,103 +33,17 @@ If no `icon` is specified, actors display the default actor icon. If no `name` i
 
 Here are some common patterns:
 
-```typescript
-import { actor } from "rivetkit";
-
-// Chat/messaging actors
-const chatRoom = actor({
-  options: { name: "Chat Room", icon: "comments" },
-  // ...
-});
-
-// Game-related actors
-const matchmaker = actor({
-  options: { name: "Matchmaker", icon: "users" },
-  // ...
-});
-
-const gameSession = actor({
-  options: { name: "Game Session", icon: "gamepad" },
-  // ...
-});
-
-// Data processing actors
-const dataProcessor = actor({
-  options: { name: "Data Processor", icon: "microchip" },
-  // ...
-});
-
-// Using emojis for quick identification
-const alertService = actor({
-  options: { name: "Alerts", icon: "🚨" },
-  // ...
-});
-```
-
 ## Advanced: Run Handler Metadata
 
 For library developers creating reusable run handlers, you can bundle icon and name metadata directly with the `run` property. This allows libraries to provide sensible defaults without requiring users to configure them manually.
 
 Instead of returning a function from your run handler factory, return an object with `name`, `icon`, and `run`:
 
-```typescript
-import type { RunConfig } from "rivetkit";
-
-type MyOptions = {
-  mode?: "safe" | "fast";
-};
-
-function myCustomRunHandler(_options: MyOptions): RunConfig {
-  const run: RunConfig["run"] = async (_c) => {
-    // Your run handler logic...
-  };
-
-  return {
-    name: "My Custom Handler",
-    icon: "bolt",
-    run,
-  };
-}
-```
-
 Users can then use this directly:
-
-```typescript
-import { actor } from "rivetkit";
-
-const myCustomRunHandler = (_options: Record<string, unknown>) => ({
-  name: "My Custom Handler",
-  icon: "bolt",
-  run: async () => {},
-});
-
-const myActor = actor({
-  run: myCustomRunHandler({ /* options */ }),
-  // Picks up "My Custom Handler" name and "bolt" icon in registry metadata
-});
-```
 
 This run-handler metadata is currently applied through the registry and serverless metadata paths. The native runtime and inspector config read the actor's `options.name` and `options.icon` directly, so set those explicitly if you need the name or icon to appear everywhere.
 
 Actor-level `options.name` and `options.icon` always take precedence, allowing users to override library defaults:
-
-```typescript
-import { actor } from "rivetkit";
-
-const myCustomRunHandler = (_options: Record<string, unknown>) => ({
-  name: "My Custom Handler",
-  icon: "bolt",
-  run: async () => {},
-});
-
-const myActor = actor({
-  options: {
-    name: "Custom Name",  // Overrides "My Custom Handler"
-    icon: "rocket",       // Overrides "bolt"
-  },
-  run: myCustomRunHandler({ /* options */ }),
-});
-```
 
 The built-in `workflow()` helper uses this pattern to automatically display the workflow icon for workflow-based actors.
 

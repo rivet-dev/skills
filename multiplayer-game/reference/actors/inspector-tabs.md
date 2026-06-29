@@ -24,34 +24,6 @@ A runnable example lives at
 
 Declare a tab on your actor:
 
-```ts
-import { actor, setup } from "rivetkit";
-
-export const counter = actor({
-  state: { value: 0 },
-  actions: {
-    increment: (c, amount: number) => {
-      c.state.value += amount;
-      return c.state.value;
-    },
-  },
-  inspector: {
-    tabs: [
-      {
-        id: "counter",
-        label: "Counter",
-        icon: "tag",
-        source: "./inspector-tabs/counter",
-      },
-      { id: "queue", hidden: true },
-    ],
-  },
-});
-
-export const registry = setup({ use: { counter } });
-registry.start();
-```
-
 Drop an `index.html` in the `source` directory:
 
 ```html
@@ -197,17 +169,6 @@ your tab could forge an `init` and feed you a fake token.
 
 If you build the tab with TypeScript, the message and response types
 are exported as types-only:
-
-```ts
-import type {
-  V1Init,
-  ShellToTabMessage,
-  TabToShellMessage,
-  InspectorStateResponse,
-  InspectorActionResponse,
-  InspectorRpcsResponse,
-} from "rivetkit/inspector-tab";
-```
 
 ## Reading state and calling actions
 
