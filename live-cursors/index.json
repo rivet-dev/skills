@@ -2,7 +2,7 @@
   "name": "live-cursors",
   "description": "Live cursors and multiplayer presence with Rivet Actors: per-connection cursor state, realtime updates over events or raw WebSockets, and throttling.",
   "skill_url": "/metadata/skills/live-cursors/SKILL.md",
-  "generated_at": "2026-06-29T06:23:18.087Z",
+  "generated_at": "2026-07-02T03:17:53.111Z",
   "references": [
     {
       "name": "actors/access-control",

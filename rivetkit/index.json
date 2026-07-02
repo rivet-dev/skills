@@ -2,7 +2,7 @@
   "name": "rivetkit",
   "description": "RivetKit backend and Rivet Actor runtime guidance. Use for building, modifying, debugging, or testing Rivet Actors, registries, serverless/runner modes, deployment, or actor-based workflows.",
   "skill_url": "/metadata/skills/rivetkit/SKILL.md",
-  "generated_at": "2026-06-29T06:23:18.005Z",
+  "generated_at": "2026-07-02T03:17:53.045Z",
   "references": [
     {
       "name": "actors/access-control",
