@@ -179,6 +179,17 @@ Use this when inbound work can spike and you need predictable per-iteration limi
 
 Use this when workflow structure changes across deployments and old histories must still replay.
 
+### Version gates with `getVersion`
+
+Use `ctx.getVersion(name, latest)` to branch behavior when you change a workflow's logic while old instances are still in flight. It returns the version this instance is pinned to at that point:
+
+- A fresh instance resolves to `latest`.
+- An instance that already executed past this point under older code resolves to `1` (the implicit floor).
+
+The resolved version is recorded in history, so replays are deterministic and each instance stays on the branch it started on. Inside a loop, every iteration resolves independently, so in-flight iterations finish on the old branch while new iterations pick up `latest`.
+
+`latest` must be an integer `>= 1`, and the gate name must be unique within its scope like any other entry. Once every old instance has drained, retire the gate by replacing the call with `ctx.removed(name, "version_check")`.
+
 ### Checkpoint-friendly loop design
 
 Use this when you need reliable replay and resume semantics across crashes and restarts.
@@ -187,6 +198,7 @@ Use this when you need reliable replay and resume semantics across crashes and r
 
 - Keep workflow entry names stable once deployed.
 - If an old entry was removed or renamed, call `ctx.removed(name, originalType)`.
+- To change behavior at a point while old instances are still running, gate it with `ctx.getVersion(name, latest)` (see [Version gates](#version-gates-with-getversion)).
 - This keeps replay compatible across deployments.
 
 ## Step-only access to actor APIs
