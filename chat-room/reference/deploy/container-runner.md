@@ -5,9 +5,17 @@
 > Description: Run any containerized server as a Rivet Actor.
 
 ---
-The container runner (`rivet-container-runner`) turns any container into a Rivet Actor host: as the entrypoint, it spawns your server as a child process and proxies HTTP and WebSocket traffic from the Rivet gateway to it. It is the recommended way to run non-RivetKit software behind Rivet, such as a Unity or Godot dedicated game server. Each actor gets its own child process on its own port; how many actors share a container is decided by the pool's request concurrency, and the recommended game-server setup is one actor per container.
+The container runner (`rivet-container-runner`) runs as your container's entrypoint, spawning your server as a child process and proxying gateway HTTP and WebSocket traffic to it. It is the recommended way to run non-RivetKit software, such as Unity or Godot dedicated game servers, behind Rivet. Each actor gets its own child process; the pool's request concurrency decides how many actors share a container, and game servers should use one actor per container.
 
-## Install in Your Container
+## Steps
+
+### Prerequisites
+
+- A containerized server (a Unity or Godot dedicated server, a plain Node process, or any HTTP/WebSocket server)
+- Access to the [Rivet Cloud](https://dashboard.rivet.dev/) or a [self-hosted Rivet Engine](/docs/general/self-hosting)
+- Docker running locally
+
+### Install in Your Container
 
 Download the static binary from Rivet's release artifacts in your Dockerfile and set it as the entrypoint, passing your server's launch command after `--`:
 
@@ -28,6 +36,21 @@ ENTRYPOINT ["rivet-container-runner", "--", "./GameServer", "-batchmode", "-nogr
 ```
 
 Artifacts are published for `x86_64-unknown-linux-musl` and `aarch64-unknown-linux-musl`. The binaries are fully static, so they run in any Linux base image, including `scratch`. Pin a version by replacing `latest` with a release version, for example `https://releases.rivet.dev/rivet/2.3.3/container-runner/rivet-container-runner-x86_64-unknown-linux-musl`.
+
+### Deploy
+
+Deploy the image to [Rivet Compute](/docs/deploy/rivet-compute) with the CLI. For game servers, configure the pool with one actor per instance:
+
+```bash
+npx @rivetkit/cli deploy \
+	--token "$RIVET_CLOUD_TOKEN" \
+	--instance-request-concurrency 1 \
+	--dockerfile Dockerfile
+```
+
+### Create Actors and Connect Clients
+
+Create actors against the pool's runner (`default`) and connect clients through the gateway URL shown in the dashboard. WebSocket clients connect at the bare gateway URL with the `rivet` WebSocket subprotocol.
 
 ## How It Works
 
@@ -59,25 +82,11 @@ The actor's `input` payload can override the launch spec per actor. All fields a
 {
 	"command": ["./GameServer", "-batchmode"],
 	"args": ["-extra-flag"],
-	"env": { "MATCH_MODE": "ranked" },
-	"port": 7777
+	"env": { "MATCH_MODE": "ranked" }
 }
 ```
 
-`command` replaces the entrypoint command template, `args` are appended to it, `env` adds environment variables for the child, and `port` overrides the child port.
-
-## Deploy
-
-Deploy the image to [Rivet Compute](/docs/deploy/rivet-compute) with the CLI. For game servers, configure the pool with one actor per instance:
-
-```bash
-npx @rivetkit/cli deploy \
-	--token "$RIVET_CLOUD_TOKEN" \
-	--instance-request-concurrency 1 \
-	--dockerfile Dockerfile
-```
-
-Then create actors against the pool's runner (`default`) and connect clients through the gateway URL shown in the dashboard.
+`command` replaces the entrypoint command template, `args` are appended to it, and `env` adds environment variables for the child.
 
 ## Source and Examples
 

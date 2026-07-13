@@ -2,7 +2,7 @@
   "name": "cron-jobs",
   "description": "Durable cron jobs with Rivet Actors: schedule.after and schedule.at timers survive restarts and crashes, plus re-arming recurring jobs and idempotent handlers.",
   "skill_url": "/metadata/skills/cron-jobs/SKILL.md",
-  "generated_at": "2026-07-13T19:32:23.555Z",
+  "generated_at": "2026-07-13T23:47:54.745Z",
   "references": [
     {
       "name": "actors/access-control",
