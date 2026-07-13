@@ -206,6 +206,7 @@ The examples ship without auth so they stay minimal. Apply this baseline before 
 
 ### Deploy
 
+- [Container Runner](reference/deploy/container-runner.md)
 - [Deploy To Amazon Web Services Lambda](reference/deploy/aws-lambda.md)
 - [Deploying to AWS ECS](reference/deploy/aws-ecs.md)
 - [Deploying to Cloudflare Workers](reference/deploy/cloudflare.md)

@@ -9,7 +9,7 @@ Use this skill when building Swift clients that connect to Rivet Actors with `Ri
 
 ## Version
 
-RivetKit version: 2.3.2
+RivetKit version: 2.3.3-rc.2
 
 ## Error Handling Policy
 

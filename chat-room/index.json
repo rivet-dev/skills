@@ -2,7 +2,7 @@
   "name": "chat-room",
   "description": "Build a realtime chat room backend with Rivet Actors: one actor per room, SQLite-backed message history, and WebSocket broadcast to every connected client.",
   "skill_url": "/metadata/skills/chat-room/SKILL.md",
-  "generated_at": "2026-07-06T19:23:49.717Z",
+  "generated_at": "2026-07-13T19:32:23.543Z",
   "references": [
     {
       "name": "actors/access-control",
@@ -115,6 +115,13 @@
       "description": "Connections represent client connections to your actor. They provide a way to handle client authentication, manage connection-specific data, and control the connection lifecycle.",
       "canonical_url": "https://rivet.dev/docs/actors/connections",
       "reference_url": "/metadata/skills/chat-room/reference/actors/connections.md"
+    },
+    {
+      "name": "deploy/container-runner",
+      "title": "Container Runner",
+      "description": "Run any containerized server as a Rivet Actor.",
+      "canonical_url": "https://rivet.dev/docs/deploy/container-runner",
+      "reference_url": "/metadata/skills/chat-room/reference/deploy/container-runner.md"
     },
     {
       "name": "cookbook/cron-jobs",
