@@ -9,7 +9,7 @@ Use this skill when building SwiftUI apps that connect to Rivet Actors with `Riv
 
 ## Version
 
-RivetKit version: 2.3.3
+RivetKit version: 2.3.4
 
 ## Error Handling Policy
 

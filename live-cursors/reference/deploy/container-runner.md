@@ -5,7 +5,7 @@
 > Description: Run any containerized server as a Rivet Actor.
 
 ---
-The container runner (`rivet-container-runner`) runs as your container's entrypoint, spawning your server as a child process and proxying gateway HTTP and WebSocket traffic to it. It is the recommended way to run non-RivetKit software, such as Unity or Godot dedicated game servers, behind Rivet. Each actor gets its own child process; the pool's request concurrency decides how many actors share a container, and game servers should use one actor per container.
+The container runner (`rivet-container-runner`) is an adapter for running arbitrary containers as Rivet Actors. Use it for non-RivetKit workloads such as Unity or Godot dedicated game servers and batch jobs like FFmpeg transcoding.
 
 ## Steps
 
