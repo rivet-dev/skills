@@ -2,7 +2,7 @@
   "name": "chat-room",
   "description": "Build a realtime chat room backend with Rivet Actors: one actor per room, SQLite-backed message history, and WebSocket broadcast to every connected client.",
   "skill_url": "/metadata/skills/chat-room/SKILL.md",
-  "generated_at": "2026-07-13T23:47:54.715Z",
+  "generated_at": "2026-07-15T15:48:23.937Z",
   "references": [
     {
       "name": "actors/access-control",

@@ -5,8 +5,6 @@
 > Description: Run your backend on Rivet Compute.
 
 ---
-Rivet Compute is currently in beta.
-
 Using an AI coding agent? Open **Connect** on the [Rivet dashboard](https://dashboard.rivet.dev), select **Rivet Cloud**, and paste the one-shot prompt into your agent and have it connect with Rivet Compute for you.
 
 ## Steps
