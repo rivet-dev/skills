@@ -2,7 +2,7 @@
   "name": "collaborative-text-editor",
   "description": "Build a collaborative text editor backend with Yjs CRDTs and Rivet Actors: per-document actors relay sync and awareness updates and persist snapshots.",
   "skill_url": "/metadata/skills/collaborative-text-editor/SKILL.md",
-  "generated_at": "2026-07-15T22:46:51.953Z",
+  "generated_at": "2026-07-18T05:55:09.558Z",
   "references": [
     {
       "name": "actors/access-control",
@@ -31,6 +31,13 @@
       "description": "Actor keys uniquely identify actor instances within each actor type. Keys are used for addressing which specific actor to communicate with.",
       "canonical_url": "https://rivet.dev/docs/actors/keys",
       "reference_url": "/metadata/skills/collaborative-text-editor/reference/actors/keys.md"
+    },
+    {
+      "name": "actors/actor-runtime-socket",
+      "title": "Actor Runtime Socket",
+      "description": "Connect trusted local tools to a running Rivet Actor over an experimental actor-local protocol.",
+      "canonical_url": "https://rivet.dev/docs/actors/actor-runtime-socket",
+      "reference_url": "/metadata/skills/collaborative-text-editor/reference/actors/actor-runtime-socket.md"
     },
     {
       "name": "actors/schedule",

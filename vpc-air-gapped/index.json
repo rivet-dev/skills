@@ -2,7 +2,7 @@
   "name": "vpc-air-gapped",
   "description": "Run Rivet entirely inside your own perimeter: single-binary or Docker Compose install, file system storage with no database infrastructure, and no outbound telemetry by default.",
   "skill_url": "/metadata/skills/vpc-air-gapped/SKILL.md",
-  "generated_at": "2026-07-15T22:46:52.029Z",
+  "generated_at": "2026-07-18T05:55:09.620Z",
   "references": [
     {
       "name": "actors/access-control",
@@ -31,6 +31,13 @@
       "description": "Actor keys uniquely identify actor instances within each actor type. Keys are used for addressing which specific actor to communicate with.",
       "canonical_url": "https://rivet.dev/docs/actors/keys",
       "reference_url": "/metadata/skills/vpc-air-gapped/reference/actors/keys.md"
+    },
+    {
+      "name": "actors/actor-runtime-socket",
+      "title": "Actor Runtime Socket",
+      "description": "Connect trusted local tools to a running Rivet Actor over an experimental actor-local protocol.",
+      "canonical_url": "https://rivet.dev/docs/actors/actor-runtime-socket",
+      "reference_url": "/metadata/skills/vpc-air-gapped/reference/actors/actor-runtime-socket.md"
     },
     {
       "name": "actors/schedule",

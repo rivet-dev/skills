@@ -2,7 +2,7 @@
   "name": "cron-jobs",
   "description": "Durable cron jobs with Rivet Actors: schedule.after and schedule.at timers survive restarts and crashes, plus re-arming recurring jobs and idempotent handlers.",
   "skill_url": "/metadata/skills/cron-jobs/SKILL.md",
-  "generated_at": "2026-07-15T22:46:51.985Z",
+  "generated_at": "2026-07-18T05:55:09.576Z",
   "references": [
     {
       "name": "actors/access-control",
@@ -31,6 +31,13 @@
       "description": "Actor keys uniquely identify actor instances within each actor type. Keys are used for addressing which specific actor to communicate with.",
       "canonical_url": "https://rivet.dev/docs/actors/keys",
       "reference_url": "/metadata/skills/cron-jobs/reference/actors/keys.md"
+    },
+    {
+      "name": "actors/actor-runtime-socket",
+      "title": "Actor Runtime Socket",
+      "description": "Connect trusted local tools to a running Rivet Actor over an experimental actor-local protocol.",
+      "canonical_url": "https://rivet.dev/docs/actors/actor-runtime-socket",
+      "reference_url": "/metadata/skills/cron-jobs/reference/actors/actor-runtime-socket.md"
     },
     {
       "name": "actors/schedule",

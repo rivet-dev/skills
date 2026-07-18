@@ -127,6 +127,7 @@ The example is intentionally minimal and skips all of the following. Add them be
 - [Access Control](reference/actors/access-control.md)
 - [Actions](reference/actors/actions.md)
 - [Actor Keys](reference/actors/keys.md)
+- [Actor Runtime Socket](reference/actors/actor-runtime-socket.md)
 - [Actor Scheduling](reference/actors/schedule.md)
 - [Actor Statuses](reference/actors/statuses.md)
 - [Authentication](reference/actors/authentication.md)

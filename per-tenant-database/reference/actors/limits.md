@@ -84,8 +84,18 @@ These limits apply to the [SQLite database](/docs/actors/state#sqlite-database) 
 |------|------------|------------|-------------|
 | Max storage size per actor | — | 10 GiB | Maximum total storage size for a single actor. This limit is shared with KV storage. |
 | Max dirty data per commit | — | 1,310,720 bytes | Maximum raw SQLite page data that can be written in a single commit. This is 320 dirty pages at 4 KiB per page. |
+| Transaction deadline | 60 seconds | — | Safety backstop for `db.transaction()`. Configure per transaction with `{ timeout: milliseconds }`; there is no product-level maximum. |
+| Transaction coordinator queue | — | 128 operations | Maximum admitted SQLite operations waiting behind an active coordinated transaction. Additional operations fail with `sqlite.transaction_queue_full`. |
 
 SQLite commit deltas are compressed and split into internal chunks before storage, but all chunks for one commit are published atomically. The commit limit is therefore based on raw dirty page bytes before compression, not the compressed delta size.
+
+### Actor Runtime Socket
+
+The experimental [Actor Runtime Socket](/docs/actors/actor-runtime-socket) negotiates its active frame limit during the handshake.
+
+| Name | Soft Limit | Hard Limit | Description |
+|------|------------|------------|-------------|
+| Frame payload size | 32 MiB | — | Default maximum request or response payload. Self-hosted native runtimes can configure `RIVET_ACTOR_RUNTIME_SOCKET_MAX_FRAME_BYTES`; oversized responses return `ResponseTooLarge`. |
 
 ### KV Preloading
 

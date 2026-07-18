@@ -82,26 +82,21 @@ const rows = await c.db.execute(
 
 Use transactions when multiple writes must succeed or fail together.
 
-- Start with `BEGIN`.
-- End with `COMMIT` if all queries succeed.
-- On error, run `ROLLBACK` and rethrow.
-- A transaction is global for the entire shared `c.db` connection. Be careful with other interleaved queries.
-
 ```ts @nocheck
-await c.db.execute("BEGIN");
-
-try {
-  await c.db.execute("INSERT INTO todos (title) VALUES (?)", title);
-  await c.db.execute(
+await c.db.transaction(async (tx) => {
+  await tx.execute("INSERT INTO todos (title) VALUES (?)", title);
+  await tx.execute(
     "INSERT INTO comments (todo_id, body) VALUES (last_insert_rowid(), ?)",
     body,
   );
-  await c.db.execute("COMMIT");
-} catch (error) {
-  await c.db.execute("ROLLBACK");
-  throw error;
-}
+});
 ```
+
+RivetKit commits when the callback resolves and rolls back when it throws. Other transactions and ordinary actor SQL queue in FIFO order until the callback finishes. Transactions have a 60-second safety timeout by default; increase it for legitimately long work with `{ timeout: 120_000 }`.
+
+Always use the callback's `tx` value inside the transaction. Starting another transaction or using the outer `c.db` from the callback waits behind the active transaction and eventually reaches the safety timeout; the resulting error points to this possible deadlock.
+
+Manual `BEGIN`/`COMMIT` calls remain supported for compatibility, but cannot protect against interleaving callers. RivetKit logs a warning recommending `db.transaction()`. Set `warnOnManualTransactions: false` in `db(...)` to disable the warning; the warning itself mentions this flag.
 
 ## Queues
 
