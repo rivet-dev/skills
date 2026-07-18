@@ -63,6 +63,8 @@ Use step timeouts and retries for slow or flaky dependencies.
 
 Step timeouts are critical by default and fail immediately. Set `retryOnTimeout: true` if a timeout should retry like any other error using `maxRetries`.
 
+Workflows use roll-forward semantics everywhere. When a step throws, any `state` or `vars` mutations it made before failing are never rolled back, whether the step retries or the failure is caught by `tryStep` or `try`. The next attempt observes whatever the failed attempt already wrote, so write steps idempotently: check before you increment, or move the mutation after the fallible work.
+
 ### Handling terminal failures as data
 
 Use `tryStep` when a step failure should produce data instead of failing the whole workflow.
@@ -92,6 +94,7 @@ async function captureOrder(orderId: string): Promise<string> {
 ```
 
 - `tryStep` and `try` only catch terminal failures. Retry backoff, sleeps, queue waits, eviction, and history divergence still rethrow.
+- Catching a failure does not undo it. `state` and `vars` mutations made before the failure remain visible after `tryStep` or `try` returns, so use explicit compensating steps when a caught failure needs cleanup.
 - `RollbackError` is not caught by default. Pass `catch: ["rollback"]` when you want rollback failures returned as data.
 
 ### Error hooks
@@ -220,5 +223,6 @@ Use non-step workflow code for orchestration only: queue waits, sleeps, loops, j
 - Keep actor state changes and side effects inside steps.
 - Store workflow progress in `state` and broadcast updates as progress changes.
 - Use timeouts and rollback for external side effects.
+- Write step bodies idempotently. `state` and `vars` mutations from a failed attempt are never rolled back, whether the step retries or `tryStep`/`try` catches the failure.
 
 _Source doc path: /docs/actors/workflows_
