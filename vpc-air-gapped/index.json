@@ -2,7 +2,7 @@
   "name": "vpc-air-gapped",
   "description": "Run Rivet entirely inside your own perimeter: single-binary or Docker Compose install, file system storage with no database infrastructure, and no outbound telemetry by default.",
   "skill_url": "/metadata/skills/vpc-air-gapped/SKILL.md",
-  "generated_at": "2026-07-20T08:47:37.937Z",
+  "generated_at": "2026-07-20T09:47:26.924Z",
   "references": [
     {
       "name": "actors/access-control",
