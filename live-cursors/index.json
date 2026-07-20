@@ -2,7 +2,7 @@
   "name": "live-cursors",
   "description": "Live cursors and multiplayer presence with Rivet Actors: per-connection cursor state, realtime updates over events or raw WebSockets, and throttling.",
   "skill_url": "/metadata/skills/live-cursors/SKILL.md",
-  "generated_at": "2026-07-18T12:40:07.529Z",
+  "generated_at": "2026-07-20T08:47:37.896Z",
   "references": [
     {
       "name": "actors/access-control",
@@ -35,16 +35,9 @@
     {
       "name": "actors/actor-runtime-socket",
       "title": "Actor Runtime Socket",
-      "description": "Connect trusted local tools to a running Rivet Actor over an experimental actor-local protocol.",
+      "description": "Access an actor's SQLite database from another local process.",
       "canonical_url": "https://rivet.dev/docs/actors/actor-runtime-socket",
       "reference_url": "/metadata/skills/live-cursors/reference/actors/actor-runtime-socket.md"
-    },
-    {
-      "name": "actors/schedule",
-      "title": "Actor Scheduling",
-      "description": "Schedule actor actions in the future with persistent timers that survive restarts and upgrades.",
-      "canonical_url": "https://rivet.dev/docs/actors/schedule",
-      "reference_url": "/metadata/skills/live-cursors/reference/actors/schedule.md"
     },
     {
       "name": "actors/statuses",
@@ -133,7 +126,7 @@
     {
       "name": "cookbook/cron-jobs",
       "title": "Cron Jobs and Scheduled Tasks",
-      "description": "Durable cron jobs with Rivet Actors: schedule.after and schedule.at timers survive restarts and crashes, plus re-arming recurring jobs and idempotent handlers.",
+      "description": "Patterns for durable one-shot, calendar, and fixed-interval work on Rivet Actors.",
       "canonical_url": "https://rivet.dev/cookbook/cron-jobs",
       "reference_url": "/metadata/skills/live-cursors/reference/cookbook/cron-jobs.md"
     },
@@ -591,6 +584,13 @@
       "description": "This page has moved to [design patterns](/docs/actors/design-patterns).",
       "canonical_url": "https://rivet.dev/docs/actors/scaling",
       "reference_url": "/metadata/skills/live-cursors/reference/actors/scaling.md"
+    },
+    {
+      "name": "actors/schedule",
+      "title": "Schedule & Cron",
+      "description": "Run durable one-shot and recurring actor actions on a schedule.",
+      "canonical_url": "https://rivet.dev/docs/actors/schedule",
+      "reference_url": "/metadata/skills/live-cursors/reference/actors/schedule.md"
     },
     {
       "name": "actors/sharing-and-joining-state",

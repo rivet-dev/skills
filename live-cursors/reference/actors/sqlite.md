@@ -5,7 +5,7 @@
 > Description: Use embedded SQLite in Rivet Actors with raw SQL queries.
 
 ---
-For a high-level overview of where to store actor data, including when to use `c.state` versus SQLite, see [State & Storage](/docs/actors/state). For a worked multi-tenant pattern, see the cookbook: [Database per Tenant](/cookbook/per-tenant-database/).
+For a high-level overview of where to store actor data, including when to use `c.state` versus SQLite, see [State & Storage](/docs/actors/state).
 
 ## What is SQLite?
 

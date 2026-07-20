@@ -1,40 +1,184 @@
-# Actor Scheduling
+# Schedule & Cron
 
 > Source: `src/content/docs/actors/schedule.mdx`
 > Canonical URL: https://rivet.dev/docs/actors/schedule
-> Description: Schedule actor actions in the future with persistent timers that survive restarts and upgrades.
+> Description: Run durable one-shot and recurring actor actions on a schedule.
 
 ---
-Scheduling is used to trigger events in the future. The actor scheduler is like `setTimeout`, except the timeout will persist even if the actor restarts, upgrades, or crashes.
+Rivet Actor schedules invoke actions on the same actor and survive sleep, restarts, upgrades, and crashes. Use one-shot schedules for delayed work, cron jobs for calendar-based work, and fixed intervals for frequent jobs.
 
-For a pattern guide to durable recurring jobs, see the cookbook: [Cron Jobs and Scheduled Tasks](/cookbook/cron-jobs/).
+## Quick start
 
-## Use Cases
+```ts After
+const reminders = actor({
+  onCreate: async (c) => {
+    await c.schedule.after(30_000, "sendReminder", "reminder-123");
+  },
+  actions: {
+    sendReminder: (_c, reminderId: string) => {
+      console.log("Sending reminder", reminderId);
+    },
+  },
+});
+```
 
-Scheduling is helpful for long-running timeouts like month-long billing periods or account trials.
+```ts Cron
+const reports = actor({
+  onCreate: async (c) => {
+    await c.cron.set({
+      name: "daily-report",
+      expression: "0 9 * * *",
+      action: "runReport",
+      args: ["sales"], // Optional.
+      timezone: "America/Los_Angeles", // Optional; defaults to UTC.
+      maxHistory: 100, // Optional; defaults to 100. Set to 0 to disable.
+    });
+  },
+  actions: {
+    runReport: (_c, report: string) => {
+      console.log("Running report", report);
+    },
+  },
+});
+```
 
-## Scheduling
+```ts Every
+const cache = actor({
+  onCreate: async (c) => {
+    await c.cron.every({
+      name: "refresh-cache",
+		interval: 60_000, // Minimum 5 seconds.
+      action: "refreshCache",
+      args: ["products"], // Optional.
+      maxHistory: 100, // Optional; defaults to 100. Set to 0 to disable.
+    });
+  },
+  actions: {
+    refreshCache: (_c, cache: string) => {
+      console.log("Refreshing cache", cache);
+    },
+  },
+});
+```
 
-### `c.schedule.after(duration, actionName, ...args)`
+## One-shot schedules
 
-Schedules a function to be executed after a specified duration. This function persists across actor restarts, upgrades, or crashes.
+### Run after a delay
 
-Parameters:
+Runs once after the given delay in milliseconds and returns the generated schedule ID.
 
-- `duration` (number): The delay in milliseconds.
-- `actionName` (string): The name of the action to be executed.
-- `...args` (unknown[]): Additional arguments to pass to the function.
+```ts
+const id = await c.schedule.after(5_000, "sendReminder", reminderId);
+```
 
-### `c.schedule.at(timestamp, actionName, ...args)`
+### Run at a specific time
 
-Schedules a function to be executed at a specific timestamp. This function persists across actor restarts, upgrades, or crashes.
+Runs once at a Unix timestamp in milliseconds.
 
-Parameters:
+```ts
+const id = await c.schedule.at(Date.parse("2026-08-01T09:00:00Z"), "openSale", saleId);
+```
 
-- `timestamp` (number): The exact time in milliseconds since the Unix epoch when the function should be executed.
-- `actionName` (string): The name of the action to be executed.
-- `...args` (unknown[]): Additional arguments to pass to the function.
+### Inspect and cancel schedules
 
-## Full Example
+```ts
+const schedule = await c.schedule.get(id);
+const pending = await c.schedule.list();
+const cancelled = await c.schedule.cancel(id);
+```
+
+## Recurring jobs
+
+### Run on a cron schedule
+
+Cron jobs use standard five-field expressions. Names are unique per actor, and reusing a name updates the existing job. The timezone defaults to UTC.
+
+```ts
+await c.cron.set({
+  name: "daily-report",
+  expression: "0 9 * * *",
+  action: "runReport",
+  args: ["sales"], // Optional.
+  timezone: "America/Los_Angeles", // Optional; defaults to UTC.
+  maxHistory: 100, // Optional; defaults to 100. Set to 0 to disable.
+});
+```
+
+### Run at a fixed interval
+
+Fixed-interval jobs keep their cadence anchored to scheduled deadlines, so action runtime does not introduce drift. Names are unique per actor, and reusing a name updates the existing job. The minimum interval is 5 seconds.
+
+```ts
+await c.cron.every({
+  name: "presence-sweep",
+	interval: 15_000, // Minimum 5 seconds.
+  action: "sweepPresence",
+  args: [], // Optional.
+  maxHistory: 25, // Optional; defaults to 100. Set to 0 to disable.
+});
+```
+
+### Update and delete jobs
+
+Submitting a recurring job with an existing name updates it. Changing its cadence calculates a new next run, while changing only its action, arguments, or history settings preserves the existing cadence.
+
+```ts
+const job = await c.cron.get("daily-report");
+const jobs = await c.cron.list();
+const deleted = await c.cron.delete("daily-report");
+```
+
+### View run history
+
+```ts
+const recent = await c.cron.history("daily-report", {
+  limit: 20, // Optional.
+});
+```
+
+Each entry reports whether the run is running, succeeded, failed, or was skipped. Jobs retain 100 entries by default. Set maximum history to zero to disable and clear history, or choose up to 1,000 entries. An actor retains at most 10,000 history entries across all jobs.
+
+## Run information
+
+When a schedule invokes an action, it appends a ScheduledFireInfo object after the configured action arguments.
+
+```ts
+import type { ScheduledFireInfo } from "rivetkit";
+
+const reports = actor({
+  onCreate: async (c) => {
+    await c.cron.set({
+      name: "daily-report",
+      expression: "0 9 * * *",
+      action: "runReport",
+      args: ["sales"], // Optional.
+    });
+  },
+  actions: {
+    runReport: (
+      _c,
+      report: string,
+      fire: ScheduledFireInfo,
+    ) => {
+      console.log(
+        report,
+        fire.kind,
+        fire.id,
+        fire.name,
+        fire.scheduledAt,
+        fire.firedAt,
+      );
+    },
+  },
+});
+```
+
+## Execution behavior
+
+- **Durability**: [Actors sleep when not in use](/docs/actors/lifecycle#sleeping), but schedules are durable, wake the actor on demand, and survive crashes.
+- **Failures**: Failed runs are not retried immediately. A failed recurring run continues at the next normal cadence; a failed one-shot is complete after its attempted invocation. Cron failures are available in [run history](#view-run-history), so you can build a custom retry mechanism.
+- **Idempotency**: Scheduled actions should be idempotent so manually retrying a failed or interrupted run is safe.
+- **Overlaps**: Overlapping recurring runs are skipped.
+- **Missing actions**: Recurring jobs are deleted when their action no longer exists.
 
 _Source doc path: /docs/actors/schedule_

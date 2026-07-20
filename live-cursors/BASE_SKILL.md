@@ -295,9 +295,9 @@ Actors can call other actors using `c.client()`.
 
 [Documentation](/docs/actors/communicating-between-actors)
 
-### Scheduling
+### Schedule & Cron
 
-Schedule actions to run after a delay or at a specific time. Schedules persist across restarts, upgrades, and crashes.
+Run one-shot actions after a delay or at a specific time. Use named cron jobs for calendar schedules and fixed intervals. Both persist across sleep, restarts, upgrades, and crashes.
 
 [Documentation](/docs/actors/schedule)
 
@@ -422,7 +422,6 @@ Actors are long-lived and maintain state across requests. Creating a new actor f
 - [Actions](reference/actors/actions.md)
 - [Actor Keys](reference/actors/keys.md)
 - [Actor Runtime Socket](reference/actors/actor-runtime-socket.md)
-- [Actor Scheduling](reference/actors/schedule.md)
 - [Actor Statuses](reference/actors/statuses.md)
 - [Authentication](reference/actors/authentication.md)
 - [Cloudflare Workers Quickstart](reference/actors/quickstart/cloudflare.md)
@@ -452,6 +451,7 @@ Actors are long-lived and maintain state across requests. Creating a new actor f
 - [Realtime](reference/actors/events.md)
 - [Rust Quickstart (Beta)](reference/actors/quickstart/rust.md)
 - [Scaling & Concurrency](reference/actors/scaling.md)
+- [Schedule & Cron](reference/actors/schedule.md)
 - [Sharing and Joining State](reference/actors/sharing-and-joining-state.md)
 - [SQLite](reference/actors/sqlite.md)
 - [SQLite + Drizzle](reference/actors/sqlite-drizzle.md)

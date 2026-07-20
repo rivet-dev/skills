@@ -15,8 +15,6 @@
 
 Queues are commonly referred to as "mailboxes" in other actor frameworks.
 
-For a worked queue-driven pattern, see the cookbook: [AI Agent](/cookbook/ai-agent/).
-
 ## What are queues good for?
 
 - Great for any task that changes actor state.
