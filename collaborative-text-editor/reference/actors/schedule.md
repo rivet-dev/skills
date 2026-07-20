@@ -142,7 +142,7 @@ const recent = await c.cron.history("daily-report", {
 });
 ```
 
-Each entry reports whether the run is running, succeeded, failed, or was skipped. Jobs retain 100 entries by default. Set maximum history to zero to disable and clear history, or choose up to 1,000 entries. An actor retains at most 10,000 history entries across all jobs.
+Each entry's `result` is `running`, `ok`, `error`, or `skipped`. Jobs retain 100 entries by default. Set maximum history to zero to disable and clear history, or choose up to 1,000 entries. An actor retains at most 10,000 history entries across all jobs.
 
 ## Run information
 
