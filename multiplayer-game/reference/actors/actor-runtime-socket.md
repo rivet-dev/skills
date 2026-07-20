@@ -53,7 +53,7 @@ The path is valid only for the current actor generation, so get it again after t
 
 ## Protocol
 
-The [protocol schema](https://github.com/rivet-dev/rivet/blob/main/engine/sdks/schemas/actor-runtime-socket-protocol/v1.bare) defines the handshake, SQLite requests, values, responses, and errors. Generate codecs using vbare's [TypeScript](https://github.com/rivet-dev/vbare/tree/main/typescript) or [Rust](https://github.com/rivet-dev/vbare/tree/main/rust) tooling, then add a small Unix socket wrapper for its length-prefixed frames. `connectRuntimeSocket` above represents that application-specific wrapper.
+The [protocol schema](https://github.com/rivet-dev/rivet/blob/main/engine/sdks/rust/actor-runtime-socket-protocol/schemas/v1.bare) defines the handshake, SQLite requests, values, responses, and errors. Generate codecs using vbare's [TypeScript](https://github.com/rivet-dev/vbare/tree/main/typescript) or [Rust](https://github.com/rivet-dev/vbare/tree/main/rust) tooling, then add a small Unix socket wrapper for its length-prefixed frames. `connectRuntimeSocket` above represents that application-specific wrapper.
 
 ## SQLite transaction interleaving
 
