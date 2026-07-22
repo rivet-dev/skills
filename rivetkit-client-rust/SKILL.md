@@ -9,7 +9,7 @@ Use this skill when building Rust clients that connect to Rivet Actors with `riv
 
 ## Version
 
-RivetKit version: 2.3.5-rc.1
+RivetKit version: 2.3.5
 
 ## First Steps
 
