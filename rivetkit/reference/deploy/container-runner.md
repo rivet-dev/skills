@@ -39,12 +39,13 @@ Artifacts are published for `x86_64-unknown-linux-musl` and `aarch64-unknown-lin
 
 ### Deploy
 
-Deploy the image to [Rivet Compute](/docs/deploy/rivet-compute) with the CLI. For game servers, configure the pool with one actor per instance:
+Deploy the image to [Rivet Compute](/docs/deploy/rivet-compute) with the CLI. For game servers, configure the pool with one actor per instance and keep running instances alive across version upgrades:
 
 ```bash
 npx @rivetkit/cli deploy \
 	--token "$RIVET_CLOUD_TOKEN" \
 	--instance-request-concurrency 1 \
+	--drain-on-version-upgrade false \
 	--dockerfile Dockerfile
 ```
 
