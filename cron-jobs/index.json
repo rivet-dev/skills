@@ -2,7 +2,7 @@
   "name": "cron-jobs",
   "description": "Patterns for durable one-shot, calendar, and fixed-interval work on Rivet Actors.",
   "skill_url": "/metadata/skills/cron-jobs/SKILL.md",
-  "generated_at": "2026-07-22T18:10:40.988Z",
+  "generated_at": "2026-07-23T09:51:45.845Z",
   "references": [
     {
       "name": "actors/access-control",
