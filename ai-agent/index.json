@@ -2,7 +2,7 @@
   "name": "ai-agent",
   "description": "Build an AI agent backend with persistent memory: one Rivet Actor per conversation, queued message handling, and streaming LLM responses as realtime events.",
   "skill_url": "/metadata/skills/ai-agent/SKILL.md",
-  "generated_at": "2026-07-25T00:08:55.862Z",
+  "generated_at": "2026-07-27T16:05:21.814Z",
   "references": [
     {
       "name": "actors/access-control",

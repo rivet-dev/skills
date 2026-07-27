@@ -42,6 +42,8 @@ gcloud builds submit --tag us-central1-docker.pkg.dev/YOUR_PROJECT/rivetkit-app/
 
 After creating your project on the Rivet dashboard, select Google Cloud Run as your provider. You'll be provided `RIVET_ENDPOINT` and `RIVET_PUBLIC_ENDPOINT` environment variables to use when deploying.
 
+Cloud Run is a serverless platform, so also set `RIVETKIT_RUNTIME_MODE=serverless`. Without it the app defaults to [Runner mode](/docs/general/runtime-modes), which does not fit Cloud Run's request-driven model.
+
 ### Deploy to Cloud Run
 
 Deploy the service to Cloud Run, passing the Rivet environment variables. Adjust the region and image as needed.
@@ -52,7 +54,7 @@ gcloud run deploy rivetkit-app \
   --region us-central1 \
   --allow-unauthenticated \
   --min-instances 1 \
-  --set-env-vars RIVET_ENDPOINT=<your-rivet-endpoint>,RIVET_PUBLIC_ENDPOINT=<your-rivet-public-endpoint>
+  --set-env-vars RIVET_ENDPOINT=<your-rivet-endpoint>,RIVET_PUBLIC_ENDPOINT=<your-rivet-public-endpoint>,RIVETKIT_RUNTIME_MODE=serverless
 ```
 
 ### Connect to Rivet
