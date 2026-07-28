@@ -22,8 +22,10 @@ npx @rivetkit/cli <command>
 | --- | --- |
 | `rivet dev` | Run a local engine and your handler's dev server. |
 | `rivet deploy` | Build and deploy the project to Rivet Cloud. |
+| `rivet pool` | List or delete compute pools in a namespace. |
 | `rivet engine` | Run the bundled `rivet-engine` binary directly. |
 | `rivet setup-ci` | Install the GitHub Actions deploy workflow. |
+| `rivet token` | Mint a namespace-scoped token. |
 
 ## `rivet dev`
 
@@ -54,7 +56,7 @@ For `cloudflare`, the CLI also passes the engine endpoint as `--var RIVET_ENDPOI
 
 ## `rivet deploy`
 
-Builds and pushes your project's Docker image and upserts the managed pool, printing the dashboard URL. See [Deploying to Rivet Compute](/docs/deploy/rivet-compute).
+Builds and pushes your project's Docker image and upserts the managed pool, printing the dashboard URL. Deploys target the `default` pool unless you pass `--pool`; a new pool is created on first deploy. See [Deploying to Rivet Compute](/docs/deploy/rivet-compute).
 
 ```bash
 rivet deploy --token cloud_api_xxxxx
@@ -66,12 +68,47 @@ The token is saved to `~/.rivet/credentials` (also read from `RIVET_CLOUD_TOKEN`
 | --- | --- | --- |
 | `--token` | env / credentials | Rivet Cloud API token. |
 | `--namespace` | `production` | Cloud namespace. |
+| `--pool` | `default` | Compute pool to deploy to. |
 | `--project` / `--org` | from token | Override project/org. |
 | `--dockerfile` | `Dockerfile` | Dockerfile to build. |
 | `--build-context` | `.` | Docker build context. |
 | `--env KEY=VAL` | — | Environment override, repeatable. |
 | `--image` | project slug | Image repository name. |
 | `--tag` | git short SHA | Image tag. |
+
+## `rivet pool`
+
+Manages the compute pools in a namespace. A namespace can hold multiple pools; `default` is the one used when a `deploy` or `logs` command omits `--pool`.
+
+### `rivet pool list`
+
+```bash
+rivet pool list
+```
+
+Each pool is printed as a status line (colorized by status) followed by its config (display name, image, resources, environment) and any error. Colors are disabled when stdout is not a terminal or `NO_COLOR` is set. This human-readable format is not stable; pass `--json` for machine-readable output.
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--token` | env / credentials | Rivet Cloud API token. |
+| `--namespace` | `production` | Cloud namespace. |
+| `--project` / `--org` | from token | Override project/org. |
+| `--json` | — | Emit raw JSON instead of formatted output. |
+
+### `rivet pool delete`
+
+Tears down a compute pool, then waits until it is fully removed, printing status changes as it goes. Prompts for confirmation unless `--yes` is passed, and refuses to run without confirmation when stdin is not a terminal.
+
+```bash
+rivet pool delete <name> --yes
+```
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--namespace` | `production` | Cloud namespace the pool belongs to. |
+| `--yes` | — | Skip the confirmation prompt. |
+| `--token` | env / credentials | Rivet Cloud API token. |
+| `--project` / `--org` | from token | Override project/org. |
 
 ## `rivet engine`
 
@@ -89,6 +126,30 @@ Installs `.github/workflows/rivet-deploy.yml`, which deploys to Rivet Cloud on p
 ```bash
 gh secret set RIVET_CLOUD_TOKEN
 ```
+
+## `rivet token`
+
+Mints a namespace-scoped token for connecting to Rivet. Only the token is printed to stdout, so it can be captured directly by scripts (e.g. `TOKEN=$(rivet token create --kind secret)`).
+
+```bash
+rivet token create --kind secret
+```
+
+| `--kind` | Prefix | Use |
+| --- | --- | --- |
+| `secret` | `sk_` | Server-side runner/runtime token. |
+| `public` | `pk_` | Client token: resolve and manage actors. |
+| `connection` | `ck_` | Client token limited to resolving actors and opening connections. |
+
+By default the namespace must already exist. Pass `--create-namespace` to create it first (useful for per-branch CI namespaces).
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `--kind` | _(required)_ | Token kind: `secret`, `public`, or `connection`. |
+| `--namespace` | `production` | Cloud namespace. |
+| `--create-namespace` | — | Create the namespace if it does not exist. |
+| `--token` | env / credentials | Rivet Cloud API token. |
+| `--project` / `--org` | from token | Override project/org. |
 
 ## Engine binary resolution
 
