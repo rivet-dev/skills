@@ -2,7 +2,7 @@
   "name": "cron-jobs",
   "description": "Patterns for durable one-shot, calendar, and fixed-interval work on Rivet Actors.",
   "skill_url": "/metadata/skills/cron-jobs/SKILL.md",
-  "generated_at": "2026-07-28T01:23:15.949Z",
+  "generated_at": "2026-07-30T01:45:40.061Z",
   "references": [
     {
       "name": "actors/access-control",
@@ -553,7 +553,7 @@
     {
       "name": "self-hosting/render",
       "title": "Render Deployment",
-      "description": "Deploy Rivet Engine to Render with managed PostgreSQL and automatic HTTPS, using the experimental PostgreSQL backend.",
+      "description": "Deploy Rivet Engine to Render with managed PostgreSQL and automatic HTTPS, using the PostgreSQL backend.",
       "canonical_url": "https://rivet.dev/docs/self-hosting/render",
       "reference_url": "/metadata/skills/cron-jobs/reference/self-hosting/render.md"
     },

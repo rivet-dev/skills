@@ -2,7 +2,7 @@
   "name": "vpc-air-gapped",
   "description": "Run Rivet entirely inside your own perimeter: single-binary or Docker Compose install, file system storage with no database infrastructure, and no outbound telemetry by default.",
   "skill_url": "/metadata/skills/vpc-air-gapped/SKILL.md",
-  "generated_at": "2026-07-28T01:23:15.998Z",
+  "generated_at": "2026-07-30T01:45:40.115Z",
   "references": [
     {
       "name": "actors/access-control",
@@ -553,7 +553,7 @@
     {
       "name": "self-hosting/render",
       "title": "Render Deployment",
-      "description": "Deploy Rivet Engine to Render with managed PostgreSQL and automatic HTTPS, using the experimental PostgreSQL backend.",
+      "description": "Deploy Rivet Engine to Render with managed PostgreSQL and automatic HTTPS, using the PostgreSQL backend.",
       "canonical_url": "https://rivet.dev/docs/self-hosting/render",
       "reference_url": "/metadata/skills/vpc-air-gapped/reference/self-hosting/render.md"
     },

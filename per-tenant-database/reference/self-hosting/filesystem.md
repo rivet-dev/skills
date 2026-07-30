@@ -5,22 +5,20 @@
 > Description: The file system backend stores all data on the local disk. This is suitable for single-node deployments, development, and testing.
 
 ---
-For a production-ready single-node Rivet deployment, use the file system backend (RocksDB-based); for multi-node deployments, PostgreSQL is the recommended backend today but remains experimental as we evaluate the best fit for scalability and performance, and Enterprise teams can contact [enterprise support](https://rivet.dev/sales) about FoundationDB.
+For a single-node deployment, use the file system backend (RocksDB-based). For multi-node deployments, PostgreSQL is the recommended backend, production-ready for light-to-moderate workloads (up to roughly 1,000 concurrent actors). Enterprise teams running larger or high-throughput realtime workloads can contact [enterprise support](https://rivet.dev/sales) about FoundationDB.
 
 ## Configuration
 
 ```json Configuration-file
 {
-  "database": {
-    "file_system": {
-      "path": "/var/lib/rivet/data"
-    }
+  "file_system": {
+    "path": "/var/lib/rivet/data"
   }
 }
 ```
 
 ```bash Environment-variables
-RIVET__database__file_system__path="/var/lib/rivet/data"
+RIVET__file_system__path="/var/lib/rivet/data"
 ```
 
 ## Default Paths
@@ -42,6 +40,6 @@ The file system backend is ideal for:
 - Testing and prototyping
 - Air-gapped environments without database infrastructure
 
-If you need a production-ready Rivet deployment today, use this backend for smaller single-node setups; for multi-node deployments, PostgreSQL is the recommended backend today though still experimental, and Enterprise teams can contact [enterprise support](https://rivet.dev/sales) about FoundationDB for the most scalable production-ready deployment.
+Use this backend for single-node setups. For multi-node deployments, PostgreSQL is the recommended backend, production-ready for light-to-moderate workloads (up to roughly 1,000 concurrent actors). Enterprise teams running larger or high-throughput realtime workloads can contact [enterprise support](https://rivet.dev/sales) about FoundationDB.
 
 _Source doc path: /docs/self-hosting/filesystem_

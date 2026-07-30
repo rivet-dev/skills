@@ -2,7 +2,7 @@
   "name": "rivetkit",
   "description": "RivetKit backend and Rivet Actor runtime guidance. Use for building, modifying, debugging, or testing Rivet Actors, registries, serverless/runner modes, deployment, or actor-based workflows.",
   "skill_url": "/metadata/skills/rivetkit/SKILL.md",
-  "generated_at": "2026-07-28T01:23:15.900Z",
+  "generated_at": "2026-07-30T01:45:40.006Z",
   "references": [
     {
       "name": "actors/access-control",
@@ -553,7 +553,7 @@
     {
       "name": "self-hosting/render",
       "title": "Render Deployment",
-      "description": "Deploy Rivet Engine to Render with managed PostgreSQL and automatic HTTPS, using the experimental PostgreSQL backend.",
+      "description": "Deploy Rivet Engine to Render with managed PostgreSQL and automatic HTTPS, using the PostgreSQL backend.",
       "canonical_url": "https://rivet.dev/docs/self-hosting/render",
       "reference_url": "/metadata/skills/rivetkit/reference/self-hosting/render.md"
     },

@@ -2,7 +2,7 @@
   "name": "chat-room",
   "description": "Build a realtime chat room backend with Rivet Actors: one actor per room, SQLite-backed message history, and WebSocket broadcast to every connected client.",
   "skill_url": "/metadata/skills/chat-room/SKILL.md",
-  "generated_at": "2026-07-28T01:23:15.924Z",
+  "generated_at": "2026-07-30T01:45:40.033Z",
   "references": [
     {
       "name": "actors/access-control",
@@ -553,7 +553,7 @@
     {
       "name": "self-hosting/render",
       "title": "Render Deployment",
-      "description": "Deploy Rivet Engine to Render with managed PostgreSQL and automatic HTTPS, using the experimental PostgreSQL backend.",
+      "description": "Deploy Rivet Engine to Render with managed PostgreSQL and automatic HTTPS, using the PostgreSQL backend.",
       "canonical_url": "https://rivet.dev/docs/self-hosting/render",
       "reference_url": "/metadata/skills/chat-room/reference/self-hosting/render.md"
     },
