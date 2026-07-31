@@ -216,7 +216,6 @@ The example ships with none of these. Apply all of them before production.
 ### General
 
 - [Actor Configuration](reference/general/actor-configuration.md)
-- [Architecture](reference/general/architecture.md)
 - [Cross-Origin Resource Sharing](reference/general/cors.md)
 - [Documentation for LLMs & AI](reference/general/docs-for-llms.md)
 - [Edge Networking](reference/general/edge.md)

@@ -2,7 +2,7 @@
   "name": "collaborative-text-editor",
   "description": "Build a collaborative text editor backend with Yjs CRDTs and Rivet Actors: per-document actors relay sync and awareness updates and persist snapshots.",
   "skill_url": "/metadata/skills/collaborative-text-editor/SKILL.md",
-  "generated_at": "2026-07-31T17:39:45.608Z",
+  "generated_at": "2026-07-31T20:30:55.578Z",
   "references": [
     {
       "name": "actors/access-control",
@@ -52,13 +52,6 @@
       "description": "Build an AI agent backend with persistent memory: one Rivet Actor per conversation, queued message handling, and streaming LLM responses as realtime events.",
       "canonical_url": "https://rivet.dev/cookbook/ai-agent",
       "reference_url": "/metadata/skills/collaborative-text-editor/reference/cookbook/ai-agent.md"
-    },
-    {
-      "name": "general/architecture",
-      "title": "Architecture",
-      "description": "- rivetkit is the typescript library used for both local development & to connect your application to rivet - a rivetkit instance is called a \"runner.\" you can run multiple runners to scale rivetkit horizontally. read omre about runners below.",
-      "canonical_url": "https://rivet.dev/docs/general/architecture",
-      "reference_url": "/metadata/skills/collaborative-text-editor/reference/general/architecture.md"
     },
     {
       "name": "actors/authentication",
