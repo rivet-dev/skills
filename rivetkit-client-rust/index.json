@@ -2,6 +2,6 @@
   "name": "rivetkit-client-rust",
   "description": "RivetKit Rust client guidance. Use for Rust clients and backends that connect to Rivet Actors with rivetkit::client, create typed actor handles, call actions, or manage connections.",
   "skill_url": "/metadata/skills/rivetkit-client-rust/SKILL.md",
-  "generated_at": "2026-07-30T19:33:28.233Z",
+  "generated_at": "2026-07-31T17:39:45.561Z",
   "references": []
 }

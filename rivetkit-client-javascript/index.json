@@ -2,6 +2,6 @@
   "name": "rivetkit-client-javascript",
   "description": "RivetKit JavaScript client guidance. Use for browser, Node.js, or Bun clients that connect to Rivet Actors with rivetkit/client, create clients, call actions, or manage connections.",
   "skill_url": "/metadata/skills/rivetkit-client-javascript/SKILL.md",
-  "generated_at": "2026-07-30T19:33:28.232Z",
+  "generated_at": "2026-07-31T17:39:45.559Z",
   "references": []
 }
