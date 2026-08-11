@@ -1,0 +1,71 @@
+// Networking: start a server inside the VM and fetch from it.
+//
+// vm.network.httpRequest() routes HTTP requests to services running inside the VM.
+// Note: Preview URLs (agent.createPreviewUrl) are only available in the
+// RivetKit actor wrapper, not in the direct VM API. See the actor examples for that.
+
+import { AgentOs } from "@rivet-dev/agentos";
+
+function settleWithin(promise: Promise<unknown>, ms: number): Promise<void> {
+	return Promise.race([
+		promise.then(() => {}),
+		new Promise<void>((resolve) => setTimeout(resolve, ms)),
+	]);
+}
+
+const vm = await AgentOs.create({
+	permissions: {
+		fs: "allow",
+		network: "allow",
+		childProcess: "allow",
+	},
+});
+
+// Write a server script to run inside the VM
+await vm.filesystem.writeFile(
+	"/tmp/server.js",
+	`
+const http = require("http");
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "application/json" });
+  res.end(JSON.stringify({ status: "ok", method: req.method, url: req.url }));
+  server.close(() => process.exit(0));
+});
+server.listen(0, "0.0.0.0", () => {
+  console.log("LISTENING:" + server.address().port);
+});
+`,
+);
+
+// Spawn the server inside the VM and wait for it to bind a port
+let resolvePort: (port: number) => void;
+const portPromise = new Promise<number>((resolve) => {
+	resolvePort = resolve;
+});
+
+const proc = await vm.process.spawn("node", ["/tmp/server.js"]);
+vm.onProcessOutput(proc.pid, (event) => {
+	if (event.stream === "stdout") {
+		const text = new TextDecoder().decode(event.data);
+		const match = text.match(/LISTENING:(\d+)/);
+		if (match) resolvePort(Number(match[1]));
+	}
+});
+
+const port = await portPromise;
+console.log("Server listening on port", port);
+
+// vm.network.httpRequest() sends a buffered request to the VM server via localhost
+const response = await vm.network.httpRequest({ port, path: "/api/test" });
+const json = JSON.parse(new TextDecoder().decode(response.body));
+console.log("Response:", json);
+
+await settleWithin(
+	vm.process.wait(proc.pid).catch(() => {}),
+	500,
+);
+await settleWithin(
+	vm.dispose().catch(() => {}),
+	500,
+);
+process.exit(0);
