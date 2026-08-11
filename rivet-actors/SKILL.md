@@ -20,6 +20,7 @@ description: "Actors: The primitive for stateful workloads."
 - [SwiftUI](https://rivet.dev/actors/docs/clients/swiftui.md)
 - [Communicating Between Actors](https://rivet.dev/actors/docs/communicating-between-actors.md)
 - [Connections](https://rivet.dev/actors/docs/connections.md)
+- [Container Runner](https://rivet.dev/actors/docs/container-runner.md)
 - [Crash Course](https://rivet.dev/actors/docs/crash-course.md)
 - [Debugging](https://rivet.dev/actors/docs/debugging.md)
 - [Design Patterns](https://rivet.dev/actors/docs/design-patterns.md)
@@ -29,8 +30,7 @@ description: "Actors: The primitive for stateful workloads."
 - [Fetch and WebSocket Handler](https://rivet.dev/actors/docs/fetch-and-websocket-handler.md)
 - [Actor Configuration](https://rivet.dev/actors/docs/general/actor-configuration.md)
 - [Cross-Origin Resource Sharing](https://rivet.dev/actors/docs/general/cors.md)
-- [Documentation for LLMs & AI](https://rivet.dev/actors/docs/general/docs-for-llms.md)
-- [Edge Networking](https://rivet.dev/actors/docs/general/edge.md)
+- [Regions & Multi-Region](https://rivet.dev/actors/docs/general/edge.md)
 - [Endpoints](https://rivet.dev/actors/docs/general/endpoints.md)
 - [Environment Variables](https://rivet.dev/actors/docs/general/environment-variables.md)
 - [HTTP Server](https://rivet.dev/actors/docs/general/http-server.md)
@@ -71,9 +71,20 @@ description: "Actors: The primitive for stateful workloads."
 - [Types](https://rivet.dev/actors/docs/types.md)
 - [Versions & Upgrades](https://rivet.dev/actors/docs/versions.md)
 - [Low-Level WebSocket Handler](https://rivet.dev/actors/docs/websocket-handler.md)
-- [Tutorials](https://rivet.dev/actors/tutorials.md)
-- [Build an AI Agent](https://rivet.dev/actors/tutorials/ai-agent.md)
-- [Build a Chat Room](https://rivet.dev/actors/tutorials/chat-room.md)
+- [Integrations](https://rivet.dev/actors/integrations.md)
+- [Flue](https://rivet.dev/actors/integrations/flue.md)
+- [Vercel Eve](https://rivet.dev/actors/integrations/vercel-eve.md)
+- [Vercel Workflows (Beta)](https://rivet.dev/actors/integrations/vercel-workflows.md)
+- [Learn](https://rivet.dev/actors/learn.md)
+- [A Radically Simpler Architecture](https://rivet.dev/actors/learn/a-radically-simpler-architecture.md)
+- [AI Agent](https://rivet.dev/actors/learn/ai-agent.md)
+- [Chat Room](https://rivet.dev/actors/learn/chat-room.md)
+- [Collaborative Text Editor](https://rivet.dev/actors/learn/collaborative-text-editor.md)
+- [Cron Jobs and Scheduled Tasks](https://rivet.dev/actors/learn/cron-jobs.md)
+- [Live Cursors and Presence](https://rivet.dev/actors/learn/live-cursors.md)
+- [Multiplayer Game](https://rivet.dev/actors/learn/multiplayer-game.md)
+- [Database per Tenant](https://rivet.dev/actors/learn/per-tenant-database.md)
+- [Use Cases](https://rivet.dev/actors/use-cases.md)
 
 ## Examples
 
@@ -112,6 +123,7 @@ Runnable code the documentation above embeds, mirrored under `examples/` in this
 - [examples/docs/actors-websocket-handler](https://github.com/rivet-dev/rivet/tree/main/examples/docs/actors-websocket-handler)
 - [examples/docs/clients-javascript](https://github.com/rivet-dev/rivet/tree/main/examples/docs/clients-javascript)
 - [examples/docs/clients-react](https://github.com/rivet-dev/rivet/tree/main/examples/docs/clients-react)
+- [examples/docs/cookbook-cron-jobs](https://github.com/rivet-dev/rivet/tree/main/examples/docs/cookbook-cron-jobs)
 - [examples/docs/general-actor-configuration](https://github.com/rivet-dev/rivet/tree/main/examples/docs/general-actor-configuration)
 - [examples/docs/general-cors](https://github.com/rivet-dev/rivet/tree/main/examples/docs/general-cors)
 - [examples/docs/general-edge](https://github.com/rivet-dev/rivet/tree/main/examples/docs/general-edge)
@@ -121,6 +133,7 @@ Runnable code the documentation above embeds, mirrored under `examples/` in this
 - [examples/docs/general-registry-configuration](https://github.com/rivet-dev/rivet/tree/main/examples/docs/general-registry-configuration)
 - [examples/docs/general-runtime-modes](https://github.com/rivet-dev/rivet/tree/main/examples/docs/general-runtime-modes)
 - [examples/docs/general-wasm-vs-native-sdk](https://github.com/rivet-dev/rivet/tree/main/examples/docs/general-wasm-vs-native-sdk)
+- [examples/vercel-workflow](https://github.com/rivet-dev/rivet/tree/main/examples/vercel-workflow)
 
 ## API Reference
 
