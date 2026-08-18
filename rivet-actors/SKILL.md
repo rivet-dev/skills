@@ -74,7 +74,7 @@ description: "Actors: The primitive for stateful workloads."
 - [Integrations](https://rivet.dev/actors/integrations.md)
 - [Flue](https://rivet.dev/actors/integrations/flue.md)
 - [Vercel Eve](https://rivet.dev/actors/integrations/vercel-eve.md)
-- [Vercel Workflows (Beta)](https://rivet.dev/actors/integrations/vercel-workflows.md)
+- [Workflow SDK (Beta)](https://rivet.dev/actors/integrations/workflow-sdk.md)
 - [Learn](https://rivet.dev/actors/learn.md)
 - [A Radically Simpler Architecture](https://rivet.dev/actors/learn/a-radically-simpler-architecture.md)
 - [AI Agent](https://rivet.dev/actors/learn/ai-agent.md)
@@ -133,7 +133,7 @@ Runnable code the documentation above embeds, mirrored under `examples/` in this
 - [examples/docs/general-registry-configuration](https://github.com/rivet-dev/rivet/tree/main/examples/docs/general-registry-configuration)
 - [examples/docs/general-runtime-modes](https://github.com/rivet-dev/rivet/tree/main/examples/docs/general-runtime-modes)
 - [examples/docs/general-wasm-vs-native-sdk](https://github.com/rivet-dev/rivet/tree/main/examples/docs/general-wasm-vs-native-sdk)
-- [examples/vercel-workflow](https://github.com/rivet-dev/rivet/tree/main/examples/vercel-workflow)
+- [examples/workflow-sdk](https://github.com/rivet-dev/rivet/tree/main/examples/workflow-sdk)
 
 ## API Reference
 
