@@ -1,6 +1,6 @@
 ---
 name: "rivet-actors"
-description: "Actors: The primitive for stateful workloads."
+description: "Actors: The primitive for agent orchestration."
 ---
 
 ## Documentation
