@@ -1,6 +1,6 @@
 ---
 name: "rivet-agentos"
-description: "agentOS: Agent execution, filesystems, and orchestration."
+description: "agentOS: A computer for every agent."
 ---
 
 ## Documentation
