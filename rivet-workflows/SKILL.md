@@ -14,7 +14,6 @@ description: "Workflows: Durable, replayable multi-step operations."
 - [Steps](https://rivet.dev/workflows/docs/steps.md)
 - [Timers & Concurrency](https://rivet.dev/workflows/docs/timers-and-concurrency.md)
 - [Versioning & Migrations](https://rivet.dev/workflows/docs/versioning.md)
-- [Use Cases](https://rivet.dev/workflows/use-cases.md)
 
 ## Examples
 

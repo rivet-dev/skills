@@ -14,7 +14,6 @@ description: "Dynamic Apps: Deploy an AI-generated backend for every user."
 - [Reference](https://rivet.dev/dynamic-apps/docs/reference.md)
 - [Route requests](https://rivet.dev/dynamic-apps/docs/routing.md)
 - [State & Data](https://rivet.dev/dynamic-apps/docs/state-and-data.md)
-- [Use Cases](https://rivet.dev/dynamic-apps/use-cases.md)
 
 ## Examples
 
