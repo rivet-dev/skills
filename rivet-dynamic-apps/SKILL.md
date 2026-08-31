@@ -18,4 +18,4 @@ description: "Dynamic Apps: Deploy an AI-generated backend for every user."
 
 Runnable code the documentation above embeds, mirrored under `examples/` in this skill directory.
 
-- [examples/apps-hello-world](https://github.com/rivet-dev/agentos/tree/main/examples/apps-hello-world)
+- [examples/apps-hello-world](https://github.com/rivet-dev/dynamic-apps/tree/main/examples/apps-hello-world)

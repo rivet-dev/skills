@@ -1,4 +1,4 @@
-import { deployApp } from "@rivet-dev/agentos-apps";
+import { deployApp } from "@rivet-dev/dynamic-apps";
 
 // An agent, upload endpoint, or any other part of the system can call
 // deployApp() with the files it generated.
@@ -21,10 +21,10 @@ import { Hono } from "hono";
 const app = new Hono();
 
 // Serve the application's frontend.
-app.get("/", (c) => c.html("<h1>Hello from agentOS Apps</h1>"));
+app.get("/", (c) => c.html("<h1>Hello from Dynamic Apps</h1>"));
 
 // Serve a REST API request from the same application.
-app.get("/api/hello", (c) => c.json({ message: "Hello from agentOS Apps" }));
+app.get("/api/hello", (c) => c.json({ message: "Hello from Dynamic Apps" }));
 
 export default app;
 `,

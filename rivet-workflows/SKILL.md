@@ -19,4 +19,4 @@ description: "Workflows: Durable, replayable multi-step operations."
 
 Runnable code the documentation above embeds, mirrored under `examples/` in this skill directory.
 
-- [examples/docs/actors-workflows](https://github.com/rivet-dev/rivet/tree/main/examples/docs/actors-workflows)
+- [examples/docs/actors-workflows](https://github.com/rivet-dev/workflows/tree/main/examples/docs/actors-workflows)

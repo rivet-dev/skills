@@ -1,17 +1,16 @@
 {
-	"name": "@rivet-dev/agentos-example-apps-hello-world",
+	"name": "@rivet-dev/dynamic-apps-example-hello-world",
 	"version": "0.0.1",
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"start": "node --import tsx src/server.ts",
+		"start": "node --no-node-snapshot --import tsx src/server.ts",
 		"deploy": "node --import tsx src/deploy.ts",
 		"check-types": "tsc --noEmit"
 	},
 	"dependencies": {
 		"@hono/node-server": "^2.0.11",
-		"@rivet-dev/agentos": "workspace:*",
-		"@rivet-dev/agentos-apps": "workspace:*",
+		"@rivet-dev/dynamic-apps": "workspace:*",
 		"hono": "^4.12.9"
 	},
 	"devDependencies": {
