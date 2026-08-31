@@ -1,16 +1,15 @@
 {
-	"name": "@rivet-dev/dynamic-apps-example-hello-world",
+	"name": "@rivet-dev/dynamic-apps-example-core-quickstart",
 	"version": "0.0.1",
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"start": "npx tsx src/server.ts",
-		"deploy": "npx tsx src/deploy.ts",
+		"start": "npx tsx src/server.ts --host 0.0.0.0",
 		"check-types": "tsc --noEmit"
 	},
 	"dependencies": {
 		"@hono/node-server": "^2.0.11",
-		"@rivet-dev/dynamic-apps": "workspace:*",
+		"@rivet-dev/dynamic-apps-core": "workspace:*",
 		"hono": "^4.12.9"
 	},
 	"devDependencies": {
