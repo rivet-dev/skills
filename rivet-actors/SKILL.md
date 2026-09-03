@@ -61,6 +61,7 @@ description: "Actors: The primitive for agent orchestration."
 - [Schedule & Cron](https://rivet.dev/actors/docs/schedule.md)
 - [SQLite](https://rivet.dev/actors/docs/sqlite.md)
 - [SQLite + Drizzle](https://rivet.dev/actors/docs/sqlite-drizzle.md)
+- [SQLite Profiling](https://rivet.dev/actors/docs/sqlite-profiling.md)
 - [In-Memory State](https://rivet.dev/actors/docs/state.md)
 - [Actor Statuses](https://rivet.dev/actors/docs/statuses.md)
 - [Testing](https://rivet.dev/actors/docs/testing.md)
