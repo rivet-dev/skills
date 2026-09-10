@@ -446,17 +446,132 @@
         }
       }
     },
-    "/gateway/{actorId}/health": {
+    "/gateway/{actor}/health": {
       "get": {
         "parameters": [
           {
-            "name": "actorId",
+            "name": "actor",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "The ID of the actor to target"
+            "description": "Actor ID, actor ID with @routing-token, or actor name used with the rvt-* selector query parameters.",
+            "x-rivet-actor-selector": {
+              "direct": [
+                "actor_id",
+                "actor_id@routing_token"
+              ],
+              "query": {
+                "required": [
+                  "rvt-namespace",
+                  "rvt-method"
+                ],
+                "getOrCreateRequiresOneOf": [
+                  "rvt-pool",
+                  "rvt-runner"
+                ]
+              }
+            }
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-namespace",
+            "description": "Engine namespace. Required when actor selects an actor name."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "get",
+                "getOrCreate"
+              ]
+            },
+            "name": "rvt-method",
+            "description": "Actor-name resolution method. Use get, or getOrCreate with rvt-pool or rvt-runner."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-key",
+            "description": "Comma-separated actor key components for actor-name resolution."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-pool",
+            "description": "Pool name. Required for getOrCreate unless rvt-runner is supplied."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-runner",
+            "description": "Legacy runner name accepted as the pool selector for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-input",
+            "description": "Base64url-encoded CBOR actor input for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-region",
+            "description": "Preferred region for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "restart",
+                "sleep",
+                "destroy"
+              ]
+            },
+            "name": "rvt-crash-policy",
+            "description": "Crash policy for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "name": "rvt-skip-ready-wait",
+            "description": "Return after resolution without waiting for actor readiness."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-token",
+            "description": "Routing token. Credentials should be supplied by a trusted client provider, not constructed by models."
           }
         ],
         "responses": {
@@ -473,17 +588,33 @@
         }
       }
     },
-    "/gateway/{actorId}/action/{action}": {
+    "/gateway/{actor}/action/{action}": {
       "post": {
         "parameters": [
           {
-            "name": "actorId",
+            "name": "actor",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "The ID of the actor to target"
+            "description": "Actor ID, actor ID with @routing-token, or actor name used with the rvt-* selector query parameters.",
+            "x-rivet-actor-selector": {
+              "direct": [
+                "actor_id",
+                "actor_id@routing_token"
+              ],
+              "query": {
+                "required": [
+                  "rvt-namespace",
+                  "rvt-method"
+                ],
+                "getOrCreateRequiresOneOf": [
+                  "rvt-pool",
+                  "rvt-runner"
+                ]
+              }
+            }
           },
           {
             "name": "action",
@@ -493,6 +624,105 @@
               "type": "string"
             },
             "description": "The name of the action to execute"
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-namespace",
+            "description": "Engine namespace. Required when actor selects an actor name."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "get",
+                "getOrCreate"
+              ]
+            },
+            "name": "rvt-method",
+            "description": "Actor-name resolution method. Use get, or getOrCreate with rvt-pool or rvt-runner."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-key",
+            "description": "Comma-separated actor key components for actor-name resolution."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-pool",
+            "description": "Pool name. Required for getOrCreate unless rvt-runner is supplied."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-runner",
+            "description": "Legacy runner name accepted as the pool selector for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-input",
+            "description": "Base64url-encoded CBOR actor input for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-region",
+            "description": "Preferred region for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "restart",
+                "sleep",
+                "destroy"
+              ]
+            },
+            "name": "rvt-crash-policy",
+            "description": "Crash policy for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "name": "rvt-skip-ready-wait",
+            "description": "Return after resolution without waiting for actor readiness."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-token",
+            "description": "Routing token. Credentials should be supplied by a trusted client provider, not constructed by models."
           }
         ],
         "requestBody": {
@@ -538,17 +768,33 @@
         }
       }
     },
-    "/gateway/{actorId}/request/{path}": {
+    "/gateway/{actor}/request/{path}": {
       "get": {
         "parameters": [
           {
-            "name": "actorId",
+            "name": "actor",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "The ID of the actor to target"
+            "description": "Actor ID, actor ID with @routing-token, or actor name used with the rvt-* selector query parameters.",
+            "x-rivet-actor-selector": {
+              "direct": [
+                "actor_id",
+                "actor_id@routing_token"
+              ],
+              "query": {
+                "required": [
+                  "rvt-namespace",
+                  "rvt-method"
+                ],
+                "getOrCreateRequiresOneOf": [
+                  "rvt-pool",
+                  "rvt-runner"
+                ]
+              }
+            }
           },
           {
             "name": "path",
@@ -558,6 +804,105 @@
               "type": "string"
             },
             "description": "The HTTP path to forward to the actor"
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-namespace",
+            "description": "Engine namespace. Required when actor selects an actor name."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "get",
+                "getOrCreate"
+              ]
+            },
+            "name": "rvt-method",
+            "description": "Actor-name resolution method. Use get, or getOrCreate with rvt-pool or rvt-runner."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-key",
+            "description": "Comma-separated actor key components for actor-name resolution."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-pool",
+            "description": "Pool name. Required for getOrCreate unless rvt-runner is supplied."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-runner",
+            "description": "Legacy runner name accepted as the pool selector for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-input",
+            "description": "Base64url-encoded CBOR actor input for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-region",
+            "description": "Preferred region for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "restart",
+                "sleep",
+                "destroy"
+              ]
+            },
+            "name": "rvt-crash-policy",
+            "description": "Crash policy for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "name": "rvt-skip-ready-wait",
+            "description": "Return after resolution without waiting for actor readiness."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-token",
+            "description": "Routing token. Credentials should be supplied by a trusted client provider, not constructed by models."
           }
         ],
         "responses": {
@@ -569,13 +914,29 @@
       "post": {
         "parameters": [
           {
-            "name": "actorId",
+            "name": "actor",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "The ID of the actor to target"
+            "description": "Actor ID, actor ID with @routing-token, or actor name used with the rvt-* selector query parameters.",
+            "x-rivet-actor-selector": {
+              "direct": [
+                "actor_id",
+                "actor_id@routing_token"
+              ],
+              "query": {
+                "required": [
+                  "rvt-namespace",
+                  "rvt-method"
+                ],
+                "getOrCreateRequiresOneOf": [
+                  "rvt-pool",
+                  "rvt-runner"
+                ]
+              }
+            }
           },
           {
             "name": "path",
@@ -585,6 +946,105 @@
               "type": "string"
             },
             "description": "The HTTP path to forward to the actor"
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-namespace",
+            "description": "Engine namespace. Required when actor selects an actor name."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "get",
+                "getOrCreate"
+              ]
+            },
+            "name": "rvt-method",
+            "description": "Actor-name resolution method. Use get, or getOrCreate with rvt-pool or rvt-runner."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-key",
+            "description": "Comma-separated actor key components for actor-name resolution."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-pool",
+            "description": "Pool name. Required for getOrCreate unless rvt-runner is supplied."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-runner",
+            "description": "Legacy runner name accepted as the pool selector for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-input",
+            "description": "Base64url-encoded CBOR actor input for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-region",
+            "description": "Preferred region for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "restart",
+                "sleep",
+                "destroy"
+              ]
+            },
+            "name": "rvt-crash-policy",
+            "description": "Crash policy for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "name": "rvt-skip-ready-wait",
+            "description": "Return after resolution without waiting for actor readiness."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-token",
+            "description": "Routing token. Credentials should be supplied by a trusted client provider, not constructed by models."
           }
         ],
         "responses": {
@@ -596,13 +1056,29 @@
       "put": {
         "parameters": [
           {
-            "name": "actorId",
+            "name": "actor",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "The ID of the actor to target"
+            "description": "Actor ID, actor ID with @routing-token, or actor name used with the rvt-* selector query parameters.",
+            "x-rivet-actor-selector": {
+              "direct": [
+                "actor_id",
+                "actor_id@routing_token"
+              ],
+              "query": {
+                "required": [
+                  "rvt-namespace",
+                  "rvt-method"
+                ],
+                "getOrCreateRequiresOneOf": [
+                  "rvt-pool",
+                  "rvt-runner"
+                ]
+              }
+            }
           },
           {
             "name": "path",
@@ -612,6 +1088,105 @@
               "type": "string"
             },
             "description": "The HTTP path to forward to the actor"
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-namespace",
+            "description": "Engine namespace. Required when actor selects an actor name."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "get",
+                "getOrCreate"
+              ]
+            },
+            "name": "rvt-method",
+            "description": "Actor-name resolution method. Use get, or getOrCreate with rvt-pool or rvt-runner."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-key",
+            "description": "Comma-separated actor key components for actor-name resolution."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-pool",
+            "description": "Pool name. Required for getOrCreate unless rvt-runner is supplied."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-runner",
+            "description": "Legacy runner name accepted as the pool selector for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-input",
+            "description": "Base64url-encoded CBOR actor input for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-region",
+            "description": "Preferred region for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "restart",
+                "sleep",
+                "destroy"
+              ]
+            },
+            "name": "rvt-crash-policy",
+            "description": "Crash policy for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "name": "rvt-skip-ready-wait",
+            "description": "Return after resolution without waiting for actor readiness."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-token",
+            "description": "Routing token. Credentials should be supplied by a trusted client provider, not constructed by models."
           }
         ],
         "responses": {
@@ -623,13 +1198,29 @@
       "delete": {
         "parameters": [
           {
-            "name": "actorId",
+            "name": "actor",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "The ID of the actor to target"
+            "description": "Actor ID, actor ID with @routing-token, or actor name used with the rvt-* selector query parameters.",
+            "x-rivet-actor-selector": {
+              "direct": [
+                "actor_id",
+                "actor_id@routing_token"
+              ],
+              "query": {
+                "required": [
+                  "rvt-namespace",
+                  "rvt-method"
+                ],
+                "getOrCreateRequiresOneOf": [
+                  "rvt-pool",
+                  "rvt-runner"
+                ]
+              }
+            }
           },
           {
             "name": "path",
@@ -639,6 +1230,105 @@
               "type": "string"
             },
             "description": "The HTTP path to forward to the actor"
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-namespace",
+            "description": "Engine namespace. Required when actor selects an actor name."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "get",
+                "getOrCreate"
+              ]
+            },
+            "name": "rvt-method",
+            "description": "Actor-name resolution method. Use get, or getOrCreate with rvt-pool or rvt-runner."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-key",
+            "description": "Comma-separated actor key components for actor-name resolution."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-pool",
+            "description": "Pool name. Required for getOrCreate unless rvt-runner is supplied."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-runner",
+            "description": "Legacy runner name accepted as the pool selector for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-input",
+            "description": "Base64url-encoded CBOR actor input for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-region",
+            "description": "Preferred region for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "restart",
+                "sleep",
+                "destroy"
+              ]
+            },
+            "name": "rvt-crash-policy",
+            "description": "Crash policy for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "name": "rvt-skip-ready-wait",
+            "description": "Return after resolution without waiting for actor readiness."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-token",
+            "description": "Routing token. Credentials should be supplied by a trusted client provider, not constructed by models."
           }
         ],
         "responses": {
@@ -650,13 +1340,29 @@
       "patch": {
         "parameters": [
           {
-            "name": "actorId",
+            "name": "actor",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "The ID of the actor to target"
+            "description": "Actor ID, actor ID with @routing-token, or actor name used with the rvt-* selector query parameters.",
+            "x-rivet-actor-selector": {
+              "direct": [
+                "actor_id",
+                "actor_id@routing_token"
+              ],
+              "query": {
+                "required": [
+                  "rvt-namespace",
+                  "rvt-method"
+                ],
+                "getOrCreateRequiresOneOf": [
+                  "rvt-pool",
+                  "rvt-runner"
+                ]
+              }
+            }
           },
           {
             "name": "path",
@@ -666,6 +1372,105 @@
               "type": "string"
             },
             "description": "The HTTP path to forward to the actor"
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-namespace",
+            "description": "Engine namespace. Required when actor selects an actor name."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "get",
+                "getOrCreate"
+              ]
+            },
+            "name": "rvt-method",
+            "description": "Actor-name resolution method. Use get, or getOrCreate with rvt-pool or rvt-runner."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-key",
+            "description": "Comma-separated actor key components for actor-name resolution."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-pool",
+            "description": "Pool name. Required for getOrCreate unless rvt-runner is supplied."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-runner",
+            "description": "Legacy runner name accepted as the pool selector for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-input",
+            "description": "Base64url-encoded CBOR actor input for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-region",
+            "description": "Preferred region for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "restart",
+                "sleep",
+                "destroy"
+              ]
+            },
+            "name": "rvt-crash-policy",
+            "description": "Crash policy for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "name": "rvt-skip-ready-wait",
+            "description": "Return after resolution without waiting for actor readiness."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-token",
+            "description": "Routing token. Credentials should be supplied by a trusted client provider, not constructed by models."
           }
         ],
         "responses": {
@@ -677,13 +1482,29 @@
       "head": {
         "parameters": [
           {
-            "name": "actorId",
+            "name": "actor",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "The ID of the actor to target"
+            "description": "Actor ID, actor ID with @routing-token, or actor name used with the rvt-* selector query parameters.",
+            "x-rivet-actor-selector": {
+              "direct": [
+                "actor_id",
+                "actor_id@routing_token"
+              ],
+              "query": {
+                "required": [
+                  "rvt-namespace",
+                  "rvt-method"
+                ],
+                "getOrCreateRequiresOneOf": [
+                  "rvt-pool",
+                  "rvt-runner"
+                ]
+              }
+            }
           },
           {
             "name": "path",
@@ -693,6 +1514,105 @@
               "type": "string"
             },
             "description": "The HTTP path to forward to the actor"
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-namespace",
+            "description": "Engine namespace. Required when actor selects an actor name."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "get",
+                "getOrCreate"
+              ]
+            },
+            "name": "rvt-method",
+            "description": "Actor-name resolution method. Use get, or getOrCreate with rvt-pool or rvt-runner."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-key",
+            "description": "Comma-separated actor key components for actor-name resolution."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-pool",
+            "description": "Pool name. Required for getOrCreate unless rvt-runner is supplied."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-runner",
+            "description": "Legacy runner name accepted as the pool selector for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-input",
+            "description": "Base64url-encoded CBOR actor input for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-region",
+            "description": "Preferred region for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "restart",
+                "sleep",
+                "destroy"
+              ]
+            },
+            "name": "rvt-crash-policy",
+            "description": "Crash policy for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "name": "rvt-skip-ready-wait",
+            "description": "Return after resolution without waiting for actor readiness."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-token",
+            "description": "Routing token. Credentials should be supplied by a trusted client provider, not constructed by models."
           }
         ],
         "responses": {
@@ -704,13 +1624,29 @@
       "options": {
         "parameters": [
           {
-            "name": "actorId",
+            "name": "actor",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "The ID of the actor to target"
+            "description": "Actor ID, actor ID with @routing-token, or actor name used with the rvt-* selector query parameters.",
+            "x-rivet-actor-selector": {
+              "direct": [
+                "actor_id",
+                "actor_id@routing_token"
+              ],
+              "query": {
+                "required": [
+                  "rvt-namespace",
+                  "rvt-method"
+                ],
+                "getOrCreateRequiresOneOf": [
+                  "rvt-pool",
+                  "rvt-runner"
+                ]
+              }
+            }
           },
           {
             "name": "path",
@@ -720,6 +1656,105 @@
               "type": "string"
             },
             "description": "The HTTP path to forward to the actor"
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-namespace",
+            "description": "Engine namespace. Required when actor selects an actor name."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "get",
+                "getOrCreate"
+              ]
+            },
+            "name": "rvt-method",
+            "description": "Actor-name resolution method. Use get, or getOrCreate with rvt-pool or rvt-runner."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-key",
+            "description": "Comma-separated actor key components for actor-name resolution."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-pool",
+            "description": "Pool name. Required for getOrCreate unless rvt-runner is supplied."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-runner",
+            "description": "Legacy runner name accepted as the pool selector for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-input",
+            "description": "Base64url-encoded CBOR actor input for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-region",
+            "description": "Preferred region for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "restart",
+                "sleep",
+                "destroy"
+              ]
+            },
+            "name": "rvt-crash-policy",
+            "description": "Crash policy for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "name": "rvt-skip-ready-wait",
+            "description": "Return after resolution without waiting for actor readiness."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-token",
+            "description": "Routing token. Credentials should be supplied by a trusted client provider, not constructed by models."
           }
         ],
         "responses": {
@@ -729,17 +1764,33 @@
         }
       }
     },
-    "/gateway/{actorId}/inspector/state": {
+    "/gateway/{actor}/inspector/state": {
       "get": {
         "parameters": [
           {
-            "name": "actorId",
+            "name": "actor",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "The ID of the actor to target"
+            "description": "Actor ID, actor ID with @routing-token, or actor name used with the rvt-* selector query parameters.",
+            "x-rivet-actor-selector": {
+              "direct": [
+                "actor_id",
+                "actor_id@routing_token"
+              ],
+              "query": {
+                "required": [
+                  "rvt-namespace",
+                  "rvt-method"
+                ],
+                "getOrCreateRequiresOneOf": [
+                  "rvt-pool",
+                  "rvt-runner"
+                ]
+              }
+            }
           },
           {
             "name": "Authorization",
@@ -749,6 +1800,105 @@
               "type": "string"
             },
             "description": "Bearer token for inspector authentication. Required in production, optional in development."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-namespace",
+            "description": "Engine namespace. Required when actor selects an actor name."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "get",
+                "getOrCreate"
+              ]
+            },
+            "name": "rvt-method",
+            "description": "Actor-name resolution method. Use get, or getOrCreate with rvt-pool or rvt-runner."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-key",
+            "description": "Comma-separated actor key components for actor-name resolution."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-pool",
+            "description": "Pool name. Required for getOrCreate unless rvt-runner is supplied."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-runner",
+            "description": "Legacy runner name accepted as the pool selector for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-input",
+            "description": "Base64url-encoded CBOR actor input for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-region",
+            "description": "Preferred region for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "restart",
+                "sleep",
+                "destroy"
+              ]
+            },
+            "name": "rvt-crash-policy",
+            "description": "Crash policy for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "name": "rvt-skip-ready-wait",
+            "description": "Return after resolution without waiting for actor readiness."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-token",
+            "description": "Routing token. Credentials should be supplied by a trusted client provider, not constructed by models."
           }
         ],
         "responses": {
@@ -773,13 +1923,29 @@
       "patch": {
         "parameters": [
           {
-            "name": "actorId",
+            "name": "actor",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "The ID of the actor to target"
+            "description": "Actor ID, actor ID with @routing-token, or actor name used with the rvt-* selector query parameters.",
+            "x-rivet-actor-selector": {
+              "direct": [
+                "actor_id",
+                "actor_id@routing_token"
+              ],
+              "query": {
+                "required": [
+                  "rvt-namespace",
+                  "rvt-method"
+                ],
+                "getOrCreateRequiresOneOf": [
+                  "rvt-pool",
+                  "rvt-runner"
+                ]
+              }
+            }
           },
           {
             "name": "Authorization",
@@ -789,6 +1955,105 @@
               "type": "string"
             },
             "description": "Bearer token for inspector authentication. Required in production, optional in development."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-namespace",
+            "description": "Engine namespace. Required when actor selects an actor name."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "get",
+                "getOrCreate"
+              ]
+            },
+            "name": "rvt-method",
+            "description": "Actor-name resolution method. Use get, or getOrCreate with rvt-pool or rvt-runner."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-key",
+            "description": "Comma-separated actor key components for actor-name resolution."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-pool",
+            "description": "Pool name. Required for getOrCreate unless rvt-runner is supplied."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-runner",
+            "description": "Legacy runner name accepted as the pool selector for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-input",
+            "description": "Base64url-encoded CBOR actor input for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-region",
+            "description": "Preferred region for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "restart",
+                "sleep",
+                "destroy"
+              ]
+            },
+            "name": "rvt-crash-policy",
+            "description": "Crash policy for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "name": "rvt-skip-ready-wait",
+            "description": "Return after resolution without waiting for actor readiness."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-token",
+            "description": "Routing token. Credentials should be supplied by a trusted client provider, not constructed by models."
           }
         ],
         "requestBody": {
@@ -828,17 +2093,33 @@
         }
       }
     },
-    "/gateway/{actorId}/inspector/connections": {
+    "/gateway/{actor}/inspector/connections": {
       "get": {
         "parameters": [
           {
-            "name": "actorId",
+            "name": "actor",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "The ID of the actor to target"
+            "description": "Actor ID, actor ID with @routing-token, or actor name used with the rvt-* selector query parameters.",
+            "x-rivet-actor-selector": {
+              "direct": [
+                "actor_id",
+                "actor_id@routing_token"
+              ],
+              "query": {
+                "required": [
+                  "rvt-namespace",
+                  "rvt-method"
+                ],
+                "getOrCreateRequiresOneOf": [
+                  "rvt-pool",
+                  "rvt-runner"
+                ]
+              }
+            }
           },
           {
             "name": "Authorization",
@@ -848,6 +2129,105 @@
               "type": "string"
             },
             "description": "Bearer token for inspector authentication. Required in production, optional in development."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-namespace",
+            "description": "Engine namespace. Required when actor selects an actor name."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "get",
+                "getOrCreate"
+              ]
+            },
+            "name": "rvt-method",
+            "description": "Actor-name resolution method. Use get, or getOrCreate with rvt-pool or rvt-runner."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-key",
+            "description": "Comma-separated actor key components for actor-name resolution."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-pool",
+            "description": "Pool name. Required for getOrCreate unless rvt-runner is supplied."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-runner",
+            "description": "Legacy runner name accepted as the pool selector for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-input",
+            "description": "Base64url-encoded CBOR actor input for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-region",
+            "description": "Preferred region for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "restart",
+                "sleep",
+                "destroy"
+              ]
+            },
+            "name": "rvt-crash-policy",
+            "description": "Crash policy for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "name": "rvt-skip-ready-wait",
+            "description": "Return after resolution without waiting for actor readiness."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-token",
+            "description": "Routing token. Credentials should be supplied by a trusted client provider, not constructed by models."
           }
         ],
         "responses": {
@@ -875,17 +2255,33 @@
         }
       }
     },
-    "/gateway/{actorId}/inspector/rpcs": {
+    "/gateway/{actor}/inspector/rpcs": {
       "get": {
         "parameters": [
           {
-            "name": "actorId",
+            "name": "actor",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "The ID of the actor to target"
+            "description": "Actor ID, actor ID with @routing-token, or actor name used with the rvt-* selector query parameters.",
+            "x-rivet-actor-selector": {
+              "direct": [
+                "actor_id",
+                "actor_id@routing_token"
+              ],
+              "query": {
+                "required": [
+                  "rvt-namespace",
+                  "rvt-method"
+                ],
+                "getOrCreateRequiresOneOf": [
+                  "rvt-pool",
+                  "rvt-runner"
+                ]
+              }
+            }
           },
           {
             "name": "Authorization",
@@ -895,6 +2291,105 @@
               "type": "string"
             },
             "description": "Bearer token for inspector authentication. Required in production, optional in development."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-namespace",
+            "description": "Engine namespace. Required when actor selects an actor name."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "get",
+                "getOrCreate"
+              ]
+            },
+            "name": "rvt-method",
+            "description": "Actor-name resolution method. Use get, or getOrCreate with rvt-pool or rvt-runner."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-key",
+            "description": "Comma-separated actor key components for actor-name resolution."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-pool",
+            "description": "Pool name. Required for getOrCreate unless rvt-runner is supplied."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-runner",
+            "description": "Legacy runner name accepted as the pool selector for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-input",
+            "description": "Base64url-encoded CBOR actor input for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-region",
+            "description": "Preferred region for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "restart",
+                "sleep",
+                "destroy"
+              ]
+            },
+            "name": "rvt-crash-policy",
+            "description": "Crash policy for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "name": "rvt-skip-ready-wait",
+            "description": "Return after resolution without waiting for actor readiness."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-token",
+            "description": "Routing token. Credentials should be supplied by a trusted client provider, not constructed by models."
           }
         ],
         "responses": {
@@ -919,17 +2414,33 @@
         }
       }
     },
-    "/gateway/{actorId}/inspector/action/{name}": {
+    "/gateway/{actor}/inspector/action/{name}": {
       "post": {
         "parameters": [
           {
-            "name": "actorId",
+            "name": "actor",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "The ID of the actor to target"
+            "description": "Actor ID, actor ID with @routing-token, or actor name used with the rvt-* selector query parameters.",
+            "x-rivet-actor-selector": {
+              "direct": [
+                "actor_id",
+                "actor_id@routing_token"
+              ],
+              "query": {
+                "required": [
+                  "rvt-namespace",
+                  "rvt-method"
+                ],
+                "getOrCreateRequiresOneOf": [
+                  "rvt-pool",
+                  "rvt-runner"
+                ]
+              }
+            }
           },
           {
             "name": "name",
@@ -948,6 +2459,105 @@
               "type": "string"
             },
             "description": "Bearer token for inspector authentication. Required in production, optional in development."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-namespace",
+            "description": "Engine namespace. Required when actor selects an actor name."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "get",
+                "getOrCreate"
+              ]
+            },
+            "name": "rvt-method",
+            "description": "Actor-name resolution method. Use get, or getOrCreate with rvt-pool or rvt-runner."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-key",
+            "description": "Comma-separated actor key components for actor-name resolution."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-pool",
+            "description": "Pool name. Required for getOrCreate unless rvt-runner is supplied."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-runner",
+            "description": "Legacy runner name accepted as the pool selector for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-input",
+            "description": "Base64url-encoded CBOR actor input for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-region",
+            "description": "Preferred region for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "restart",
+                "sleep",
+                "destroy"
+              ]
+            },
+            "name": "rvt-crash-policy",
+            "description": "Crash policy for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "name": "rvt-skip-ready-wait",
+            "description": "Return after resolution without waiting for actor readiness."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-token",
+            "description": "Routing token. Credentials should be supplied by a trusted client provider, not constructed by models."
           }
         ],
         "requestBody": {
@@ -985,17 +2595,33 @@
         }
       }
     },
-    "/gateway/{actorId}/inspector/queue": {
+    "/gateway/{actor}/inspector/queue": {
       "get": {
         "parameters": [
           {
-            "name": "actorId",
+            "name": "actor",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "The ID of the actor to target"
+            "description": "Actor ID, actor ID with @routing-token, or actor name used with the rvt-* selector query parameters.",
+            "x-rivet-actor-selector": {
+              "direct": [
+                "actor_id",
+                "actor_id@routing_token"
+              ],
+              "query": {
+                "required": [
+                  "rvt-namespace",
+                  "rvt-method"
+                ],
+                "getOrCreateRequiresOneOf": [
+                  "rvt-pool",
+                  "rvt-runner"
+                ]
+              }
+            }
           },
           {
             "name": "limit",
@@ -1015,6 +2641,105 @@
               "type": "string"
             },
             "description": "Bearer token for inspector authentication. Required in production, optional in development."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-namespace",
+            "description": "Engine namespace. Required when actor selects an actor name."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "get",
+                "getOrCreate"
+              ]
+            },
+            "name": "rvt-method",
+            "description": "Actor-name resolution method. Use get, or getOrCreate with rvt-pool or rvt-runner."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-key",
+            "description": "Comma-separated actor key components for actor-name resolution."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-pool",
+            "description": "Pool name. Required for getOrCreate unless rvt-runner is supplied."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-runner",
+            "description": "Legacy runner name accepted as the pool selector for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-input",
+            "description": "Base64url-encoded CBOR actor input for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-region",
+            "description": "Preferred region for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "restart",
+                "sleep",
+                "destroy"
+              ]
+            },
+            "name": "rvt-crash-policy",
+            "description": "Crash policy for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "name": "rvt-skip-ready-wait",
+            "description": "Return after resolution without waiting for actor readiness."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-token",
+            "description": "Routing token. Credentials should be supplied by a trusted client provider, not constructed by models."
           }
         ],
         "responses": {
@@ -1062,17 +2787,33 @@
         }
       }
     },
-    "/gateway/{actorId}/inspector/traces": {
+    "/gateway/{actor}/inspector/traces": {
       "get": {
         "parameters": [
           {
-            "name": "actorId",
+            "name": "actor",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "The ID of the actor to target"
+            "description": "Actor ID, actor ID with @routing-token, or actor name used with the rvt-* selector query parameters.",
+            "x-rivet-actor-selector": {
+              "direct": [
+                "actor_id",
+                "actor_id@routing_token"
+              ],
+              "query": {
+                "required": [
+                  "rvt-namespace",
+                  "rvt-method"
+                ],
+                "getOrCreateRequiresOneOf": [
+                  "rvt-pool",
+                  "rvt-runner"
+                ]
+              }
+            }
           },
           {
             "name": "startMs",
@@ -1111,6 +2852,105 @@
               "type": "string"
             },
             "description": "Bearer token for inspector authentication. Required in production, optional in development."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-namespace",
+            "description": "Engine namespace. Required when actor selects an actor name."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "get",
+                "getOrCreate"
+              ]
+            },
+            "name": "rvt-method",
+            "description": "Actor-name resolution method. Use get, or getOrCreate with rvt-pool or rvt-runner."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-key",
+            "description": "Comma-separated actor key components for actor-name resolution."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-pool",
+            "description": "Pool name. Required for getOrCreate unless rvt-runner is supplied."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-runner",
+            "description": "Legacy runner name accepted as the pool selector for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-input",
+            "description": "Base64url-encoded CBOR actor input for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-region",
+            "description": "Preferred region for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "restart",
+                "sleep",
+                "destroy"
+              ]
+            },
+            "name": "rvt-crash-policy",
+            "description": "Crash policy for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "name": "rvt-skip-ready-wait",
+            "description": "Return after resolution without waiting for actor readiness."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-token",
+            "description": "Routing token. Credentials should be supplied by a trusted client provider, not constructed by models."
           }
         ],
         "responses": {
@@ -1138,17 +2978,33 @@
         }
       }
     },
-    "/gateway/{actorId}/inspector/workflow-history": {
+    "/gateway/{actor}/inspector/workflow-history": {
       "get": {
         "parameters": [
           {
-            "name": "actorId",
+            "name": "actor",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "The ID of the actor to target"
+            "description": "Actor ID, actor ID with @routing-token, or actor name used with the rvt-* selector query parameters.",
+            "x-rivet-actor-selector": {
+              "direct": [
+                "actor_id",
+                "actor_id@routing_token"
+              ],
+              "query": {
+                "required": [
+                  "rvt-namespace",
+                  "rvt-method"
+                ],
+                "getOrCreateRequiresOneOf": [
+                  "rvt-pool",
+                  "rvt-runner"
+                ]
+              }
+            }
           },
           {
             "name": "Authorization",
@@ -1158,6 +3014,105 @@
               "type": "string"
             },
             "description": "Bearer token for inspector authentication. Required in production, optional in development."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-namespace",
+            "description": "Engine namespace. Required when actor selects an actor name."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "get",
+                "getOrCreate"
+              ]
+            },
+            "name": "rvt-method",
+            "description": "Actor-name resolution method. Use get, or getOrCreate with rvt-pool or rvt-runner."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-key",
+            "description": "Comma-separated actor key components for actor-name resolution."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-pool",
+            "description": "Pool name. Required for getOrCreate unless rvt-runner is supplied."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-runner",
+            "description": "Legacy runner name accepted as the pool selector for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-input",
+            "description": "Base64url-encoded CBOR actor input for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-region",
+            "description": "Preferred region for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "restart",
+                "sleep",
+                "destroy"
+              ]
+            },
+            "name": "rvt-crash-policy",
+            "description": "Crash policy for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "name": "rvt-skip-ready-wait",
+            "description": "Return after resolution without waiting for actor readiness."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-token",
+            "description": "Routing token. Credentials should be supplied by a trusted client provider, not constructed by models."
           }
         ],
         "responses": {
@@ -1183,17 +3138,33 @@
         }
       }
     },
-    "/gateway/{actorId}/inspector/workflow/replay": {
+    "/gateway/{actor}/inspector/workflow/replay": {
       "post": {
         "parameters": [
           {
-            "name": "actorId",
+            "name": "actor",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "The ID of the actor to target"
+            "description": "Actor ID, actor ID with @routing-token, or actor name used with the rvt-* selector query parameters.",
+            "x-rivet-actor-selector": {
+              "direct": [
+                "actor_id",
+                "actor_id@routing_token"
+              ],
+              "query": {
+                "required": [
+                  "rvt-namespace",
+                  "rvt-method"
+                ],
+                "getOrCreateRequiresOneOf": [
+                  "rvt-pool",
+                  "rvt-runner"
+                ]
+              }
+            }
           },
           {
             "name": "Authorization",
@@ -1203,6 +3174,105 @@
               "type": "string"
             },
             "description": "Bearer token for inspector authentication. Required in production, optional in development."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-namespace",
+            "description": "Engine namespace. Required when actor selects an actor name."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "get",
+                "getOrCreate"
+              ]
+            },
+            "name": "rvt-method",
+            "description": "Actor-name resolution method. Use get, or getOrCreate with rvt-pool or rvt-runner."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-key",
+            "description": "Comma-separated actor key components for actor-name resolution."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-pool",
+            "description": "Pool name. Required for getOrCreate unless rvt-runner is supplied."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-runner",
+            "description": "Legacy runner name accepted as the pool selector for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-input",
+            "description": "Base64url-encoded CBOR actor input for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-region",
+            "description": "Preferred region for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "restart",
+                "sleep",
+                "destroy"
+              ]
+            },
+            "name": "rvt-crash-policy",
+            "description": "Crash policy for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "name": "rvt-skip-ready-wait",
+            "description": "Return after resolution without waiting for actor readiness."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-token",
+            "description": "Routing token. Credentials should be supplied by a trusted client provider, not constructed by models."
           }
         ],
         "requestBody": {
@@ -1243,17 +3313,33 @@
         }
       }
     },
-    "/gateway/{actorId}/inspector/summary": {
+    "/gateway/{actor}/inspector/summary": {
       "get": {
         "parameters": [
           {
-            "name": "actorId",
+            "name": "actor",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "The ID of the actor to target"
+            "description": "Actor ID, actor ID with @routing-token, or actor name used with the rvt-* selector query parameters.",
+            "x-rivet-actor-selector": {
+              "direct": [
+                "actor_id",
+                "actor_id@routing_token"
+              ],
+              "query": {
+                "required": [
+                  "rvt-namespace",
+                  "rvt-method"
+                ],
+                "getOrCreateRequiresOneOf": [
+                  "rvt-pool",
+                  "rvt-runner"
+                ]
+              }
+            }
           },
           {
             "name": "Authorization",
@@ -1263,6 +3349,105 @@
               "type": "string"
             },
             "description": "Bearer token for inspector authentication. Required in production, optional in development."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-namespace",
+            "description": "Engine namespace. Required when actor selects an actor name."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "get",
+                "getOrCreate"
+              ]
+            },
+            "name": "rvt-method",
+            "description": "Actor-name resolution method. Use get, or getOrCreate with rvt-pool or rvt-runner."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-key",
+            "description": "Comma-separated actor key components for actor-name resolution."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-pool",
+            "description": "Pool name. Required for getOrCreate unless rvt-runner is supplied."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-runner",
+            "description": "Legacy runner name accepted as the pool selector for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-input",
+            "description": "Base64url-encoded CBOR actor input for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-region",
+            "description": "Preferred region for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "restart",
+                "sleep",
+                "destroy"
+              ]
+            },
+            "name": "rvt-crash-policy",
+            "description": "Crash policy for getOrCreate."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "name": "rvt-skip-ready-wait",
+            "description": "Return after resolution without waiting for actor readiness."
+          },
+          {
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "name": "rvt-token",
+            "description": "Routing token. Credentials should be supplied by a trusted client provider, not constructed by models."
           }
         ],
         "responses": {
