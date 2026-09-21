@@ -81,6 +81,7 @@ Runnable code the documentation above embeds, mirrored under `examples/` in this
 - [examples/embedded](https://github.com/rivet-dev/agentos/tree/main/examples/embedded)
 - [examples/filesystem](https://github.com/rivet-dev/agentos/tree/main/examples/filesystem)
 - [examples/flue](https://github.com/rivet-dev/agentos/tree/main/examples/flue)
+- [examples/js-code-mode](https://github.com/rivet-dev/agentos/tree/main/examples/js-code-mode)
 - [examples/js-dev-servers](https://github.com/rivet-dev/agentos/tree/main/examples/js-dev-servers)
 - [examples/js-quickstart](https://github.com/rivet-dev/agentos/tree/main/examples/js-quickstart)
 - [examples/js-runtime-platform](https://github.com/rivet-dev/agentos/tree/main/examples/js-runtime-platform)
