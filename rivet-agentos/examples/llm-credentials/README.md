@@ -9,7 +9,7 @@ A VM never inherits the host `process.env`, so LLM provider keys must be handed 
 
 ## How it works
 
-The server declares the agent software but holds no credentials. The client passes keys through the `env` option on `openSession`, which injects them into that session's adapter environment. For multi-tenant setups, give each tenant an isolated VM keyed by their id and resolve their key from your own credential store when opening the session. Keys live on the server and are never sent to the browser.
+The server declares the agent software but holds no credentials. The client passes keys through the `env` option on `openSession`, which injects them into that session's adapter environment. For multi-tenant setups, resolve each tenant's key from your own credential store when opening the session. Keys live on the server and are never sent to the browser.
 
 ## Run it
 

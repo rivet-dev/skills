@@ -8,8 +8,8 @@ const client = createClient<typeof registry>({
 // Stand-in for your own per-tenant credential store.
 declare function lookupTenantApiKey(tenantId: string): Promise<string>;
 
-// Give each tenant an isolated VM keyed by their tenant id, then inject that
-// tenant's API key from your database at session creation. Keys stay on the
+// Look up each tenant's API key from your database and inject it at session
+// creation. Keys stay on the
 // server and never reach the client.
 async function startTenantSession(tenantId: string) {
 	const anthropicApiKey = await lookupTenantApiKey(tenantId);
