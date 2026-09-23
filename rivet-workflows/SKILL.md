@@ -5,7 +5,7 @@ description: "Workflows: Durable, replayable multi-step operations."
 
 ## Documentation
 
-- [Introduction](https://rivet.dev/workflows/docs.md)
+- [Workflows](https://rivet.dev/workflows/docs.md)
 - [Failure & Recovery](https://rivet.dev/workflows/docs/failure-and-recovery.md)
 - [Patterns](https://rivet.dev/workflows/docs/patterns.md)
 - [Queues & Messaging](https://rivet.dev/workflows/docs/queues.md)
