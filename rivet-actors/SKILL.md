@@ -40,6 +40,7 @@ description: "Actors: The primitive for agent orchestration."
 - [Registry Configuration](https://rivet.dev/actors/docs/general/registry-configuration.md)
 - [Runtime Modes](https://rivet.dev/actors/docs/general/runtime-modes.md)
 - [Skills](https://rivet.dev/actors/docs/general/skill.md)
+- [OpenTelemetry](https://rivet.dev/actors/docs/general/tracing.md)
 - [WASM vs Native SDK](https://rivet.dev/actors/docs/general/wasm-vs-native-sdk.md)
 - [Vanilla HTTP API](https://rivet.dev/actors/docs/http-api.md)
 - [Input Parameters](https://rivet.dev/actors/docs/input.md)
@@ -132,6 +133,7 @@ Runnable code the documentation above embeds, mirrored under `examples/` in this
 - [examples/docs/general-logging](https://github.com/rivet-dev/rivet/tree/main/examples/docs/general-logging)
 - [examples/docs/general-registry-configuration](https://github.com/rivet-dev/rivet/tree/main/examples/docs/general-registry-configuration)
 - [examples/docs/general-runtime-modes](https://github.com/rivet-dev/rivet/tree/main/examples/docs/general-runtime-modes)
+- [examples/docs/general-tracing](https://github.com/rivet-dev/rivet/tree/main/examples/docs/general-tracing)
 - [examples/docs/general-wasm-vs-native-sdk](https://github.com/rivet-dev/rivet/tree/main/examples/docs/general-wasm-vs-native-sdk)
 - [examples/workflow-sdk](https://github.com/rivet-dev/rivet/tree/main/examples/workflow-sdk)
 
