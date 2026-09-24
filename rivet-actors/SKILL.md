@@ -6,12 +6,10 @@ description: "Actors: The primitive for agent orchestration."
 ## Documentation
 
 - [Actors](https://rivet.dev/actors/docs.md)
-- [Access Control](https://rivet.dev/actors/docs/access-control.md)
 - [Actions](https://rivet.dev/actors/docs/actions.md)
 - [Actor Configuration](https://rivet.dev/actors/docs/actor-configuration.md)
 - [Actor Runtime Socket](https://rivet.dev/actors/docs/actor-runtime-socket.md)
 - [Icons & Names](https://rivet.dev/actors/docs/appearance.md)
-- [Authentication](https://rivet.dev/actors/docs/authentication.md)
 - [Clients](https://rivet.dev/actors/docs/clients.md)
 - [Node.js & Bun](https://rivet.dev/actors/docs/clients/javascript.md)
 - [React](https://rivet.dev/actors/docs/clients/react.md)
@@ -38,6 +36,7 @@ description: "Actors: The primitive for agent orchestration."
 - [Limits](https://rivet.dev/actors/docs/limits.md)
 - [Logging](https://rivet.dev/actors/docs/logging.md)
 - [Metadata](https://rivet.dev/actors/docs/metadata.md)
+- [Permissions](https://rivet.dev/actors/docs/permissions.md)
 - [Production Checklist](https://rivet.dev/actors/docs/production-checklist.md)
 - [Queues & Run Loops](https://rivet.dev/actors/docs/queues.md)
 - [Node.js & Bun Quickstart](https://rivet.dev/actors/docs/quickstart/backend.md)
@@ -62,6 +61,7 @@ description: "Actors: The primitive for agent orchestration."
 - [A Radically Simpler Architecture](https://rivet.dev/guides/a-radically-simpler-architecture.md)
 - [Agent App Builders](https://rivet.dev/guides/agent-app-builders.md)
 - [AI Agent](https://rivet.dev/guides/ai-agent.md)
+- [Authenticate Users End to End](https://rivet.dev/guides/authentication.md)
 - [Chat Room](https://rivet.dev/guides/chat-room.md)
 - [Coding Agents](https://rivet.dev/guides/coding-agents.md)
 - [Collaborative Text Editor](https://rivet.dev/guides/collaborative-text-editor.md)
@@ -75,10 +75,8 @@ description: "Actors: The primitive for agent orchestration."
 
 Runnable code the documentation above embeds, mirrored under `examples/` in this skill directory.
 
-- [examples/docs/actors-access-control](https://github.com/rivet-dev/rivet/tree/main/examples/docs/actors-access-control)
 - [examples/docs/actors-actions](https://github.com/rivet-dev/rivet/tree/main/examples/docs/actors-actions)
 - [examples/docs/actors-appearance](https://github.com/rivet-dev/rivet/tree/main/examples/docs/actors-appearance)
-- [examples/docs/actors-authentication](https://github.com/rivet-dev/rivet/tree/main/examples/docs/actors-authentication)
 - [examples/docs/actors-communicating-between-actors](https://github.com/rivet-dev/rivet/tree/main/examples/docs/actors-communicating-between-actors)
 - [examples/docs/actors-connections](https://github.com/rivet-dev/rivet/tree/main/examples/docs/actors-connections)
 - [examples/docs/actors-crash-course](https://github.com/rivet-dev/rivet/tree/main/examples/docs/actors-crash-course)
@@ -93,6 +91,7 @@ Runnable code the documentation above embeds, mirrored under `examples/` in this
 - [examples/docs/actors-lifecycle](https://github.com/rivet-dev/rivet/tree/main/examples/docs/actors-lifecycle)
 - [examples/docs/actors-limits](https://github.com/rivet-dev/rivet/tree/main/examples/docs/actors-limits)
 - [examples/docs/actors-metadata](https://github.com/rivet-dev/rivet/tree/main/examples/docs/actors-metadata)
+- [examples/docs/actors-permissions](https://github.com/rivet-dev/rivet/tree/main/examples/docs/actors-permissions)
 - [examples/docs/actors-queues](https://github.com/rivet-dev/rivet/tree/main/examples/docs/actors-queues)
 - [examples/docs/actors-quickstart-backend](https://github.com/rivet-dev/rivet/tree/main/examples/docs/actors-quickstart-backend)
 - [examples/docs/actors-quickstart-cloudflare](https://github.com/rivet-dev/rivet/tree/main/examples/docs/actors-quickstart-cloudflare)
@@ -111,6 +110,7 @@ Runnable code the documentation above embeds, mirrored under `examples/` in this
 - [examples/docs/general-actor-configuration](https://github.com/rivet-dev/rivet/tree/main/examples/docs/general-actor-configuration)
 - [examples/docs/general-cors](https://github.com/rivet-dev/rivet/tree/main/examples/docs/general-cors)
 - [examples/docs/general-http-server](https://github.com/rivet-dev/rivet/tree/main/examples/docs/general-http-server)
+- [examples/docs/general-jwt](https://github.com/rivet-dev/rivet/tree/main/examples/docs/general-jwt)
 - [examples/docs/general-logging](https://github.com/rivet-dev/rivet/tree/main/examples/docs/general-logging)
 - [examples/docs/general-registry-configuration](https://github.com/rivet-dev/rivet/tree/main/examples/docs/general-registry-configuration)
 - [examples/docs/general-wasm-vs-native-sdk](https://github.com/rivet-dev/rivet/tree/main/examples/docs/general-wasm-vs-native-sdk)
