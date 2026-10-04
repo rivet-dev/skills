@@ -1,0 +1,44 @@
+# List desktop recordings.
+
+> Source: `sandbox-agent/docs/content/docs/api-reference/operations/get_v1_desktop_recordings.mdx`
+> Canonical URL: https://rivet.dev/sandbox-agent/docs/api-reference/operations/get_v1_desktop_recordings
+> Description: GET /v1/desktop/recordings: request parameters and responses.
+
+---
+`GET /v1/desktop/recordings`
+
+Returns the current desktop recording catalog.
+
+## Responses
+
+### 200
+
+Desktop recordings
+
+Content type: `application/json`
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/DesktopRecordingListResponse"
+  }
+}
+```
+
+Related schemas: [DesktopRecordingListResponse](/sandbox-agent/docs/api-reference/schemas/desktoprecordinglistresponse/).
+
+### 502
+
+Desktop recordings query failed
+
+Content type: `application/json`
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/ProblemDetails"
+  }
+}
+```
+
+Related schemas: [ProblemDetails](/sandbox-agent/docs/api-reference/schemas/problemdetails/).

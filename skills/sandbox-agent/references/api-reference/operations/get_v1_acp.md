@@ -1,0 +1,84 @@
+# get_v1_acp
+
+> Source: `sandbox-agent/docs/content/docs/api-reference/operations/get_v1_acp.mdx`
+> Canonical URL: https://rivet.dev/sandbox-agent/docs/api-reference/operations/get_v1_acp
+> Description: GET /v1/acp/{server_id}: request parameters and responses.
+
+---
+`GET /v1/acp/{server_id}`
+
+## Parameters
+
+| Name | In | Required | Type | Description |
+| --- | --- | --- | --- | --- |
+| `server_id` | path | Yes | string | Client-defined ACP server id |
+
+### Parameter schemas
+
+```json
+[
+  {
+    "name": "server_id",
+    "in": "path",
+    "description": "Client-defined ACP server id",
+    "required": true,
+    "schema": {
+      "type": "string"
+    }
+  }
+]
+```
+
+## Responses
+
+### 200
+
+SSE stream of ACP envelopes
+
+### 400
+
+Invalid request
+
+Content type: `application/json`
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/ProblemDetails"
+  }
+}
+```
+
+Related schemas: [ProblemDetails](/sandbox-agent/docs/api-reference/schemas/problemdetails/).
+
+### 404
+
+Unknown ACP server
+
+Content type: `application/json`
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/ProblemDetails"
+  }
+}
+```
+
+Related schemas: [ProblemDetails](/sandbox-agent/docs/api-reference/schemas/problemdetails/).
+
+### 406
+
+Client does not accept SSE responses
+
+Content type: `application/json`
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/ProblemDetails"
+  }
+}
+```
+
+Related schemas: [ProblemDetails](/sandbox-agent/docs/api-reference/schemas/problemdetails/).

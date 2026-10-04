@@ -1,0 +1,59 @@
+# AgentInfo
+
+> Source: `sandbox-agent/docs/content/docs/api-reference/schemas/agentinfo.mdx`
+> Canonical URL: https://rivet.dev/sandbox-agent/docs/api-reference/schemas/agentinfo
+> Description: HTTP API schema for AgentInfo.
+
+---
+```json
+{
+  "type": "object",
+  "required": [
+    "id",
+    "installed",
+    "credentialsAvailable",
+    "capabilities"
+  ],
+  "properties": {
+    "capabilities": {
+      "$ref": "#/components/schemas/AgentCapabilities"
+    },
+    "configError": {
+      "type": "string",
+      "nullable": true
+    },
+    "configOptions": {
+      "type": "array",
+      "items": {},
+      "nullable": true
+    },
+    "credentialsAvailable": {
+      "type": "boolean"
+    },
+    "id": {
+      "type": "string"
+    },
+    "installed": {
+      "type": "boolean"
+    },
+    "path": {
+      "type": "string",
+      "nullable": true
+    },
+    "serverStatus": {
+      "allOf": [
+        {
+          "$ref": "#/components/schemas/ServerStatusInfo"
+        }
+      ],
+      "nullable": true
+    },
+    "version": {
+      "type": "string",
+      "nullable": true
+    }
+  }
+}
+```
+
+Related schemas: [AgentCapabilities](/sandbox-agent/docs/api-reference/schemas/agentcapabilities/), [ServerStatusInfo](/sandbox-agent/docs/api-reference/schemas/serverstatusinfo/).

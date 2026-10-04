@@ -1,0 +1,93 @@
+# Type desktop keyboard text.
+
+> Source: `sandbox-agent/docs/content/docs/api-reference/operations/post_v1_desktop_keyboard_type.mdx`
+> Canonical URL: https://rivet.dev/sandbox-agent/docs/api-reference/operations/post_v1_desktop_keyboard_type
+> Description: POST /v1/desktop/keyboard/type: request parameters and responses.
+
+---
+`POST /v1/desktop/keyboard/type`
+
+Performs a health-gated `xdotool type` operation against the managed
+desktop.
+
+## Request body
+
+Required.
+
+### application/json
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/DesktopKeyboardTypeRequest"
+  }
+}
+```
+
+Related schemas: [DesktopKeyboardTypeRequest](/sandbox-agent/docs/api-reference/schemas/desktopkeyboardtyperequest/).
+
+## Responses
+
+### 200
+
+Desktop keyboard action result
+
+Content type: `application/json`
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/DesktopActionResponse"
+  }
+}
+```
+
+Related schemas: [DesktopActionResponse](/sandbox-agent/docs/api-reference/schemas/desktopactionresponse/).
+
+### 400
+
+Invalid keyboard type request
+
+Content type: `application/json`
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/ProblemDetails"
+  }
+}
+```
+
+Related schemas: [ProblemDetails](/sandbox-agent/docs/api-reference/schemas/problemdetails/).
+
+### 409
+
+Desktop runtime is not ready
+
+Content type: `application/json`
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/ProblemDetails"
+  }
+}
+```
+
+Related schemas: [ProblemDetails](/sandbox-agent/docs/api-reference/schemas/problemdetails/).
+
+### 502
+
+Desktop runtime health or input failed
+
+Content type: `application/json`
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/ProblemDetails"
+  }
+}
+```
+
+Related schemas: [ProblemDetails](/sandbox-agent/docs/api-reference/schemas/problemdetails/).

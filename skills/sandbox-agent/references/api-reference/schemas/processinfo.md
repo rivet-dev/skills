@@ -1,0 +1,74 @@
+# ProcessInfo
+
+> Source: `sandbox-agent/docs/content/docs/api-reference/schemas/processinfo.mdx`
+> Canonical URL: https://rivet.dev/sandbox-agent/docs/api-reference/schemas/processinfo
+> Description: HTTP API schema for ProcessInfo.
+
+---
+```json
+{
+  "type": "object",
+  "required": [
+    "id",
+    "command",
+    "args",
+    "tty",
+    "interactive",
+    "owner",
+    "status",
+    "createdAtMs"
+  ],
+  "properties": {
+    "args": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "command": {
+      "type": "string"
+    },
+    "createdAtMs": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "cwd": {
+      "type": "string",
+      "nullable": true
+    },
+    "exitCode": {
+      "type": "integer",
+      "format": "int32",
+      "nullable": true
+    },
+    "exitedAtMs": {
+      "type": "integer",
+      "format": "int64",
+      "nullable": true
+    },
+    "id": {
+      "type": "string"
+    },
+    "interactive": {
+      "type": "boolean"
+    },
+    "owner": {
+      "$ref": "#/components/schemas/ProcessOwner"
+    },
+    "pid": {
+      "type": "integer",
+      "format": "int32",
+      "nullable": true,
+      "minimum": 0
+    },
+    "status": {
+      "$ref": "#/components/schemas/ProcessState"
+    },
+    "tty": {
+      "type": "boolean"
+    }
+  }
+}
+```
+
+Related schemas: [ProcessOwner](/sandbox-agent/docs/api-reference/schemas/processowner/), [ProcessState](/sandbox-agent/docs/api-reference/schemas/processstate/).

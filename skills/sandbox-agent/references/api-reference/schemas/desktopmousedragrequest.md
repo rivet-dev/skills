@@ -1,0 +1,46 @@
+# DesktopMouseDragRequest
+
+> Source: `sandbox-agent/docs/content/docs/api-reference/schemas/desktopmousedragrequest.mdx`
+> Canonical URL: https://rivet.dev/sandbox-agent/docs/api-reference/schemas/desktopmousedragrequest
+> Description: HTTP API schema for DesktopMouseDragRequest.
+
+---
+```json
+{
+  "type": "object",
+  "required": [
+    "startX",
+    "startY",
+    "endX",
+    "endY"
+  ],
+  "properties": {
+    "button": {
+      "allOf": [
+        {
+          "$ref": "#/components/schemas/DesktopMouseButton"
+        }
+      ],
+      "nullable": true
+    },
+    "endX": {
+      "type": "integer",
+      "format": "int32"
+    },
+    "endY": {
+      "type": "integer",
+      "format": "int32"
+    },
+    "startX": {
+      "type": "integer",
+      "format": "int32"
+    },
+    "startY": {
+      "type": "integer",
+      "format": "int32"
+    }
+  }
+}
+```
+
+Related schemas: [DesktopMouseButton](/sandbox-agent/docs/api-reference/schemas/desktopmousebutton/).

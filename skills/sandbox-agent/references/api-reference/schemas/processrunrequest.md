@@ -1,0 +1,47 @@
+# ProcessRunRequest
+
+> Source: `sandbox-agent/docs/content/docs/api-reference/schemas/processrunrequest.mdx`
+> Canonical URL: https://rivet.dev/sandbox-agent/docs/api-reference/schemas/processrunrequest
+> Description: HTTP API schema for ProcessRunRequest.
+
+---
+```json
+{
+  "type": "object",
+  "required": [
+    "command"
+  ],
+  "properties": {
+    "args": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "command": {
+      "type": "string"
+    },
+    "cwd": {
+      "type": "string",
+      "nullable": true
+    },
+    "env": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "maxOutputBytes": {
+      "type": "integer",
+      "nullable": true,
+      "minimum": 0
+    },
+    "timeoutMs": {
+      "type": "integer",
+      "format": "int64",
+      "nullable": true,
+      "minimum": 0
+    }
+  }
+}
+```

@@ -1,0 +1,54 @@
+# Download a desktop recording.
+
+> Source: `sandbox-agent/docs/content/docs/api-reference/operations/get_v1_desktop_recording_download.mdx`
+> Canonical URL: https://rivet.dev/sandbox-agent/docs/api-reference/operations/get_v1_desktop_recording_download
+> Description: GET /v1/desktop/recordings/{id}/download: request parameters and responses.
+
+---
+`GET /v1/desktop/recordings/{id}/download`
+
+Serves the recorded MP4 bytes for a completed desktop recording.
+
+## Parameters
+
+| Name | In | Required | Type | Description |
+| --- | --- | --- | --- | --- |
+| `id` | path | Yes | string | Desktop recording ID |
+
+### Parameter schemas
+
+```json
+[
+  {
+    "name": "id",
+    "in": "path",
+    "description": "Desktop recording ID",
+    "required": true,
+    "schema": {
+      "type": "string"
+    }
+  }
+]
+```
+
+## Responses
+
+### 200
+
+Desktop recording as MP4 bytes
+
+### 404
+
+Unknown desktop recording
+
+Content type: `application/json`
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/ProblemDetails"
+  }
+}
+```
+
+Related schemas: [ProblemDetails](/sandbox-agent/docs/api-reference/schemas/problemdetails/).

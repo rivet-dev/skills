@@ -1,0 +1,96 @@
+# post_v1_agent_install
+
+> Source: `sandbox-agent/docs/content/docs/api-reference/operations/post_v1_agent_install.mdx`
+> Canonical URL: https://rivet.dev/sandbox-agent/docs/api-reference/operations/post_v1_agent_install
+> Description: POST /v1/agents/{agent}/install: request parameters and responses.
+
+---
+`POST /v1/agents/{agent}/install`
+
+## Parameters
+
+| Name | In | Required | Type | Description |
+| --- | --- | --- | --- | --- |
+| `agent` | path | Yes | string | Agent id |
+
+### Parameter schemas
+
+```json
+[
+  {
+    "name": "agent",
+    "in": "path",
+    "description": "Agent id",
+    "required": true,
+    "schema": {
+      "type": "string"
+    }
+  }
+]
+```
+
+## Request body
+
+Required.
+
+### application/json
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/AgentInstallRequest"
+  }
+}
+```
+
+Related schemas: [AgentInstallRequest](/sandbox-agent/docs/api-reference/schemas/agentinstallrequest/).
+
+## Responses
+
+### 200
+
+Agent install result
+
+Content type: `application/json`
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/AgentInstallResponse"
+  }
+}
+```
+
+Related schemas: [AgentInstallResponse](/sandbox-agent/docs/api-reference/schemas/agentinstallresponse/).
+
+### 400
+
+Invalid request
+
+Content type: `application/json`
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/ProblemDetails"
+  }
+}
+```
+
+Related schemas: [ProblemDetails](/sandbox-agent/docs/api-reference/schemas/problemdetails/).
+
+### 500
+
+Install failed
+
+Content type: `application/json`
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/ProblemDetails"
+  }
+}
+```
+
+Related schemas: [ProblemDetails](/sandbox-agent/docs/api-reference/schemas/problemdetails/).

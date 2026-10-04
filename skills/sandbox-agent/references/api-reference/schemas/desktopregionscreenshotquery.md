@@ -1,0 +1,63 @@
+# DesktopRegionScreenshotQuery
+
+> Source: `sandbox-agent/docs/content/docs/api-reference/schemas/desktopregionscreenshotquery.mdx`
+> Canonical URL: https://rivet.dev/sandbox-agent/docs/api-reference/schemas/desktopregionscreenshotquery
+> Description: HTTP API schema for DesktopRegionScreenshotQuery.
+
+---
+```json
+{
+  "type": "object",
+  "required": [
+    "x",
+    "y",
+    "width",
+    "height"
+  ],
+  "properties": {
+    "format": {
+      "allOf": [
+        {
+          "$ref": "#/components/schemas/DesktopScreenshotFormat"
+        }
+      ],
+      "nullable": true
+    },
+    "height": {
+      "type": "integer",
+      "format": "int32",
+      "minimum": 0
+    },
+    "quality": {
+      "type": "integer",
+      "format": "int32",
+      "nullable": true,
+      "minimum": 0
+    },
+    "scale": {
+      "type": "number",
+      "format": "float",
+      "nullable": true
+    },
+    "showCursor": {
+      "type": "boolean",
+      "nullable": true
+    },
+    "width": {
+      "type": "integer",
+      "format": "int32",
+      "minimum": 0
+    },
+    "x": {
+      "type": "integer",
+      "format": "int32"
+    },
+    "y": {
+      "type": "integer",
+      "format": "int32"
+    }
+  }
+}
+```
+
+Related schemas: [DesktopScreenshotFormat](/sandbox-agent/docs/api-reference/schemas/desktopscreenshotformat/).

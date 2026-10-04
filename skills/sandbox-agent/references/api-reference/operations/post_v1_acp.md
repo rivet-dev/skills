@@ -1,0 +1,175 @@
+# post_v1_acp
+
+> Source: `sandbox-agent/docs/content/docs/api-reference/operations/post_v1_acp.mdx`
+> Canonical URL: https://rivet.dev/sandbox-agent/docs/api-reference/operations/post_v1_acp
+> Description: POST /v1/acp/{server_id}: request parameters and responses.
+
+---
+`POST /v1/acp/{server_id}`
+
+## Parameters
+
+| Name | In | Required | Type | Description |
+| --- | --- | --- | --- | --- |
+| `server_id` | path | Yes | string | Client-defined ACP server id |
+| `agent` | query | No | string | Agent id required for first POST |
+
+### Parameter schemas
+
+```json
+[
+  {
+    "name": "server_id",
+    "in": "path",
+    "description": "Client-defined ACP server id",
+    "required": true,
+    "schema": {
+      "type": "string"
+    }
+  },
+  {
+    "name": "agent",
+    "in": "query",
+    "description": "Agent id required for first POST",
+    "required": false,
+    "schema": {
+      "type": "string",
+      "nullable": true
+    }
+  }
+]
+```
+
+## Request body
+
+Required.
+
+### application/json
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/AcpEnvelope"
+  }
+}
+```
+
+Related schemas: [AcpEnvelope](/sandbox-agent/docs/api-reference/schemas/acpenvelope/).
+
+## Responses
+
+### 200
+
+JSON-RPC response envelope
+
+Content type: `application/json`
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/AcpEnvelope"
+  }
+}
+```
+
+Related schemas: [AcpEnvelope](/sandbox-agent/docs/api-reference/schemas/acpenvelope/).
+
+### 202
+
+JSON-RPC notification accepted
+
+### 400
+
+Invalid ACP envelope
+
+Content type: `application/json`
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/ProblemDetails"
+  }
+}
+```
+
+Related schemas: [ProblemDetails](/sandbox-agent/docs/api-reference/schemas/problemdetails/).
+
+### 404
+
+Unknown ACP server
+
+Content type: `application/json`
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/ProblemDetails"
+  }
+}
+```
+
+Related schemas: [ProblemDetails](/sandbox-agent/docs/api-reference/schemas/problemdetails/).
+
+### 406
+
+Client does not accept JSON responses
+
+Content type: `application/json`
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/ProblemDetails"
+  }
+}
+```
+
+Related schemas: [ProblemDetails](/sandbox-agent/docs/api-reference/schemas/problemdetails/).
+
+### 409
+
+ACP server bound to different agent
+
+Content type: `application/json`
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/ProblemDetails"
+  }
+}
+```
+
+Related schemas: [ProblemDetails](/sandbox-agent/docs/api-reference/schemas/problemdetails/).
+
+### 415
+
+Unsupported media type
+
+Content type: `application/json`
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/ProblemDetails"
+  }
+}
+```
+
+Related schemas: [ProblemDetails](/sandbox-agent/docs/api-reference/schemas/problemdetails/).
+
+### 504
+
+ACP agent process response timeout
+
+Content type: `application/json`
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/ProblemDetails"
+  }
+}
+```
+
+Related schemas: [ProblemDetails](/sandbox-agent/docs/api-reference/schemas/problemdetails/).

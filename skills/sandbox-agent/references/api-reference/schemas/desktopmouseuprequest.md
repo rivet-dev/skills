@@ -1,0 +1,34 @@
+# DesktopMouseUpRequest
+
+> Source: `sandbox-agent/docs/content/docs/api-reference/schemas/desktopmouseuprequest.mdx`
+> Canonical URL: https://rivet.dev/sandbox-agent/docs/api-reference/schemas/desktopmouseuprequest
+> Description: HTTP API schema for DesktopMouseUpRequest.
+
+---
+```json
+{
+  "type": "object",
+  "properties": {
+    "button": {
+      "allOf": [
+        {
+          "$ref": "#/components/schemas/DesktopMouseButton"
+        }
+      ],
+      "nullable": true
+    },
+    "x": {
+      "type": "integer",
+      "format": "int32",
+      "nullable": true
+    },
+    "y": {
+      "type": "integer",
+      "format": "int32",
+      "nullable": true
+    }
+  }
+}
+```
+
+Related schemas: [DesktopMouseButton](/sandbox-agent/docs/api-reference/schemas/desktopmousebutton/).

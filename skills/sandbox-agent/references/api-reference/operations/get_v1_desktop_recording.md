@@ -1,0 +1,66 @@
+# Get desktop recording metadata.
+
+> Source: `sandbox-agent/docs/content/docs/api-reference/operations/get_v1_desktop_recording.mdx`
+> Canonical URL: https://rivet.dev/sandbox-agent/docs/api-reference/operations/get_v1_desktop_recording
+> Description: GET /v1/desktop/recordings/{id}: request parameters and responses.
+
+---
+`GET /v1/desktop/recordings/{id}`
+
+Returns metadata for a single desktop recording.
+
+## Parameters
+
+| Name | In | Required | Type | Description |
+| --- | --- | --- | --- | --- |
+| `id` | path | Yes | string | Desktop recording ID |
+
+### Parameter schemas
+
+```json
+[
+  {
+    "name": "id",
+    "in": "path",
+    "description": "Desktop recording ID",
+    "required": true,
+    "schema": {
+      "type": "string"
+    }
+  }
+]
+```
+
+## Responses
+
+### 200
+
+Desktop recording metadata
+
+Content type: `application/json`
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/DesktopRecordingInfo"
+  }
+}
+```
+
+Related schemas: [DesktopRecordingInfo](/sandbox-agent/docs/api-reference/schemas/desktoprecordinginfo/).
+
+### 404
+
+Unknown desktop recording
+
+Content type: `application/json`
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/ProblemDetails"
+  }
+}
+```
+
+Related schemas: [ProblemDetails](/sandbox-agent/docs/api-reference/schemas/problemdetails/).

@@ -1,0 +1,73 @@
+# Open a desktop WebRTC signaling session.
+
+> Source: `sandbox-agent/docs/content/docs/api-reference/operations/get_v1_desktop_stream_ws.mdx`
+> Canonical URL: https://rivet.dev/sandbox-agent/docs/api-reference/operations/get_v1_desktop_stream_ws
+> Description: GET /v1/desktop/stream/signaling: request parameters and responses.
+
+---
+`GET /v1/desktop/stream/signaling`
+
+Upgrades the connection to a WebSocket used for WebRTC signaling between
+the browser client and the desktop streaming process. Also accepts mouse
+and keyboard input frames as a fallback transport.
+
+## Parameters
+
+| Name | In | Required | Type | Description |
+| --- | --- | --- | --- | --- |
+| `access_token` | query | No | string | Bearer token alternative for WS auth |
+
+### Parameter schemas
+
+```json
+[
+  {
+    "name": "access_token",
+    "in": "query",
+    "description": "Bearer token alternative for WS auth",
+    "required": false,
+    "schema": {
+      "type": "string",
+      "nullable": true
+    }
+  }
+]
+```
+
+## Responses
+
+### 101
+
+WebSocket upgraded
+
+### 409
+
+Desktop runtime or streaming session is not ready
+
+Content type: `application/json`
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/ProblemDetails"
+  }
+}
+```
+
+Related schemas: [ProblemDetails](/sandbox-agent/docs/api-reference/schemas/problemdetails/).
+
+### 502
+
+Desktop stream failed
+
+Content type: `application/json`
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/ProblemDetails"
+  }
+}
+```
+
+Related schemas: [ProblemDetails](/sandbox-agent/docs/api-reference/schemas/problemdetails/).

@@ -1,0 +1,83 @@
+# Get a single process by ID.
+
+> Source: `sandbox-agent/docs/content/docs/api-reference/operations/get_v1_process.mdx`
+> Canonical URL: https://rivet.dev/sandbox-agent/docs/api-reference/operations/get_v1_process
+> Description: GET /v1/processes/{id}: request parameters and responses.
+
+---
+`GET /v1/processes/{id}`
+
+Returns the current state of a managed process including its status,
+PID, exit code, and creation/exit timestamps.
+
+## Parameters
+
+| Name | In | Required | Type | Description |
+| --- | --- | --- | --- | --- |
+| `id` | path | Yes | string | Process ID |
+
+### Parameter schemas
+
+```json
+[
+  {
+    "name": "id",
+    "in": "path",
+    "description": "Process ID",
+    "required": true,
+    "schema": {
+      "type": "string"
+    }
+  }
+]
+```
+
+## Responses
+
+### 200
+
+Process details
+
+Content type: `application/json`
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/ProcessInfo"
+  }
+}
+```
+
+Related schemas: [ProcessInfo](/sandbox-agent/docs/api-reference/schemas/processinfo/).
+
+### 404
+
+Unknown process
+
+Content type: `application/json`
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/ProblemDetails"
+  }
+}
+```
+
+Related schemas: [ProblemDetails](/sandbox-agent/docs/api-reference/schemas/problemdetails/).
+
+### 501
+
+Process API unsupported on this platform
+
+Content type: `application/json`
+
+```json
+{
+  "schema": {
+    "$ref": "#/components/schemas/ProblemDetails"
+  }
+}
+```
+
+Related schemas: [ProblemDetails](/sandbox-agent/docs/api-reference/schemas/problemdetails/).

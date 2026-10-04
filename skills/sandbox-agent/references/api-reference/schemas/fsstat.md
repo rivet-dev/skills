@@ -1,0 +1,36 @@
+# FsStat
+
+> Source: `sandbox-agent/docs/content/docs/api-reference/schemas/fsstat.mdx`
+> Canonical URL: https://rivet.dev/sandbox-agent/docs/api-reference/schemas/fsstat
+> Description: HTTP API schema for FsStat.
+
+---
+```json
+{
+  "type": "object",
+  "required": [
+    "path",
+    "entryType",
+    "size"
+  ],
+  "properties": {
+    "entryType": {
+      "$ref": "#/components/schemas/FsEntryType"
+    },
+    "modified": {
+      "type": "string",
+      "nullable": true
+    },
+    "path": {
+      "type": "string"
+    },
+    "size": {
+      "type": "integer",
+      "format": "int64",
+      "minimum": 0
+    }
+  }
+}
+```
+
+Related schemas: [FsEntryType](/sandbox-agent/docs/api-reference/schemas/fsentrytype/).

@@ -1,0 +1,28 @@
+# ServerStatusInfo
+
+> Source: `sandbox-agent/docs/content/docs/api-reference/schemas/serverstatusinfo.mdx`
+> Canonical URL: https://rivet.dev/sandbox-agent/docs/api-reference/schemas/serverstatusinfo
+> Description: HTTP API schema for ServerStatusInfo.
+
+---
+```json
+{
+  "type": "object",
+  "required": [
+    "status"
+  ],
+  "properties": {
+    "status": {
+      "$ref": "#/components/schemas/ServerStatus"
+    },
+    "uptimeMs": {
+      "type": "integer",
+      "format": "int64",
+      "nullable": true,
+      "minimum": 0
+    }
+  }
+}
+```
+
+Related schemas: [ServerStatus](/sandbox-agent/docs/api-reference/schemas/serverstatus/).
