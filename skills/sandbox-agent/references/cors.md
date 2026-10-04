@@ -1,0 +1,52 @@
+# CORS Configuration
+
+> Source: `docs/cors.mdx`
+> Canonical URL: https://sandboxagent.dev/docs/cors
+> Description: Configure CORS for browser-based applications.
+
+---
+When calling the Sandbox Agent server from a browser, CORS (Cross-Origin Resource Sharing) controls which origins can make requests.
+
+## Default Behavior
+
+By default, no CORS origins are allowed. You must explicitly specify origins for browser-based applications:
+
+```bash
+sandbox-agent server \
+  --cors-allow-origin "http://localhost:5173"
+```
+
+The built-in Inspector UI at `/ui/` is served from the same origin as the server, so it does not require CORS configuration.
+
+## Options
+
+| Flag | Description |
+|------|-------------|
+| `--cors-allow-origin` | Origins to allow |
+| `--cors-allow-method` | HTTP methods to allow (defaults to all if not specified) |
+| `--cors-allow-header` | Headers to allow (defaults to all if not specified) |
+| `--cors-allow-credentials` | Allow credentials (cookies, authorization headers) |
+
+## Multiple Origins
+
+Specify the flag multiple times to allow multiple origins:
+
+```bash
+sandbox-agent server \
+  --cors-allow-origin "http://localhost:5173" \
+  --cors-allow-origin "http://localhost:3000"
+```
+
+## Restricting Methods and Headers
+
+By default, all methods and headers are allowed. To restrict them:
+
+```bash
+sandbox-agent server \
+  --cors-allow-origin "https://your-app.com" \
+  --cors-allow-method "GET" \
+  --cors-allow-method "POST" \
+  --cors-allow-header "Authorization" \
+  --cors-allow-header "Content-Type" \
+  --cors-allow-credentials
+```

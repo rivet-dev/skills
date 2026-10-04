@@ -1,0 +1,71 @@
+# Daemon
+
+> Source: `docs/daemon.mdx`
+> Canonical URL: https://sandboxagent.dev/docs/daemon
+> Description: Background daemon lifecycle and management.
+
+---
+The sandbox-agent daemon is a background server process. Commands like `sandbox-agent opencode` and `gigacode` can ensure it is running.
+
+## How it works
+
+1. A daemon-aware command checks for a healthy daemon at host/port.
+2. If missing, it starts one in the background and records PID/version files.
+3. Subsequent checks can compare build/version and restart when required.
+
+## Auto-upgrade behavior
+
+- `sandbox-agent opencode` and `gigacode` use ensure-running behavior with upgrade checks.
+- `sandbox-agent daemon start` uses direct start by default.
+- `sandbox-agent daemon start --upgrade` uses ensure-running behavior (including version check/restart).
+
+## Managing the daemon
+
+### Start
+
+```bash
+sandbox-agent daemon start [OPTIONS]
+```
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `-H, --host ` | `127.0.0.1` | Host |
+| `-p, --port ` | `2468` | Port |
+| `--upgrade` | false | Use ensure-running + upgrade behavior |
+
+```bash
+sandbox-agent daemon start
+sandbox-agent daemon start --upgrade
+```
+
+### Stop
+
+```bash
+sandbox-agent daemon stop [OPTIONS]
+```
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `-H, --host ` | `127.0.0.1` | Host |
+| `-p, --port ` | `2468` | Port |
+
+### Status
+
+```bash
+sandbox-agent daemon status [OPTIONS]
+```
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `-H, --host ` | `127.0.0.1` | Host |
+| `-p, --port ` | `2468` | Port |
+
+## Files
+
+Daemon state is stored under the sandbox-agent data directory (for example `~/.local/share/sandbox-agent/daemon/`):
+
+| File | Purpose |
+|------|---------|
+| `daemon-{host}-{port}.pid` | PID of running daemon |
+| `daemon-{host}-{port}.version` | Build/version marker |
+| `daemon-{host}-{port}.log` | Daemon stdout/stderr log |

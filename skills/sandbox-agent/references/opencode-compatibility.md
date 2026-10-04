@@ -1,0 +1,123 @@
+# OpenCode Compatibility
+
+> Source: `docs/opencode-compatibility.mdx`
+> Canonical URL: https://sandboxagent.dev/docs/opencode-compatibility
+> Description: Connect OpenCode clients, SDKs, and web UI to Sandbox Agent.
+
+---
+**Experimental**: OpenCode SDK/UI compatibility may change.
+
+Sandbox Agent exposes an OpenCode-compatible API at `/opencode`.
+
+## Why use OpenCode clients with Sandbox Agent?
+
+- OpenCode CLI (`opencode attach`)
+- OpenCode web UI
+- OpenCode TypeScript SDK (`@opencode-ai/sdk`)
+
+## Quick start
+
+### OpenCode CLI / TUI
+
+```bash
+sandbox-agent opencode --port 2468 --no-token
+```
+
+Or start server + attach manually:
+
+```bash
+sandbox-agent server --no-token --host 127.0.0.1 --port 2468
+opencode attach http://localhost:2468/opencode
+```
+
+With authentication enabled:
+
+```bash
+sandbox-agent server --token "$SANDBOX_TOKEN" --host 127.0.0.1 --port 2468
+opencode attach http://localhost:2468/opencode --password "$SANDBOX_TOKEN"
+```
+
+### OpenCode web UI
+
+### Start Sandbox Agent with CORS
+
+```bash
+sandbox-agent server --no-token --host 127.0.0.1 --port 2468 --cors-allow-origin http://127.0.0.1:5173
+```
+
+### Run OpenCode web app
+
+```bash
+git clone https://github.com/anomalyco/opencode
+cd opencode/packages/app
+export VITE_OPENCODE_SERVER_HOST=127.0.0.1
+export VITE_OPENCODE_SERVER_PORT=2468
+bun install
+bun run dev -- --host 127.0.0.1 --port 5173
+```
+
+### Open UI
+
+Visit `http://127.0.0.1:5173/`.
+
+### OpenCode SDK
+
+```typescript
+import { createOpencodeClient } from "@opencode-ai/sdk";
+
+const client = createOpencodeClient({
+  baseUrl: "http://localhost:2468/opencode",
+});
+
+const session = await client.session.create();
+
+await client.session.promptAsync({
+  path: { id: session.data.id },
+  body: {
+    parts: [{ type: "text", text: "Hello, write a hello world script" }],
+  },
+});
+
+const events = await client.event.subscribe({});
+for await (const event of events.stream) {
+  console.log(event);
+}
+```
+
+## Notes
+
+- API base path: `/opencode`
+- If server auth is enabled, pass bearer auth (or `--password` in OpenCode CLI)
+- For browser UIs, configure CORS with `--cors-allow-origin`
+- Provider selector currently exposes compatible providers (`mock`, `amp`, `claude`, `codex`)
+- Provider/model metadata for compatibility endpoints is normalized and may differ from native OpenCode grouping
+- Optional proxy: set `OPENCODE_COMPAT_PROXY_URL` to forward selected endpoints to native OpenCode
+
+## Endpoint coverage
+
+#### Endpoint Status Table
+
+| Endpoint | Status | Notes |
+|---|---|---|
+| `GET /event` | ✓ | Session/message updates (SSE) |
+| `GET /global/event` | ✓ | GlobalEvent-wrapped stream |
+| `GET /session` | ✓ | Session list |
+| `POST /session` | ✓ | Create session |
+| `GET /session/{id}` | ✓ | Session details |
+| `POST /session/{id}/message` | ✓ | Send message |
+| `GET /session/{id}/message` | ✓ | Session messages |
+| `GET /permission` | ✓ | Pending permissions |
+| `POST /permission/{id}/reply` | ✓ | Permission reply |
+| `GET /question` | ✓ | Pending questions |
+| `POST /question/{id}/reply` | ✓ | Question reply |
+| `GET /provider` | ✓ | Provider metadata |
+| `GET /command` | ↔ | Proxied when `OPENCODE_COMPAT_PROXY_URL` is set; otherwise stub |
+| `GET /config` | ↔ | Proxied when set; otherwise stub |
+| `PATCH /config` | ↔ | Proxied when set; otherwise local compatibility behavior |
+| `GET /global/config` | ↔ | Proxied when set; otherwise stub |
+| `PATCH /global/config` | ↔ | Proxied when set; otherwise local compatibility behavior |
+| `/tui/*` | ↔ | Proxied when set; otherwise local compatibility behavior |
+| `GET /agent` | − | Agent list |
+| *other endpoints* | − | Empty/stub responses |
+
+✓ Functional   ↔ Proxied optional   − Stubbed

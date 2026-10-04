@@ -1,0 +1,27 @@
+# Telemetry
+
+> Source: `docs/telemetry.mdx`
+> Canonical URL: https://sandboxagent.dev/docs/telemetry
+> Description: Anonymous telemetry collected by sandbox-agent.
+
+---
+sandbox-agent sends a small, anonymous telemetry payload on startup and then every 5 minutes to help us understand usage and improve reliability.
+
+## What gets sent
+
+- Sandbox Agent version.
+- OS name, architecture, and OS family.
+- Detected sandbox provider (for example: Docker, E2B, Vercel Sandboxes).
+
+Each sandbox gets a random anonymous ID stored on disk so usage can be counted without identifying users.
+The last successful send time is also stored on disk, and heartbeats are rate-limited to at most one every 5 minutes.
+
+## Opting out
+
+Telemetry is enabled by default in release builds.
+
+Disable it with:
+
+```bash
+sandbox-agent server --no-telemetry
+```

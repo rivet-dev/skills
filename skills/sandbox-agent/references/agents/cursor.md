@@ -1,0 +1,34 @@
+# Cursor
+
+> Source: `docs/agents/cursor.mdx`
+> Canonical URL: https://sandboxagent.dev/docs/agents/cursor
+> Description: Use Cursor as a sandbox agent.
+
+---
+## Usage
+
+```typescript
+const session = await client.createSession({
+  agent: "cursor",
+});
+```
+
+## Capabilities
+
+| Category | Values |
+|----------|--------|
+| **Models** | See below |
+| **Modes** | Unsupported |
+| **Thought levels** | Unsupported |
+
+#### All models
+
+| Group | Models |
+|-------|--------|
+| **Auto** | `auto` |
+| **Composer** | `composer-1.5`, `composer-1` |
+| **GPT-5.3 Codex** | `gpt-5.3-codex`, `gpt-5.3-codex-low`, `gpt-5.3-codex-high`, `gpt-5.3-codex-xhigh`, `gpt-5.3-codex-fast`, `gpt-5.3-codex-low-fast`, `gpt-5.3-codex-high-fast`, `gpt-5.3-codex-xhigh-fast` |
+| **GPT-5.2** | `gpt-5.2`, `gpt-5.2-high`, `gpt-5.2-codex`, `gpt-5.2-codex-low`, `gpt-5.2-codex-high`, `gpt-5.2-codex-xhigh`, `gpt-5.2-codex-fast`, `gpt-5.2-codex-low-fast`, `gpt-5.2-codex-high-fast`, `gpt-5.2-codex-xhigh-fast` |
+| **GPT-5.1** | `gpt-5.1-high`, `gpt-5.1-codex-max`, `gpt-5.1-codex-max-high` |
+| **Claude** | `opus-4.6-thinking` (default), `opus-4.6`, `opus-4.5`, `opus-4.5-thinking`, `sonnet-4.5`, `sonnet-4.5-thinking` |
+| **Other** | `gemini-3-pro`, `gemini-3-flash`, `grok` |

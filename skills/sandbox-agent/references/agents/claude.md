@@ -1,0 +1,49 @@
+# Claude
+
+> Source: `docs/agents/claude.mdx`
+> Canonical URL: https://sandboxagent.dev/docs/agents/claude
+> Description: Use Claude Code as a sandbox agent.
+
+---
+## Usage
+
+```typescript
+const session = await client.createSession({
+  agent: "claude",
+});
+```
+
+## Capabilities
+
+| Category | Values |
+|----------|--------|
+| **Models** | `default`, `sonnet`, `opus`, `haiku` |
+| **Modes** | `default`, `acceptEdits`, `plan`, `dontAsk`, `bypassPermissions` |
+| **Thought levels** | Unsupported |
+
+## Configuring effort level
+
+Claude does not support changing effort level after a session starts. Configure it in the filesystem before creating the session.
+
+```ts
+import { mkdir, writeFile } from "node:fs/promises";
+import path from "node:path";
+
+const cwd = "/path/to/workspace";
+await mkdir(path.join(cwd, ".claude"), { recursive: true });
+await writeFile(
+  path.join(cwd, ".claude", "settings.json"),
+  JSON.stringify({ effortLevel: "high" }, null, 2),
+);
+
+const session = await client.createSession({
+  agent: "claude",
+  cwd,
+});
+```
+
+#### Supported settings file locations (highest precedence last)
+
+1. `~/.claude/settings.json`
+2. `<session cwd>/.claude/settings.json`
+3. `<session cwd>/.claude/settings.local.json`
