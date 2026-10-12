@@ -1,7 +1,7 @@
 import { AgentOs, type Permissions } from "@rivet-dev/agentos-core";
 
-// The kernel permission policy is the same object the actor takes. Pass it to
-// AgentOs.create() instead of agentOS().
+// Core accepts the kernel permission tree plus policies for trusted host
+// bindings and mounts.
 const permissions = {
 	network: {
 		default: "deny",
