@@ -13,6 +13,7 @@ A deploy is a local build, one upload, and two Code Mode operations run through 
 
 1. Confirm the session can deploy. If `search` does not list `rivet.deploy.prepare`, the session is read-only or is pinned to a project or namespace, and the deploy cannot run from here. Say so instead of retrying.
 2. Pick the cluster. Run `return (await rivet.cloud.v2.clusters.list()).items;` in `execute` and use the `cluster` field of the one to deploy to, which is its name. On a connection pinned to a cluster, `rivet.context()` reports it, and `cluster` is left out of every call below.
+3. Check the image. When the app has no Dockerfile for a runner yet, or the first deploy fails to start, follow `references/runner-image.md`.
 
 ## Steps
 
@@ -48,7 +49,7 @@ A deploy is a local build, one upload, and two Code Mode operations run through 
    return await rivet.deploy.rollout({ cluster: "my-cluster", build_id: "<build_id>" });
    ```
 
-   Each call advances one step and returns immediately, so call it again while `done` is `false`. See `references/rollout.md` for each step, the errors, and how to roll back.
+   Each call advances one step and returns immediately, so call it again while `done` is `false`. A deploy takes 5 to 10 minutes, and the previous build keeps serving until it finishes. See `references/rollout.md` for each step, the errors, and how to roll back.
 
 5. Report the `build_id` and the `endpoints` from the final result to the user. The `build_id` is what a later rollback needs.
 
