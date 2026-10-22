@@ -23,12 +23,13 @@ const [pricing, regions] = await Promise.all([
 return { pricing, regions: regions.items };
 ```
 
-- `regions` lists each `cloud` and `region` a cluster can be created in, with its city.
-- `pricing.plans` is cheapest first. Each plan's `control_planes` are the sizes it is sold in, cheapest first, with `monthly_cents`. The control plane stores actor state.
-- `plan.runners` caps the runners across every pool: `max_nodes`, the allowed `machine_types`, and whether nodes are `billed`.
-- `pricing.machine_types` gives each machine type's vCPU, memory, disk and write throughput. `pricing.node_prices` gives the monthly price of one runner node by `cloud` and `machine_type`.
+Take every price and limit from this response. Never quote one from memory. See `references/plans.md` for what each field means and how to weigh it.
 
-Take every price from this response. Never quote a price from memory.
+- `regions` lists each `cloud` and `region` a cluster can be created in, with its city.
+- `pricing.plans` is cheapest first. Each plan is sold in the `control_planes` it lists, cheapest first, and caps the runners with `runners`.
+- `pricing.machine_types` gives each machine type's vCPU, memory, disk and write throughput.
+- `pricing.node_prices` gives the monthly price of one runner node by `cloud` and `machine_type`.
+- `pricing.allowances` gives the egress and storage every cluster includes, and the price of going past it.
 
 ## 3. Recommend a setup
 
@@ -39,6 +40,8 @@ Recommend one value for each setting, each with a one-line reason, and the total
 - `plan` and `control_plane`.
 - Runner `machine_type` and `node_count`, within the plan's `runners` limits.
 - Allowed IPs (`cidr_allowlist`, comma-separated CIDRs): `0.0.0.0/0` unless the app is only reached from known networks.
+
+Name each choice the way the dashboard shows it, by its `label`, followed by its ID, such as "Hobby (`pro`)" or "R-10 (`e2-small`)". The user may compare the recommendation with the dashboard's creation form.
 
 The plan, control plane and runners can all be changed later without recreating the cluster. The cloud and region cannot.
 
