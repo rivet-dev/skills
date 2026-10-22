@@ -32,14 +32,14 @@ Each entry of a plan's `control_planes` has:
 | `availability_zones` | The isolated data centers of the region the nodes are spread across. With more than one, the cluster stays up through a zone outage. |
 | `monthly_cents` | The plan's whole price with this option, before Actor Nodes. |
 
-For the control plane's machine type in `pricing.machine_types`, `storage_gib` is the actor storage the cluster includes and `write_mbps` is each node's sustained write throughput.
+Look the control plane's `machine_type` up in `pricing.machine_types`. Multiply by `node_count` to get the cluster's figures, which is how the dashboard shows them: `storage_gib × node_count` is the actor storage, or hot cache, the cluster includes, and `write_mbps × node_count` is its sustained write throughput.
 
 ## Allowances
 
 `pricing.allowances` applies to every cluster:
 
 - `included_egress_gib` of egress each month, then `egress_cents_per_gib`.
-- Actor storage past the control plane's `storage_gib` costs `extra_storage_cents_per_gib`.
+- Actor storage past the included `storage_gib × node_count` costs `extra_storage_cents_per_gib`.
 - Object storage of `object_storage_multiplier` times the actor storage is included, then `extra_object_storage_cents_per_gib`.
 
 Mention these in the cost estimate when the app stores a lot of state or serves large responses.
@@ -48,6 +48,6 @@ Mention these in the cost estimate when the app stores a lot of state or serves 
 
 - **Prototype or side project:** the free plan, or the cheapest paid plan when it needs more than the free limits. One availability zone and no SLA are fine.
 - **Production with real users:** a plan with an `uptime_sla`. Prefer one whose control plane spans several `availability_zones` when downtime costs the user money.
-- **Write-heavy or large state:** a larger control plane option within the plan, sized so the expected state fits its `storage_gib` and peak writes fit its `write_mbps`.
+- **Write-heavy or large state:** a larger control plane option within the plan, sized so the expected state fits its included actor storage and peak writes fit its write throughput.
 - **Runners:** pick the machine type and count first, then the cheapest plan whose `runners` allow them. A plan that does not allow a machine type or node count refuses it, so move up a plan rather than shrinking the runners below what the app needs.
 - The monthly total is the option's `monthly_cents`, plus `node_prices` times `node_count` for the region's `cloud` when `runners.billed` is `true`.
