@@ -59,7 +59,6 @@ description: "Actors: The primitive for agent orchestration."
 - [Low-Level WebSocket Handler](https://rivet.dev/actors/docs/websocket-handler.md)
 - [A Radically Simpler Architecture](https://rivet.dev/guides/a-radically-simpler-architecture.md)
 - [Agent App Builders](https://rivet.dev/guides/agent-app-builders.md)
-- [AI Agent](https://rivet.dev/guides/ai-agent.md)
 - [Authenticate Users End to End](https://rivet.dev/guides/authentication.md)
 - [Chat Room](https://rivet.dev/guides/chat-room.md)
 - [Coding Agents](https://rivet.dev/guides/coding-agents.md)
