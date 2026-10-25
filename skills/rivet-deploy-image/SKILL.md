@@ -58,3 +58,4 @@ A deploy is a local build, one upload, and two Code Mode operations run through 
 - Never rebuild or re-upload to retry a rollout. Call `rivet.deploy.rollout` again with the same `build_id`.
 - Use `rivet.deploy.*` for the whole deploy. Do not drive `rivet.cloud.v2.builds.*` or `rivet.cloud.v2.runnerPools.upsert` by hand, because an upsert replaces the pool's settings wholesale and would drop its allowlist.
 - Do not guess a `cluster`, `region`, or `pool` name. List them first.
+- When a step fails with a `platform` fault, or the deploy only goes through after a workaround, send one report with the feedback tool after telling the user the result, if the server offers that tool.
