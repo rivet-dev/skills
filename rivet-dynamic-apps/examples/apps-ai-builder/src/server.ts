@@ -1,0 +1,139 @@
+import { readFile } from "node:fs/promises";
+import { anthropic } from "@ai-sdk/anthropic";
+import { serve } from "@hono/node-server";
+import {
+	appsRouter,
+	deployApp,
+	rivetActorsSkill,
+	webServerSkill,
+} from "@rivet-dev/dynamic-apps";
+import { generateObject } from "ai";
+import { Hono } from "hono";
+import { z } from "zod";
+
+// docs:start limits
+const editablePaths = [
+	"package.json",
+	"tsconfig.json",
+	"src/index.ts",
+] as const;
+const maxRepairs = 3;
+const maxFileBytes = 64 * 1024;
+
+async function loadSeed(): Promise<Record<string, string>> {
+	const files: Record<string, string> = {};
+	for (const path of editablePaths) {
+		files[path] = await readFile(
+			new URL(`../fixtures/app/${path}`, import.meta.url),
+			"utf8",
+		);
+	}
+	return files;
+}
+
+const filesSchema = z.object({ files: z.record(z.string(), z.string()) });
+
+function validateFiles(value: Record<string, string>): Record<string, string> {
+	const files: Record<string, string> = {};
+	for (const path of editablePaths) {
+		const content = value[path];
+		if (typeof content !== "string") {
+			throw new TypeError(`model response is missing ${path}`);
+		}
+		if (Buffer.byteLength(content) > maxFileBytes) {
+			throw new RangeError(`${path} exceeds ${maxFileBytes} bytes`);
+		}
+		files[path] = content;
+	}
+	return files;
+}
+// docs:end limits
+
+// docs:start generate
+async function revise(
+	prompt: string,
+	files: Record<string, string>,
+	diagnostics?: string,
+): Promise<Record<string, string>> {
+	const result = await generateObject({
+		model: anthropic(process.env.AI_MODEL ?? "claude-sonnet-4-5"),
+		maxOutputTokens: 8_000,
+		schema: filesSchema,
+		prompt: [
+			// These skills tell the model how to structure, build, and serve the generated code.
+			webServerSkill,
+			rivetActorsSkill,
+			`You may edit only: ${editablePaths.join(", ")}.`,
+			`User request: ${prompt}`,
+			diagnostics ? `Previous build diagnostics:\n${diagnostics}` : "",
+			`Current files:\n${JSON.stringify(files)}`,
+		]
+			.filter(Boolean)
+			.join("\n\n"),
+	});
+	return validateFiles(result.object.files);
+}
+// docs:end generate
+
+// docs:start deploy
+async function generateApp(appId: string, prompt: string) {
+	let files = await revise(prompt, await loadSeed());
+	for (let attempt = 0; attempt <= maxRepairs; attempt += 1) {
+		try {
+			return await deployApp({
+				appId,
+				files,
+			});
+		} catch (error) {
+			const appsError =
+				typeof error === "object" &&
+				error !== null &&
+				"code" in error &&
+				typeof error.code === "string" &&
+				error.code.startsWith("dynamic_apps_");
+			if (!appsError || attempt === maxRepairs) {
+				throw error;
+			}
+			const details = error as {
+				code: string;
+				message?: string;
+				metadata?: unknown;
+			};
+			const diagnostics = JSON.stringify({
+				code: details.code,
+				message: details.message ?? String(error),
+				metadata: details.metadata,
+			}).slice(0, 16 * 1024);
+			files = await revise(prompt, files, diagnostics);
+		}
+	}
+	throw new Error("unreachable");
+}
+// docs:end deploy
+
+// docs:start routes
+const server = new Hono();
+server.all("/api/rivet/*", (c) => appsRouter.fetch(c.req.raw));
+
+// An agent or any other part of the system can call this route. A generic
+// deployment endpoint could accept multipart files; this example generates the
+// files from a prompt instead.
+server.post("/deploy/:name", async (context) => {
+	const body = await context.req.json<{ prompt?: unknown }>();
+	if (typeof body.prompt !== "string" || body.prompt.length > 4_000) {
+		return context.json(
+			{ error: "prompt must be at most 4,000 characters" },
+			400,
+		);
+	}
+	return context.json(
+		await generateApp(context.req.param("name"), body.prompt),
+	);
+});
+server.route("/apps", appsRouter);
+// docs:end routes
+
+serve({
+	fetch: server.fetch,
+	port: 3000,
+});

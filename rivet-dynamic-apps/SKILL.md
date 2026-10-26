@@ -22,11 +22,13 @@ description: "Dynamic Apps: Deploy an AI-generated backend for every user."
 - [SQLite](https://rivet.dev/dynamic-apps/docs/sqlite.md)
 - [Frontends & Static Sites](https://rivet.dev/dynamic-apps/docs/static-websites.md)
 - [Workflows](https://rivet.dev/dynamic-apps/docs/workflows.md)
+- [Host AI-Generated Apps](https://rivet.dev/guides/host-ai-generated-apps.md)
 
 ## Examples
 
 Runnable code the documentation above embeds, mirrored under `examples/` in this skill directory.
 
+- [examples/apps-ai-builder](https://github.com/rivet-dev/dynamic-apps/tree/main/examples/apps-ai-builder)
 - [examples/apps-core-quickstart](https://github.com/rivet-dev/dynamic-apps/tree/main/examples/apps-core-quickstart)
 - [examples/apps-hello-world](https://github.com/rivet-dev/dynamic-apps/tree/main/examples/apps-hello-world)
 - [examples/apps-multiplayer](https://github.com/rivet-dev/dynamic-apps/tree/main/examples/apps-multiplayer)

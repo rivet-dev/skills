@@ -1,0 +1,23 @@
+{
+	"name": "@rivet-dev/dynamic-apps-example-ai-builder",
+	"version": "0.0.1",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"start": "npx tsx src/server.ts",
+		"check-types": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@ai-sdk/anthropic": "^4.0.46",
+		"@hono/node-server": "^2.1.1",
+		"@rivet-dev/dynamic-apps": "workspace:*",
+		"ai": "^7.0.86",
+		"hono": "^4.13.5",
+		"zod": "^4.5.4"
+	},
+	"devDependencies": {
+		"@types/node": "^22.20.1",
+		"tsx": "^4.23.13",
+		"typescript": "^5.9.3"
+	}
+}

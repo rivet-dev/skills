@@ -2,7 +2,6 @@
 
 import { createRequire } from "node:module";
 import { dirname, resolve } from "node:path";
-import git from "@agentos-software/git";
 import { AgentOs } from "@rivet-dev/agentos-core";
 
 type ExecResult = {
@@ -45,9 +44,11 @@ function parseHeadRef(content: string): string {
 	return branch;
 }
 
+// Install git from the agentOS software registry. The package is resolved from
+// this client's release manifest and its bytes are verified before install.
 const vm = await AgentOs.create({
 	permissions: GIT_QUICKSTART_PERMISSIONS,
-	software: [git],
+	software: [{ registry: "git" }],
 });
 
 async function run(command: string): Promise<ExecResult> {
@@ -64,6 +65,8 @@ async function run(command: string): Promise<ExecResult> {
 	};
 }
 
+await run('git config --global user.name "agentOS"');
+await run('git config --global user.email "agentos@example.com"');
 await run("git init /tmp/origin");
 await vm.filesystem.writeFile("/tmp/origin/README.md", "# demo repo\n");
 await run("git -C /tmp/origin add README.md");
