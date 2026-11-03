@@ -22,7 +22,7 @@ description: "Dynamic Apps: Deploy an AI-generated backend for every user."
 - [SQLite](https://rivet.dev/dynamic-apps/docs/sqlite.md)
 - [Frontends & Static Sites](https://rivet.dev/dynamic-apps/docs/static-websites.md)
 - [Workflows](https://rivet.dev/dynamic-apps/docs/workflows.md)
-- [Host AI-Generated Apps](https://rivet.dev/guides/host-ai-generated-apps.md)
+- [Host AI-Generated Apps](https://rivet.dev/dynamic-apps/guides/host-ai-generated-apps.md)
 
 ## Examples
 
