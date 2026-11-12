@@ -1,67 +1,81 @@
 ---
 name: rivet-open-orange
-description: Move a Cloudflare Workers project to Rivet with Open Orange, the orange CLI. Use when asked to run, deploy, or migrate a Worker, its Durable Objects, or its D1 databases from Cloudflare to Rivet, or when a project with a wrangler.jsonc, wrangler.json, or wrangler.toml mentions Open Orange or orange.
+description: Run a Cloudflare Workers project on Rivet with OpenOrange, the orange CLI, and move its Durable Objects and D1 databases off Cloudflare. Use when asked to run, deploy, migrate, or roll back a Cloudflare Worker on Rivet or OpenOrange.
 ---
 
-# Move a Cloudflare Worker to Rivet with Open Orange
+# Run a Cloudflare Worker on Rivet with OpenOrange
 
-Open Orange runs a Worker, unchanged, on Rivet: `orange dev` locally, `orange deploy` on a Rivet cluster, and `orange migrate` to move the data of Durable Objects and D1 databases from Cloudflare while the app serves. A D1 database takes no writes during its move.
+OpenOrange runs a Cloudflare Workers project on Rivet with no changes to its code. `orange dev` runs it locally, `orange deploy` ships it to a Rivet cluster, and `orange migrate` moves its Durable Objects and D1 databases off Cloudflare while the app keeps serving.
 
-Steps 1 to 3 run and deploy the Worker. Steps 4 to 10 move production data. Do only the steps the user asked for.
+Do the parts the user asks for. Each part needs the parts before it: set up, run locally, deploy, migrate.
 
 ## Rules
 
-- **Secrets.** The user creates and enters every secret value: `WORKER_MIGRATOR_TOKEN`, `CLOUDFLARE_API_TOKEN`, Rivet tokens. Refer to a secret only by its name or as `$NAME`. Keep secret values out of commands you show, files you read, and your output. Run the commands that prompt for a secret (`wrangler secret put`, `rivet cluster secret set`) by asking the user to run them.
-- **Stop and ask.** At each **Stop and ask**, tell the user what will change and for whom, then wait for an explicit yes. A yes covers that one action.
-- **Cloudflare stays.** Orange never deletes anything on Cloudflare. Deleting the Cloudflare Worker or its data is the user's job, after the migration.
-- **Run commands through the project.** Open Orange is a dev dependency of the project, so run `pnpm orange ...` (or the project's package manager). When the project has no `orange`, install it as the [Open Orange README](https://github.com/rivet-dev/open-orange#readme) says. `orange <command> --help` is the source of truth for flags.
-- **Rivet MCP.** When the user's agent has no Rivet MCP server, suggest it once for reading cluster state and logs: `claude mcp add --transport http rivet https://mcp.rivet.dev/mcp`. Other clients are at <https://rivet.dev/docs/mcp/>.
+- **Stop and ask.** At each **Stop and ask**, tell the user what changes and for whom, then wait for a yes. A yes covers that one action.
+- **Secrets.** The user creates and types every secret value: `WORKER_MIGRATOR_TOKEN`, `CLOUDFLARE_API_TOKEN`, and Rivet tokens. Write a secret only as its name or `$NAME`, in commands, files, and output. Ask the user to run each command that prompts for a value, such as `wrangler secret put` and `rivet cluster secret set`.
+- **The code stays.** Keep the app code and the Wrangler configuration as they are, `compatibility_flags` included: Cloudflare runs the same code until the migration ends. When a fix needs a code change, tell the user first.
+- **Cloudflare stays.** Orange deletes nothing on Cloudflare. The user deletes the Cloudflare Worker and its data, after the migration.
+- **Look it up.** `orange <command> --help` has every flag, JSON event, and exit code. The [Deploy](https://openorange.dev/docs/deploy/) and [Migrate](https://openorange.dev/docs/migrate/) guides have every step, message, and failure in detail, and each binding has a page under <https://openorange.dev/docs/bindings/>.
+- **Bugs.** When a command ends with `Looks like a bug? Report it: <link>`, give the user the link. Orange prints it only for unexpected errors.
 
-## Steps
+## Set up
 
-1. **Check the project.** Run `orange doctor --json` and read each event as `references/doctor.md` says. Fix every `check` event with `"status":"fail"`. Show the user a table of the `binding` events. To migrate, read the Wrangler `migrations` too: a class created in `new_classes` is KV-backed and cannot move.
-   **Stop and ask:** confirm the bindings that need setup, the ones not supported, and the Durable Object classes and D1 databases that will move.
-   Done when doctor exits `0` and the user agreed to the plan.
+1. **Install.** `orange --version` prints a version when OpenOrange is installed. Otherwise:
 
-2. **Run locally.** Follow "Run locally" in `references/deploy.md`. For a D1 app, apply its migrations to the local database first: `orange d1 migrations apply <DB> --local`. Start `orange dev` in the background on `http://127.0.0.1:8787` (or the `--port` used). Exercise every kind of route the app has: create, read, update, and delete, for each resource. When the app has its own test suite, run it against that URL.
-   Done when each route gives the response that the app gives on Cloudflare. Stop `orange dev` after the check.
+   ```sh
+   pnpm add -g open-orange
+   ```
 
-3. **Deploy to Rivet.** Follow `references/deploy.md`: pick a Rivet cluster (`orange deploy`) or the user's own Rivet Engine (`orange serve`), sign in, and run `orange deploy --dry-run`.
-   When the Wrangler config has `triggers.crons` and the Worker still serves on Cloudflare, deploy with `--var ORANGE_CRONS:off`, or each cron runs on both sides ("Cron triggers" in `references/migrate.md`).
-   **Stop and ask** before the first real `orange deploy`: it creates or rolls a runner pool, which can cost money.
-   Done when `orange deploy` prints `✓ Deployed`, a `Build` ID, and a `URL`, and a request to that URL works. Record the build ID. When the data will move later, test the deployed Orange only as "Test the deployed Orange" in `references/migrate.md` says: a request that starts a Durable Object that also exists on Cloudflare, even a read, blocks that object's move. For a D1 app, the D1 database on Orange is empty until step 6, so check a route that does not use D1. Do not apply migrations to the deployed database: `orange migrate d1` then refuses with `already has ... tables` unless `--replace`.
+   When the shell then cannot find `orange`, run `pnpm setup`, which puts pnpm's global bin on `PATH`, and start a new shell. When the installed version is older than `pnpm view open-orange version`, a pnpm `minimumReleaseAge` limit held back a new release: run `pnpm add -g open-orange@latest`.
+   Done when `orange --version` prints the latest version.
 
-4. **Prepare the Cloudflare Worker.** Go through "Before step 4" and "Where the secrets live" in `references/migrate.md` with the user. Run `orange migrate prepare`. It writes `wrangler.migrate.jsonc` and `.open-orange/migrate/worker.mjs` and deploys nothing.
-   **Stop and ask** before the user runs `wrangler secret put WORKER_MIGRATOR_TOKEN --config wrangler.migrate.jsonc`: a new secret deploys a new version of the production Worker on Cloudflare.
-   **Stop and ask** before `wrangler deploy --config wrangler.migrate.jsonc`: it replaces the production Worker on Cloudflare with the wrapped Worker.
-   Done when the app works as before and the `resolve` or `state` check in `references/migrate.md` step 4 answers.
+2. **Check the project.** Run `orange doctor --json` in the Worker's directory. Fix each `check` event with `"status":"fail"` by its `hint`, and run doctor again. Show the user one table of the `binding` events: name, resource, `support`, and `hint`. For a migration, add the `durable_object_class` events: a class with `"migratable":false` cannot move, and its `hint` says why. When the `summary` event has `"mcp":{"configured":false}`, suggest the Rivet MCP once: `orange mcp` prints the command for the user's agent.
+   **Stop and ask:** confirm the bindings that need a service, the ones that are not supported, and, for a migration, the classes and D1 databases that will move.
+   Done when doctor exits `0` and the user agrees.
 
-5. **Turn the migration on in Orange.** Deploy again with Orange's migration variables, `ORANGE_MIGRATE_WORKER_URL` and `WORKER_MIGRATOR_TOKEN` (`references/migrate.md` step 5).
-   **Stop and ask** first: from this deploy on, an object that starts on Orange copies itself from Cloudflare.
-   Done when the deploy prints `✓ Deployed`.
+## Run locally
 
-6. **Move each D1 database.** Run `orange migrate d1 <binding> --url <orange-url>` one time per database (`references/migrate.md` step 6).
-   **Stop and ask** before each database, with its size: the app's writes to it fail from the start of the move until the switch, and all its queries fail during the export, about 50 seconds per GB. In a test, a 1 GB database was frozen for about 3 minutes. After the state is `moved` there is no automated way back. Ask again before any `--replace`.
-   Done when each run prints `✓ Moved <binding>`.
+Start `orange dev` in the background. It serves on `http://127.0.0.1:8787` (`--port` picks another) and keeps its data in `.open-orange/`, which belongs in `.gitignore`. For a D1 app, apply the migrations to the local database first: `orange d1 migrations apply <DB> --local`.
 
-7. **Cut over.** The user points the app's domain at Orange in their DNS provider. The user makes this change, and you wait.
-   **Stop and ask:** the user confirms that the D1 databases moved (step 6), that clients with long-lived WebSockets reconnected after the step 4 deploy (`references/migrate.md` step 7), and tells you when DNS points at Orange.
-   For a Worker with crons, move them to Orange after the DNS change ("Cron triggers" in `references/migrate.md`). **Stop and ask** first.
-   Done when the user confirms the DNS change, and the crons run only on Orange.
+Exercise every kind of route the app has: create, read, update, and delete each resource. When the app has its own tests, run them against that URL. A call that fails on Orange and works on Cloudflare is often a known difference: look on that binding's page.
 
-8. **Backfill.** Wait at least 7 minutes after the cutover, run `orange migrate backfill --dry-run` to count the objects of each class, then run `orange migrate backfill --url https://<app-domain>` (`references/migrate.md` step 8).
-   **Stop and ask** before the first real run, with the counts, which include objects that already moved: each object it wakes moves to Orange and refuses app traffic on Cloudflare.
-   Done when a run reports `0 failed` for every class, and one more run a few minutes later reports `0 moved, 0 failed` for every class. Each run exits `0`.
+Done when each route answers as it does on Cloudflare. Then stop `orange dev`.
 
-9. **Verify.** Run the checks in `references/migrate.md` step 9.
-   Done when every check passes. Report the results to the user.
+## Deploy
 
-10. **Clean up.** Follow `references/migrate.md` step 10: remove `ORANGE_MIGRATE_WORKER_URL` from the pool.
-   **Stop and ask** before each action, and only after the user confirms that no traffic reaches the Cloudflare Worker.
-   Done when the user knows that the Cloudflare Worker and its data are still on Cloudflare, for them to delete.
+Ask where it runs: a Rivet Cloud cluster, which needs Docker, or the user's own Rivet Engine ([Self-host](https://openorange.dev/docs/deploy/#self-host)). A BYOC cluster is a Rivet Cloud cluster.
+
+1. **Sign in and link.** `orange login` opens a browser for the user to approve, and keeps a session that still works. Get the cluster name from the user or the Rivet MCP.
+
+   ```sh
+   orange login
+   orange link --cluster <cluster>
+   ```
+
+   In CI, a cluster token goes in `RIVET_CLOUD_TOKEN`, as [Deploy from CI](https://openorange.dev/docs/deploy/#deploy-from-ci) says. A cluster token cannot create a runner pool, so with one the pool must already exist: the user creates it in the dashboard, or deploys once with `orange login`.
+   Done when `orange whoami` shows the account and the linked cluster.
+
+2. **Check the plan.** `orange deploy --dry-run` writes the build and calls no API. Show the user the cluster, region, pool, image, variables, and secrets that it prints.
+   - Secrets go in with `--secrets-file` or `--secret`, because `vars` ship inside the image. Before `--secrets-file .dev.vars`, confirm with the user which names the file holds, without reading the values.
+   - When the Worker has `triggers.crons` and its data moves later, add `--var ORANGE_CRONS:off` to every deploy until the domain moves. Otherwise each cron runs on Cloudflare and on Orange.
+
+   Done when the plan names the cluster and pool that the user expects.
+
+3. **Deploy.** **Stop and ask** before the first deploy: it creates or rolls a runner pool, which can cost money.
+
+   ```sh
+   orange deploy
+   ```
+
+   A deploy takes several minutes: a Docker build, an upload, 3 to 5 minutes for Rivet Cloud to prepare the build, and a rollout. On a failure, read [Fix a failed deploy](https://openorange.dev/docs/deploy/#fix-a-failed-deploy).
+   Done when it prints `✓ Deployed`, a `Build` ID, and a `URL`, and a request to the URL works. Record the build ID: `orange deploy --build <id>` rolls the pool back to it.
+
+When the data moves later, test the deployed Worker only as [Test Orange before the migration is on](https://openorange.dev/docs/migrate/#test-orange-before-the-migration-is-on) allows: a request that starts a Durable Object which Cloudflare also has, even a read, blocks that object's move. For a D1 app, the deployed database stays empty, with no migrations applied, until its move.
+
+## Migrate the data
+
+Follow `references/migrate.md`. Start only after the deploy works.
 
 ## Roll back
 
-When the user asks to undo a step, or a step leaves production broken, follow `references/rollback.md`. Every rollback action changes production, so **stop and ask** before each one.
-
-Full guides: [migrate.mdx](https://github.com/rivet-dev/open-orange/blob/main/docs/migrate.mdx) and [deploy.mdx](https://github.com/rivet-dev/open-orange/blob/main/docs/deploy.mdx).
+When the user asks to undo a migration step, or a step leaves production broken, follow `references/rollback.md`.
